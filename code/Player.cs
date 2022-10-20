@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 public class Player
 {
-public
-    int superpower = 0; // 0 for NULL, 1 for EAST, 2 for WEST
-    int orders = 0; // 0 for HOLD, 1 for PRIME, 2 for LAUNCH
-    int armament = 0; // 0 for NOT_PRIMED, 1 for PRIMED, 2 for LAUNCHING, -1 for LAUNCHED
+    
+    
+    public int superpower = 0; // 0 for NULL, 1 for EAST, 2 for WEST
+    public int orders = 0; // 0 for HOLD, 1 for PRIME, 2 for LAUNCH
+    public int armament = 0; // 0 for NOT_PRIMED, 1 for PRIMED, 2 for LAUNCHING, -1 for LAUNCHED
 
 
 }
@@ -22,7 +23,6 @@ protected
 
 public class Crew : Player
 {
-protected
-    string submarine = "A1234";
+    protected string submarine = "A1234";
 
 }

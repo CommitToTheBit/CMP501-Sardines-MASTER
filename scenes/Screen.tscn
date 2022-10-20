@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://scenes/Screen.cs" type="Script" id=1]
+[ext_resource path="res://code/Screen.cs" type="Script" id=1]
 [ext_resource path="res://assets/fonts/Pointless.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://Assets/Background Panel.png" type="Texture" id=4]
 [ext_resource path="res://assets/shaders/screen_scanlines.gdshader" type="Shader" id=7]
@@ -43,7 +43,6 @@ custom_fonts/font = SubResource( 8 )
 text = "Pending..."
 
 [node name="ForegroundBuffer" type="BackBufferCopy" parent="."]
-visible = false
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="ForegroundShader" type="ColorRect" parent="ForegroundBuffer"]
