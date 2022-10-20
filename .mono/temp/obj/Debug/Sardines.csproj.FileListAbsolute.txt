@@ -1,0 +1,9 @@
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\bin\Debug\Sardines.dll
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\bin\Debug\Sardines.pdb
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.csproj.AssemblyReference.cache
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.AssemblyInfoInputs.cache
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.AssemblyInfo.cs
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.csproj.CoreCompileInputs.cache
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.dll
+C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.pdb

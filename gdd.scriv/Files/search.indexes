@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchIndexes Version="1.0">
+    <Documents>
+        <Document ID="317F4D50-6586-41D4-A1AD-17A949DFD2B1">
+            <Title>15.10.22 - Submarine Variables</Title>
+            <Text>Submarine Data
+// Diplomatic Variables
+enum Superpower = { EAST, WEST, NULL }
+
+// Data Transfers
+Diplomat-&gt;Diplomat: Two-Way Voice Channel 
+
+Crew-&gt;Crew: One-Way Voice Channel
+Crew-&gt;Comms: Microphone Active/Inactive
+Comms-&gt;Crew: Channel Active
+
+Captain-&gt;Comms: Written Log Message
+Comms-&gt;Comms: Forwarded Log Message
+Comms-&gt;Captain: Received Log Message
+
+Captain-&gt;Comms: Armament Ping
+Navigation-&gt;Comms: Coordinate Ping
+Comms-&gt;Diplomat: Combined Armament+Coordinate Ping
+Diplomat-&gt;Comms: Combined Orders+Direction Ping
+Comms-&gt;Navigation: Orders Ping
+Comms-&gt;Navigation: (Simultaneous)
+
+
+</Text>
+        </Document>
+    </Documents>
+</SearchIndexes>
