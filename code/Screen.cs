@@ -21,25 +21,6 @@ public class Screen : Control
         tcpConnection = new TCPConnection();
         connected = false;
 
-        /*IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-
-        // Create a TCP socket that we'll connect to the server
-        socket = new Socket(ipAddress.AddressFamily,SocketType.Stream,ProtocolType.Tcp);
-
-        IPAddress serverIPAddress = IPAddress.Parse("127.0.0.1");
-        IPEndPoint serverEndPoint = new IPEndPoint(serverIPAddress,5555);
-
-        // Connect the socket to the server.
-        try
-        {
-            socket.Connect(serverEndPoint);
-            GD.Print("Connected to server");
-        }
-        catch
-        {
-            GD.Print("Could not connect to server");
-        }*/
-
         messenger = GetNode<Label>("Messenger");
     }
 
@@ -67,10 +48,4 @@ public class Screen : Control
             messenger.Text = tcpConnection.GetBuffer();
         }
     }
-
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
 }
