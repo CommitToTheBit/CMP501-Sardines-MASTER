@@ -146,8 +146,10 @@ public class TCPConnection
 
     public void SerialisePositionPacket()
     {
-        Stream stream = new MemoryStream();
-        BinaryFormatter formatter = new BinaryFormatter();
-
+        PositionPacket packet = new PositionPacket(0,1.23f,0.0f);
+        byte[] bytes = PacketSerialiser.Serialise<PositionPacket>(packet);
+        GD.Print(bytes.Length);
+        PositionPacket dPacket = PacketSerialiser.Deserialise<PositionPacket>(bytes);
+        GD.Print(dPacket.x);
     }
 }

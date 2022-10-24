@@ -62,5 +62,6 @@ public class Screen : Control
     public void SendPositionPacket()
     {
         GD.Print("timer running!");
+        tcpConnection.SerialisePositionPacket();
     }
 }
