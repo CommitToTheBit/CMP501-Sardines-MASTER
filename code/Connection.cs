@@ -12,10 +12,10 @@ public class TCPConnection
     private const string CLIENTIP = "127.0.0.1";
     private const string SERVERIP = "127.0.0.1";
     private const int SERVERPORT = 5555;
-    private const int MESSAGESIZE = 40;
+    private const int MESSAGESIZE = 12;
 
     private Socket client;
-    private byte[] buffer;
+    public byte[] buffer;
 
     private enum State { READ, WRITE, NULL };
     private State state;
@@ -49,14 +49,14 @@ public class TCPConnection
         }
     }
 
-    public string GetBuffer()
+    public byte[] GetBuffer()
     {
-        return Encoding.UTF8.GetString(buffer).Split("#")[0];
+        return buffer;
     }
 
-    public void SetBuffer(string message)
+    public void SetBuffer(byte[] bytes)
     {
-        buffer = Encoding.UTF8.GetBytes(message.PadRight(MESSAGESIZE,'#'));
+        buffer = bytes;
     }
 
     public bool ReadingToBuffer()
@@ -144,12 +144,10 @@ public class TCPConnection
         state = State.WRITE;
     }
 
-    public void SerialisePositionPacket()
+    public byte[] SerialisePositionPacket(int objectID, float x, float y)
     {
-        PositionPacket packet = new PositionPacket(0,1.23f,0.0f);
+        PositionPacket packet = new PositionPacket(objectID,x,y);
         byte[] bytes = PacketSerialiser.Serialise<PositionPacket>(packet);
-        GD.Print(bytes.Length);
-        PositionPacket dPacket = PacketSerialiser.Deserialise<PositionPacket>(bytes);
-        GD.Print(dPacket.x);
+        return bytes;
     }
 }

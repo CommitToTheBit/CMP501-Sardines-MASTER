@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://code/Screen.cs" type="Script" id=1]
 [ext_resource path="res://assets/fonts/Pointless.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/Diplomat P3 Icon.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Background Panel.png" type="Texture" id=4]
 [ext_resource path="res://assets/shaders/screen_scanlines.gdshader" type="Shader" id=7]
 [ext_resource path="res://assets/shaders/screen_foreground.gdshader" type="Shader" id=8]
@@ -41,6 +42,10 @@ margin_right = 492.0
 margin_bottom = 120.0
 custom_fonts/font = SubResource( 8 )
 text = "Pending..."
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 430, 354 )
+texture = ExtResource( 3 )
 
 [node name="ForegroundBuffer" type="BackBufferCopy" parent="."]
 rect = Rect2( 0, 0, 1920, 1080 )

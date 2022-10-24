@@ -3,7 +3,6 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
 using System.Runtime.InteropServices;
 
 public static class PacketSerialiser
@@ -33,7 +32,7 @@ public static class PacketSerialiser
 
 struct PositionPacket
 {
-    public Int64 objectID;
+    public int objectID;
     public float x, y;
 
     public PositionPacket(int init_objectID, float init_x, float init_y)
