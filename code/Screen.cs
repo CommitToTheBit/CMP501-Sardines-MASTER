@@ -83,9 +83,9 @@ public class Screen : Control
     public void SendPositionPacket()
     {
         GD.Print("timer running!");
-        tcpConnection.SetBuffer(tcpConnection.SerialisePositionPacket(0,sprite.Position.x,sprite.Position.y));
+        //tcpConnection.SetBuffer(tcpConnection.SerialisePositionPacket(0,sprite.Position.x,sprite.Position.y));
 
-        tcpConnection.WriteFromBuffer();
+        //tcpConnection.WriteFromBuffer();
         //tcpConnection.ReadToBuffer();
 
         //PositionPacket packet = PacketSerialiser.Deserialise<PositionPacket>(tcpConnection.GetBuffer());
