@@ -23,13 +23,14 @@ public class TCPConnection
     private enum WriteState { HEADER, PACKET, NULL };
     private WriteState writeState;
 
-    private int packetID;
-    private int packetSize;
-
+    private int readPacketID;
+    private int readPacketSize;
     private byte[] readHeaderBuffer;
     private byte[] readPacketBuffer;
     private int readCount;
 
+    private int writePacketID;
+    private int writePacketSize;
     private byte[] writeHeaderBuffer;
     private byte[] writePacketBuffer;
     private int writeCount;
@@ -42,15 +43,19 @@ public class TCPConnection
         readState = ReadState.HEADER;
         writeState = WriteState.HEADER;
 
-        packetID = -1;
-        packetSize = Packet.GetSize(packetID);
+        readState = ReadState.HEADER;
+        writeState = WriteState.HEADER;
 
+        readPacketID = -1;
+        readPacketSize = Packet.GetSize(readPacketID);
         readHeaderBuffer = new byte[HEADERSIZE];
-        readPacketBuffer = new byte[packetSize];
+        readPacketBuffer = new byte[readPacketSize];
         readCount = 0;
 
+        writePacketID = -1;
+        writePacketSize = Packet.GetSize(readPacketID);
         writeHeaderBuffer = new byte[HEADERSIZE];
-        writePacketBuffer = new byte[packetSize];
+        writePacketBuffer = new byte[writePacketSize];
         writeCount = 0;
     }
 
@@ -127,8 +132,8 @@ public class TCPConnection
 
         // Process contents of header
         HeaderPacket header = Packet.Deserialise<HeaderPacket>(readHeaderBuffer);
-        packetID = header.packetID;
-        packetSize = Packet.GetSize(packetID);
+        readPacketID = header.packetID;
+        readPacketSize = Packet.GetSize(readPacketID);
 
         // Prepare to read packet
         readState = ReadState.PACKET;
@@ -142,7 +147,7 @@ public class TCPConnection
         // Read into buffer
         try
         {
-            int bufferLeft = packetSize - readCount;
+            int bufferLeft = readPacketSize - readCount;
             int count = client.Receive(readPacketBuffer, readCount, bufferLeft, 0);
 
             if (count <= 0)
@@ -157,26 +162,119 @@ public class TCPConnection
         }
 
         // Wait for buffer to fill up
-        if (readCount < packetSize)
+        if (readCount < readPacketSize)
             return false;
 
         // Process contents of packet
-        if (packetID == 1)
+        if (readPacketID == 1)
         {
             PositionPacket position = Packet.Deserialise<PositionPacket>(readPacketBuffer);
             Console.WriteLine("Object " + position.objectID.ToString() + " has position (" + position.x.ToString() + ", " + position.y.ToString() + ")");
         }
 
-        // Reset for next header
-        packetID = -1;
-        packetSize = Packet.GetSize(packetID);
+        // Reset for next read
+        readPacketID = -1;
+        readPacketSize = Packet.GetSize(readPacketID);
         readHeaderBuffer = new byte[HEADERSIZE];
-        readPacketBuffer = new byte[packetSize];
+        readPacketBuffer = new byte[readPacketSize];
 
         // Prepare to read header
         readState = ReadState.HEADER;
         readCount = 0;
 
         return false;
+    }
+
+    public bool IsWrite()
+    {
+        return writeState != WriteState.NULL;
+    }
+
+    public bool Write()
+    {
+        if (writeState == WriteState.HEADER)
+            return WriteHeader();
+        else if (writeState == WriteState.PACKET)
+            return WritePacket();
+
+        Console.WriteLine("Error in writeState");
+        return true;
+    }
+
+    private bool WriteHeader()
+    {
+        // Write out of buffer
+        try
+        {
+            int bufferLeft = HEADERSIZE - writeCount;
+            int count = client.Send(writeHeaderBuffer, writeCount, bufferLeft, 0);
+
+            if (count <= 0)
+                throw new Exception();
+
+            writeCount += count;
+        }
+        catch
+        {
+            Console.WriteLine("Client connection closed or broken");
+            return true;
+        }
+
+        // Wait for buffer to fully send
+        if (writeCount < HEADERSIZE)
+            return false;
+
+        // Prepare to write packet
+        readState = ReadState.PACKET;
+        readCount = 0;
+
+        return false;
+    }
+
+    private bool WritePacket()
+    {
+        // Write out of buffer
+        try
+        {
+            int bufferLeft = writePacketSize - writeCount;
+            int count = client.Send(writePacketBuffer, writeCount, bufferLeft, 0);
+
+            if (count <= 0)
+                throw new Exception();
+
+            writeCount += count;
+        }
+        catch
+        {
+            Console.WriteLine("Client connection closed or broken");
+            return true;
+        }
+
+        // Wait for buffer to fully send
+        if (writeCount < writePacketSize)
+            return false;
+
+        // Reset for next use
+        writePacketID = -1;
+        writePacketSize = Packet.GetSize(writePacketID);
+        writeHeaderBuffer = new byte[HEADERSIZE];
+        writePacketBuffer = new byte[writePacketSize];
+
+        // Prepare to write nothing
+        writeState = WriteState.NULL;
+        writeCount = 0;
+
+        return false;
+    }
+
+    public void QueueWrite(int packetID, byte[] serialisedPacket)
+    {
+        writePacketID = packetID;
+        writePacketSize = Packet.GetSize(writePacketID);
+        writeHeaderBuffer = Packet.Serialise<HeaderPacket>(new HeaderPacket(writePacketID));
+        writePacketBuffer = serialisedPacket;
+
+        WriteHeader();
+        WritePacket();
     }
 }
