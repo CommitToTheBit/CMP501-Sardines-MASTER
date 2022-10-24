@@ -3,6 +3,9 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using System.IO;
 
 public class TCPConnection
 {
@@ -139,5 +142,12 @@ public class TCPConnection
     public void QueueWriteFromBuffer()
     {
         state = State.WRITE;
+    }
+
+    public void SerialisePositionPacket()
+    {
+        Stream stream = new MemoryStream();
+        BinaryFormatter formatter = new BinaryFormatter();
+
     }
 }

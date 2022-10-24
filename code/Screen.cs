@@ -7,11 +7,12 @@ using System.Text;
 public class Screen : Control
 {
     private TCPConnection tcpConnection;
+    private Timer positionTimer;
     private bool connected;
 
     const int MESSAGESIZE = 40;
 
-    Socket socket;
+
     Label messenger;
 
     int counter = 0;
@@ -22,6 +23,14 @@ public class Screen : Control
         connected = false;
 
         messenger = GetNode<Label>("Messenger");
+
+        positionTimer = new Timer();
+        positionTimer.WaitTime = 1.0f;
+        positionTimer.Autostart = false;
+        positionTimer.OneShot = false;
+        AddChild(positionTimer);
+        positionTimer.Connect("timeout",this,"SendPositionPacket");
+
     }
 
     public override void _Process(float delta)
@@ -33,6 +42,7 @@ public class Screen : Control
         else
         {
             connected = tcpConnection.Connect();
+            positionTimer.Start();
         }
     }
 
@@ -47,5 +57,10 @@ public class Screen : Control
 
             messenger.Text = tcpConnection.GetBuffer();
         }
+    }
+
+    public void SendPositionPacket()
+    {
+        GD.Print("timer running!");
     }
 }

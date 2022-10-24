@@ -6,6 +6,6 @@ using System.Text;
 
 struct PositionPacket
 {
-    public int objectID;
-    public float x, y;
+    int objectID;
+    float x, y;
 }
