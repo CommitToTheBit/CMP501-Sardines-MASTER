@@ -132,7 +132,8 @@ public class Screen : Control
                 if (packet.header.bodyID == 1)
                 {
                     PositionPacket position = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                    GD.Print("This is a PositionPacket saying object "+position.objectID.ToString()+" has coordinates ("+position.x.ToString()+", "+position.y.ToString()+")");
+                    Console.WriteLine("This is a PositionPacket saying object "+position.objectID.ToString()+" has coordinates ("+position.x.ToString()+", "+position.y.ToString()+")");
+                    //sprite.Position = new Vector2(position.x,position.y);
                 }
             }
         }
