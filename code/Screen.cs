@@ -3,6 +3,8 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 public class Screen : Control
 {
@@ -10,7 +12,7 @@ public class Screen : Control
     private Timer positionTimer;
     private bool connected;
 
-    const int MESSAGESIZE = 12;
+    private static int HEADERSIZE = Marshal.SizeOf(new HeaderPacket());
 
 
     Label messenger;
@@ -85,6 +87,6 @@ public class Screen : Control
         GD.Print("timer running!");
 
         PositionPacket position = new PositionPacket(0,sprite.Position.x,sprite.Position.y);
-        tcpConnection.QueueWrite(1,Packet.Serialise<PositionPacket>(position));
+        tcpConnection.Send(new SendablePacket(new HeaderPacket(1),Packet.Serialise<PositionPacket>(position)));
     }
 }

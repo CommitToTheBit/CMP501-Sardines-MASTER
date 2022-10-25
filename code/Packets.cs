@@ -43,17 +43,29 @@ public static class Packet
     }
 }
 
-struct HeaderPacket
+public struct SendablePacket
 {
-    public int packetID;
+    public HeaderPacket header;
+    public byte[] serialisedBody;
 
-    public HeaderPacket(int init_packetID)
+    public SendablePacket(HeaderPacket init_header, byte[] init_serialisedBody)
     {
-        packetID = init_packetID;
+        header = init_header;
+        serialisedBody = init_serialisedBody;
     }
 }
 
-struct PositionPacket
+public struct HeaderPacket
+{
+    public int bodyID;
+
+    public HeaderPacket(int init_bodyID)
+    {
+        bodyID = init_bodyID;
+    }
+}
+
+public struct PositionPacket
 {
     public int objectID;
     public float x, y;
