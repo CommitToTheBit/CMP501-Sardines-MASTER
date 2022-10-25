@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 public class TCPConnection
 {
@@ -32,12 +33,15 @@ public class TCPConnection
     private byte[] writeBodyBuffer;
     private int writeCount;
 
+    private List<SendablePacket> recvQueue;
+    private List<SendablePacket> sendQueue;
+
     // Constructor
     public TCPConnection()
     {
         client = new Socket(IPAddress.Parse(CLIENTIP).AddressFamily,SocketType.Stream,ProtocolType.Tcp); 
 
-        State state = State.READ;
+        state = State.READ;
 
         readBodyID = -1;
         readBodySize = Packet.GetSize(readBodyID);
@@ -50,12 +54,15 @@ public class TCPConnection
         writeHeaderBuffer = new byte[HEADERSIZE];
         writeBodyBuffer = new byte[writeBodySize];
         writeCount = 0;
+
+        recvQueue = new List<SendablePacket>();
+        sendQueue = new List<SendablePacket>();
     }
 
     // Destructor
     ~TCPConnection()
     {
-        Console.WriteLine("Closing connection...");
+        GD.Print("Closing connection...");
         client.Close();
     }
 
@@ -74,13 +81,13 @@ public class TCPConnection
 
             GD.Print("Connected to server\n");
 
-            return true;
+            return false;
         }
         catch
         {
-            GD.Print("Waiting to connect...");
+            //GD.Print("Waiting to connect...");
 
-            return false;
+            return true;
         }
     }
 
@@ -105,7 +112,7 @@ public class TCPConnection
             }
             catch
             {
-                Console.WriteLine("Client connection closed or broken");
+                GD.Print("Client connection closed or broken");
                 return true;
             }
 
@@ -117,13 +124,14 @@ public class TCPConnection
         HeaderPacket header = Packet.Deserialise<HeaderPacket>(readHeaderBuffer);
         readBodyID = header.bodyID;
         readBodySize = Packet.GetSize(readBodyID);
+        readBodyBuffer = new byte[readBodySize];
 
         // Read into body buffer
         if (readCount < HEADERSIZE+readBodySize)
             try
             {
-                int bufferLeft = HEADERSIZE + readBodySize - readCount;
-                int count = client.Receive(readBodyBuffer, readCount, bufferLeft, 0);
+                int bufferLeft = readBodySize - (readCount - HEADERSIZE);
+                int count = client.Receive(readBodyBuffer, readCount-HEADERSIZE, bufferLeft, 0);
 
                 if (count <= 0)
                     throw new Exception();
@@ -132,7 +140,7 @@ public class TCPConnection
             }
             catch
             {
-                Console.WriteLine("Client connection closed or broken");
+                GD.Print("Client connection closed or broken");
                 return true;
             }
 
@@ -140,15 +148,17 @@ public class TCPConnection
         if (readCount < HEADERSIZE+readBodySize)
             return false;
 
-        // Process body buffer
-        if (readBodyID == 1)
-        {
-            PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(readBodyBuffer);
-            Console.WriteLine(positionPacket.x);
-        }
+        // Reset reading
+        recvQueue.Add(new SendablePacket(header, readBodyBuffer));
 
-        // Prepare to write packet
-        state = State.WRITE;
+        readBodyID = -1;
+        readBodySize = Packet.GetSize(readBodyID);
+        readHeaderBuffer = new byte[HEADERSIZE];
+        readBodyBuffer = new byte[readBodySize];
+        readCount = 0;
+
+        // Prepare to read next packet
+        state = State.READ;
         readCount = 0;
 
         return false;
@@ -161,6 +171,18 @@ public class TCPConnection
 
     public bool Write()
     {
+        // Check we have a message worth sending
+        if (sendQueue.Count == 0)
+        {
+            state = State.READ;
+            return false;
+        }
+
+        writeBodyID = sendQueue[0].header.bodyID;
+        writeBodySize = Packet.GetSize(writeBodyID);
+        writeHeaderBuffer = Packet.Serialise<HeaderPacket>(sendQueue[0].header);
+        writeBodyBuffer = sendQueue[0].serialisedBody;
+
         // Write out of header buffer
         if (writeCount < HEADERSIZE)
             try
@@ -175,7 +197,7 @@ public class TCPConnection
             }
             catch
             {
-                Console.WriteLine("Client connection closed or broken");
+                GD.Print("Client connection closed or broken");
                 return true;
             }
 
@@ -188,7 +210,7 @@ public class TCPConnection
             try
             {
                 int bufferLeft = writeBodySize-(writeCount-HEADERSIZE);
-                int count = client.Send(writeBodyBuffer, 0, bufferLeft, 0);
+                int count = client.Send(writeBodyBuffer, writeCount-HEADERSIZE, bufferLeft, 0);
 
                 if (count <= 0)
                     throw new Exception();
@@ -197,7 +219,7 @@ public class TCPConnection
             }
             catch
             {
-                Console.WriteLine("Client connection closed or broken");
+                GD.Print("Client connection closed or broken");
                 return true;
             }
 
@@ -205,23 +227,38 @@ public class TCPConnection
         if (writeCount < HEADERSIZE)
             return false;
 
+        // Reset writing
+        writeBodyID = -1;
+        writeBodySize = Packet.GetSize(writeBodyID);
+        writeHeaderBuffer = new byte[HEADERSIZE];
+        writeBodyBuffer = new byte[writeBodySize];
+        writeCount = 0;
+
+        sendQueue.RemoveAt(0);
+
         // Prepare to read packet
         state = State.READ;
         writeCount = 0;
 
-        GD.Print("all sent!");
-
         return false;
     }
 
-    public void Send(SendablePacket packet)
+    public bool isRecvPacket()
     {
-        writeBodyID = packet.header.bodyID;
-        writeBodySize = Packet.GetSize(writeBodyID);
-        writeHeaderBuffer = Packet.Serialise<HeaderPacket>(packet.header);
-        writeBodyBuffer = packet.serialisedBody;
+        return recvQueue.Count > 0;
+    }
 
-        Write();
-        Read();
+    public SendablePacket RecvPacket()
+    {
+        SendablePacket packet = recvQueue[0];
+        recvQueue.RemoveAt(0);
+        return packet;
+    }
+
+    public void SendPacket(SendablePacket packet)
+    {
+        sendQueue.Add(packet);
+
+        state = State.WRITE;
     }
 }
