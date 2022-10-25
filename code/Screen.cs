@@ -8,8 +8,8 @@ using System.Collections.Generic;
 
 public class Screen : Control
 {
-    private TCPConnection tcpConnection;
-    private Timer connectionTimer;
+    private Client client;
+    private Timer clientTimer;
     private Timer positionTimer;
     private bool dead;
 
@@ -23,18 +23,17 @@ public class Screen : Control
 
     public override void _Ready()
     {
-        tcpConnection = new TCPConnection();
-        dead = true;
+        client = new Client();
 
         messenger = GetNode<Label>("Messenger");
 
-        connectionTimer = new Timer();
-        connectionTimer.WaitTime = 0.1f;
-        connectionTimer.Autostart = false;
-        connectionTimer.OneShot = false;
-        AddChild(connectionTimer);
-        connectionTimer.Connect("timeout",this,"CheckConnections");
-        connectionTimer.Start();
+        clientTimer = new Timer();
+        clientTimer.WaitTime = 0.1f;
+        clientTimer.Autostart = false;
+        clientTimer.OneShot = false;
+        AddChild(clientTimer);
+        clientTimer.Connect("timeout",this,"ClientTick");
+        clientTimer.Start();
 
         positionTimer = new Timer();
         positionTimer.WaitTime = 1.0f;
@@ -75,73 +74,24 @@ public class Screen : Control
         }
     }
 
-    /*public override void _Input(InputEvent @event)
-    {
-        if (Input.IsActionJustPressed("ui_accept"))
-        {
-            tcpConnection.SetBuffer(messenger.Text.PadRight(MESSAGESIZE,'#'));
-
-            tcpConnection.WriteFromBuffer();
-            tcpConnection.ReadToBuffer();
-
-            messenger.Text = Encoding.UTF8.GetString(tcpConnection.GetBuffer());
-        }
-    }*/
-
     public void SendPositionPacket()
     {
         PositionPacket position = new PositionPacket(0,sprite.Position.x,sprite.Position.y);
         SendablePacket packet = new SendablePacket(new HeaderPacket(1),Packet.Serialise<PositionPacket>(position));
-        tcpConnection.SendPacket(packet);
+        client.SendPacket(packet);
     }
 
-    public void CheckConnections()
+    public void ClientTick()
     {
-        if (dead)
+        if (client.IsConnected())
         {
-            dead = tcpConnection.Connect();
-            return;
+            client.Write();
+            client.Read();
+            client.Update();
         }
-
-        // The structure that describes the set of sockets we're interested in reading from.
-        List<Socket> readable = new List<Socket>();
-
-        // The structure that describes the set of sockets we're interested in writing to.
-        List<Socket> writeable = new List<Socket>();
-
-        if (tcpConnection.IsRead())
+        else
         {
-            readable.Add(tcpConnection.GetSocket());
-        }
-        if (tcpConnection.IsWrite())
-        {
-            writeable.Add(tcpConnection.GetSocket());
-        }
-
-        Socket.Select(readable, writeable, null, 0);
-        //Console.WriteLine("1 connection, " + (readable.Count + writeable.Count) + " are ready.");
-
-        if (readable.Contains(tcpConnection.GetSocket()))
-        {
-            //GD.Print("Trying to read...");
-            dead |= tcpConnection.Read();
-            if (tcpConnection.isRecvPacket())
-            {
-                SendablePacket packet = tcpConnection.RecvPacket();
-                GD.Print("Received a packet with bodyID "+packet.header.bodyID.ToString());
-                if (packet.header.bodyID == 1)
-                {
-                    PositionPacket position = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                    Console.WriteLine("This is a PositionPacket saying object "+position.objectID.ToString()+" has coordinates ("+position.x.ToString()+", "+position.y.ToString()+")");
-                    //sprite.Position = new Vector2(position.x,position.y);
-                }
-            }
-        }
-
-        if (writeable.Contains(tcpConnection.GetSocket()))
-        {
-            //GD.Print("Trying to write...");
-            dead |= tcpConnection.Write();
+            client.Connect();
         }
     }
 }

@@ -9,17 +9,10 @@ using System.Collections.Generic;
 public class TCPConnection
 {
     // Constants
-    private const string CLIENTIP = "127.0.0.1";
-    private const string SERVERIP = "127.0.0.1";
-    private const int SERVERPORT = 5555;
-
     private static int HEADERSIZE = Marshal.SizeOf(new HeaderPacket());
 
     // Variables
-    private Socket client;
-
-    private enum State { READ, WRITE };
-    private State state;
+    private Socket socket;
 
     private int readBodyID;
     private int readBodySize;
@@ -36,12 +29,12 @@ public class TCPConnection
     private List<SendablePacket> recvQueue;
     private List<SendablePacket> sendQueue;
 
-    // Constructor
-    public TCPConnection()
+    // Constructor        
+    public TCPConnection(Socket init_socket)
     {
-        client = new Socket(IPAddress.Parse(CLIENTIP).AddressFamily,SocketType.Stream,ProtocolType.Tcp); 
+        Console.WriteLine("New connection...");
 
-        state = State.READ;
+        socket = init_socket;
 
         readBodyID = -1;
         readBodySize = Packet.GetSize(readBodyID);
@@ -63,37 +56,19 @@ public class TCPConnection
     ~TCPConnection()
     {
         GD.Print("Closing connection...");
-        client.Close();
+        socket.Close();
     }
 
     // Accessors
     public Socket GetSocket()
     {
-        return client;
+        return socket;
     }
 
     // Functions
-    public bool Connect()
-    {
-        try
-        {
-            client.Connect(new IPEndPoint(IPAddress.Parse(SERVERIP),SERVERPORT));
-
-            GD.Print("Connected to server\n");
-
-            return false;
-        }
-        catch
-        {
-            //GD.Print("Waiting to connect...");
-
-            return true;
-        }
-    }
-
     public bool IsRead()
     {
-        return state == State.READ;
+        return sendQueue.Count == 0;
     }
 
     public bool Read()
@@ -103,7 +78,7 @@ public class TCPConnection
             try
             {
                 int bufferLeft = HEADERSIZE - readCount;
-                int count = client.Receive(readHeaderBuffer, readCount, bufferLeft, 0);
+                int count = socket.Receive(readHeaderBuffer, readCount, bufferLeft, 0);
 
                 if (count <= 0)
                     throw new Exception();
@@ -131,7 +106,7 @@ public class TCPConnection
             try
             {
                 int bufferLeft = readBodySize - (readCount - HEADERSIZE);
-                int count = client.Receive(readBodyBuffer, readCount-HEADERSIZE, bufferLeft, 0);
+                int count = socket.Receive(readBodyBuffer, readCount-HEADERSIZE, bufferLeft, 0);
 
                 if (count <= 0)
                     throw new Exception();
@@ -157,26 +132,19 @@ public class TCPConnection
         readBodyBuffer = new byte[readBodySize];
         readCount = 0;
 
-        // Prepare to read next packet
-        state = State.READ;
-        readCount = 0;
-
         return false;
     }
 
     public bool IsWrite()
     {
-        return state == State.WRITE;
+        return sendQueue.Count > 0;
     }
 
     public bool Write()
     {
         // Check we have a message worth sending
         if (sendQueue.Count == 0)
-        {
-            state = State.READ;
             return false;
-        }
 
         writeBodyID = sendQueue[0].header.bodyID;
         writeBodySize = Packet.GetSize(writeBodyID);
@@ -188,7 +156,7 @@ public class TCPConnection
             try
             {
                 int bufferLeft = HEADERSIZE - writeCount;
-                int count = client.Send(writeHeaderBuffer, writeCount, bufferLeft, 0);
+                int count = socket.Send(writeHeaderBuffer, writeCount, bufferLeft, 0);
 
                 if (count <= 0)
                     throw new Exception();
@@ -210,7 +178,7 @@ public class TCPConnection
             try
             {
                 int bufferLeft = writeBodySize-(writeCount-HEADERSIZE);
-                int count = client.Send(writeBodyBuffer, writeCount-HEADERSIZE, bufferLeft, 0);
+                int count = socket.Send(writeBodyBuffer, writeCount-HEADERSIZE, bufferLeft, 0);
 
                 if (count <= 0)
                     throw new Exception();
@@ -236,10 +204,6 @@ public class TCPConnection
 
         sendQueue.RemoveAt(0);
 
-        // Prepare to read packet
-        state = State.READ;
-        writeCount = 0;
-
         return false;
     }
 
@@ -258,7 +222,5 @@ public class TCPConnection
     public void SendPacket(SendablePacket packet)
     {
         sendQueue.Add(packet);
-
-        state = State.WRITE;
     }
 }

@@ -8,19 +8,24 @@
     ".NETFramework,Version=v4.7.2": []
   },
   "packageFolders": {
-    "C:\\Users\\samdr\\.nuget\\packages\\": {}
+    "C:\\Users\\Sam\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj",
+      "projectUniqueName": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines\\Sardines.csproj",
       "projectName": "Sardines",
-      "projectPath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj",
-      "packagesPath": "C:\\Users\\samdr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\.mono\\temp\\obj\\",
+      "projectPath": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines\\Sardines.csproj",
+      "packagesPath": "C:\\Users\\Sam\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines\\.mono\\temp\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\samdr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Sam\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -45,7 +50,7 @@
     "frameworks": {
       "net472": {
         "targetAlias": "net472",
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
       }
     }
   }

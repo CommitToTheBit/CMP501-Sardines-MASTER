@@ -7,3 +7,12 @@ C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.AssemblyI
 C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.csproj.CoreCompileInputs.cache
 C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.dll
 C:\Users\samdr\OneDrive\Desktop\Sardines\.mono\temp\obj\Debug\Sardines.pdb
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\bin\Debug\Sardines.dll
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\bin\Debug\Sardines.pdb
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.csproj.AssemblyReference.cache
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.AssemblyInfoInputs.cache
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.AssemblyInfo.cs
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.csproj.CoreCompileInputs.cache
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.dll
+C:\Users\Sam\Documents\GitHub\Sardines\.mono\temp\obj\Debug\Sardines.pdb
