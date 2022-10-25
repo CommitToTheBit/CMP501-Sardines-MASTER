@@ -34,9 +34,9 @@ public static class Packet
         switch (packetID)
         {
             case 0:
-                return Marshal.SizeOf(new HeaderPacket());
+                return Marshal.SizeOf(new IDPacket());
             case 1:
-                return Marshal.SizeOf(new PositionPacket());
+                return Marshal.SizeOf(new SubmarinePacket());
             default:
                 return 0;
         }
@@ -65,14 +65,24 @@ public struct HeaderPacket
     }
 }
 
-public struct PositionPacket
+public struct IDPacket
 {
-    public int objectID;
+    public int clientID;
+
+    public IDPacket(int init_clientID)
+    {
+        clientID = init_clientID;
+    }
+}
+
+public struct SubmarinePacket
+{
+    public int clientID;
     public float x, y;
 
-    public PositionPacket(int init_objectID, float init_x, float init_y)
+    public SubmarinePacket(int init_clientID, float init_x, float init_y)
     {
-        objectID = init_objectID;
+        clientID = init_clientID;
         x = init_x;
         y = init_y;
     }

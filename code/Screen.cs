@@ -20,6 +20,7 @@ public class Screen : Control
     int counter = 0;
 
     Sprite sprite;
+    Dictionary<int,Sprite> sprites;
 
     public override void _Ready()
     {
@@ -28,7 +29,7 @@ public class Screen : Control
         messenger = GetNode<Label>("Messenger");
 
         clientTimer = new Timer();
-        clientTimer.WaitTime = 0.1f;
+        clientTimer.WaitTime = 0.01f;
         clientTimer.Autostart = false;
         clientTimer.OneShot = false;
         AddChild(clientTimer);
@@ -36,13 +37,14 @@ public class Screen : Control
         clientTimer.Start();
 
         positionTimer = new Timer();
-        positionTimer.WaitTime = 1.0f;
+        positionTimer.WaitTime = 0.02f;
         positionTimer.Autostart = false;
         positionTimer.OneShot = true;
         AddChild(positionTimer);
         positionTimer.Connect("timeout",this,"SendPositionPacket");
 
         sprite = GetNode<Sprite>("Sprite");
+        sprites = new Dictionary<int, Sprite>();
 
     }
 
@@ -50,35 +52,51 @@ public class Screen : Control
     {
         if (Input.IsActionPressed("ui_up"))
         {
-            sprite.Position += new Vector2(0.0f,-300*delta);
+            client.state.MoveSubmarine(client.GetClientID(),0.0f,-300*delta);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_down"))
         {
-            sprite.Position += new Vector2(0.0f,300*delta);
+            client.state.MoveSubmarine(client.GetClientID(),0.0f,300*delta);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_left"))
         {
-            sprite.Position += new Vector2(-300*delta,0.0f);
+            client.state.MoveSubmarine(client.GetClientID(),-300*delta,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_right"))
         {
-            sprite.Position += new Vector2(300*delta,0.0f);
+            client.state.MoveSubmarine(client.GetClientID(),300*delta,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
+        }
+
+        Render();
+    }
+
+    public void Render()
+    {
+        Dictionary<int,Submarine> submarines = client.state.GetSubmarines();
+
+        foreach (int id in submarines.Keys)
+        {
+            if (!sprites.ContainsKey(id))
+            {
+                sprites.Add(id,(Sprite)sprite.Duplicate());
+                AddChild(sprites[id]);
+            }
+            sprites[id].Position = new Vector2(submarines[id].GetX(),submarines[id].GetY());
         }
     }
 
     public void SendPositionPacket()
     {
-        PositionPacket position = new PositionPacket(0,sprite.Position.x,sprite.Position.y);
-        SendablePacket packet = new SendablePacket(new HeaderPacket(1),Packet.Serialise<PositionPacket>(position));
-        client.SendPacket(packet);
+        Submarine submarine = client.state.GetSubmarines()[client.GetClientID()];
+        client.SendSubmarinePacket(submarine.GetX(),submarine.GetY());
     }
 
     public void ClientTick()

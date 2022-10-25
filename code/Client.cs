@@ -14,9 +14,11 @@ public class Client
 
     // Variables
     private Socket clientSocket;
-
     private TCPConnection serverConnection;
     private bool disconnected;
+
+    private int clientID;
+    public State state;
 
     // Constructor
     public Client()
@@ -25,6 +27,9 @@ public class Client
 
         serverConnection = new TCPConnection(clientSocket);
         disconnected = true;
+
+        clientID = -1;
+        state = new State();
     }
 
     // Destructor
@@ -49,6 +54,9 @@ public class Client
             GD.Print("Connected to server\n");
 
             disconnected = false;
+
+            SendIDPacket();
+            SendSubmarinePacket(0.0f,0.0f);
         }
         catch
         {
@@ -84,13 +92,10 @@ public class Client
         while (serverConnection.isRecvPacket())
         {
             SendablePacket packet = serverConnection.RecvPacket();
+            ReceivePacket(packet);
+
             GD.Print("Received a packet with bodyID "+packet.header.bodyID.ToString());
-            if (packet.header.bodyID == 1)
-            {
-                PositionPacket position = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                Console.WriteLine("This is a PositionPacket saying object "+position.objectID.ToString()+" has coordinates ("+position.x.ToString()+", "+position.y.ToString()+")");
-                //sprite.Position = new Vector2(position.x,position.y);
-            }
+            GD.Print("Client ID is "+clientID);
         }
     }
 
@@ -117,15 +122,54 @@ public class Client
             disconnected |= serverConnection.Write();
     }
 
-    public void SendPacket(SendablePacket packet)
+    // Send functions
+    private void SendIDPacket()
     {
+        HeaderPacket header = new HeaderPacket(0);
+        IDPacket id = new IDPacket(clientID);
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<IDPacket>(id));
         serverConnection.SendPacket(packet);
     }
 
-    // Private functions
-    private void ProcessPacket(SendablePacket packet)
+    public void SendSubmarinePacket(float x, float y)
     {
-        //switch (packet.header.bodyID)
+        HeaderPacket header = new HeaderPacket(1);
+        SubmarinePacket submarine = new SubmarinePacket(clientID,x,y);
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
+        serverConnection.SendPacket(packet);
+    }
+
+    // Receive functions
+    private void ReceivePacket(SendablePacket packet)
+    {
+        switch (packet.header.bodyID)
+        {
+            case 0:
+                IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
+                ReceiveIDPacket(idPacket);
+                break;
+            case 1:
+                SubmarinePacket submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
+                ReceiveSubmarinePacket(submarinePacket);
+                break;    
+        }
+    }
+
+    private void ReceiveIDPacket(IDPacket packet)
+    {
+        if (clientID < 0)
+            clientID = packet.clientID;
+    }
+
+    private void ReceiveSubmarinePacket(SubmarinePacket packet)
+    {
+        state.UpdateSubmarine(packet.clientID,packet.x,packet.y);
+    }
+
+    //
+    public int GetClientID()
+    {
+        return clientID;
     }
 }
 
