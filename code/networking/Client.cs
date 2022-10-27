@@ -28,6 +28,7 @@ public class Client
         serverConnection = new TCPConnection(clientSocket);
         disconnected = true;
 
+        // Initialise for New Game 
         clientID = -1;
         state = new State();
     }
@@ -50,13 +51,9 @@ public class Client
         try
         {
             clientSocket.Connect(new IPEndPoint(IPAddress.Parse(SERVERIP),SERVERPORT));
-
-            GD.Print("Connected to server\n");
-
             disconnected = false;
 
             SendIDPacket();
-            SendSubmarinePacket(0.0f,0.0f,0.0f,0.0f);
         }
         catch
         {
@@ -93,9 +90,6 @@ public class Client
         {
             SendablePacket packet = serverConnection.RecvPacket();
             ReceivePacket(packet);
-
-            GD.Print("Received a packet with bodyID "+packet.header.bodyID.ToString());
-            GD.Print("Client ID is "+clientID);
         }
     }
 
@@ -125,6 +119,9 @@ public class Client
     // Send functions
     private void SendIDPacket()
     {
+        /*
+        *   Identify self to server on connection
+        */
         HeaderPacket header = new HeaderPacket(0);
         IDPacket id = new IDPacket(clientID);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<IDPacket>(id));
@@ -133,6 +130,10 @@ public class Client
 
     public void SendSubmarinePacket(float x, float y, float direction, float steer)
     {
+        /*
+        *   Send details of own submarine to server
+        */
+        // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(1);
         SubmarinePacket submarine = new SubmarinePacket(clientID,x,y,direction,steer);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
@@ -140,7 +141,7 @@ public class Client
     }
 
     // Receive functions
-    private void ReceivePacket(SendablePacket packet)
+    private void ReceivePacket(SendablePacket packet) // Redirects each type of packet
     {
         switch (packet.header.bodyID)
         {
@@ -157,19 +158,27 @@ public class Client
 
     private void ReceiveIDPacket(IDPacket packet)
     {
+        /*
+        *   If clientID is null (-1), assign a new ID.
+        */
         if (clientID < 0)
             clientID = packet.clientID;
     }
 
     private void ReceiveSubmarinePacket(SubmarinePacket packet)
     {
+        /*
+        *   Update nearby submarines, and forget about submarines out of range. 
+        */
         if (packet.clientID < 0)
             return;
 
+        // FIXME: Add range checks on server and client sides...
+        // FIXME: Who should get priority if client and server update the submarine *at the same time*?
         state.UpdateSubmarine(packet.clientID,packet.x,packet.y,packet.direction,packet.steer);
     }
 
-    //
+    // Accessors
     public int GetClientID()
     {
         return clientID;

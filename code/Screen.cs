@@ -8,41 +8,26 @@ using System.Collections.Generic;
 
 public class Screen : Control
 {
-    private Client client;
-    private Timer clientTimer;
+    private Handler h;
     private Timer positionTimer;
-    private bool dead;
 
-    private static int HEADERSIZE = Marshal.SizeOf(new HeaderPacket());
-
-    Label messenger;
-
-    int counter = 0;
-
+    // FIXME: Simple sprite set-up
     Sprite sprite;
     Dictionary<int,Sprite> sprites;
 
     public override void _Ready()
     {
-        client = new Client();
+        h = GetNode<Handler>("/root/Handler");
 
-        messenger = GetNode<Label>("Messenger");
-
-        clientTimer = new Timer();
-        clientTimer.WaitTime = 0.01f;
-        clientTimer.Autostart = false;
-        clientTimer.OneShot = false;
-        AddChild(clientTimer);
-        //clientTimer.Connect("timeout",this,"ClientTick");
-        clientTimer.Start();
-
+        // Set up timer for sending position packets
         positionTimer = new Timer();
         positionTimer.WaitTime = 0.1f;
         positionTimer.Autostart = false;
         positionTimer.OneShot = true;
         AddChild(positionTimer);
-        positionTimer.Connect("timeout",this,"SendPositionPacket");
+        positionTimer.Connect("timeout",this,"SendPosition");
 
+        // FIXME: Simple sprite management
         sprite = GetNode<Sprite>("Sprite");
         sprites = new Dictionary<int, Sprite>();
 
@@ -50,83 +35,75 @@ public class Screen : Control
 
     public override void _Process(float delta)
     {
-        if (client.IsConnected())
-        {
-            client.Write();
-            client.Read();
-            client.Update();
-        }
-        else
-        {
-            client.Connect();
-        }
+        // Take in player controls
+        UpdatePosition(delta);
 
+        // Move all objects on screen to h.c.state positions
+        Render();
+    }
+
+    public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?
+    {
         if (Input.IsActionPressed("ui_up"))
         {
-            Submarine submarine = client.state.GetSubmarines()[client.GetClientID()];
-            client.state.MoveSubmarine(client.GetClientID(),300*delta*Mathf.Sin(submarine.GetDirection()),-300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
+            Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
+            h.c.state.MoveSubmarine(h.c.GetClientID(),300*delta*Mathf.Sin(submarine.GetDirection()),-300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_down"))
         {
-            Submarine submarine = client.state.GetSubmarines()[client.GetClientID()];
-            client.state.MoveSubmarine(client.GetClientID(),-300*delta*Mathf.Sin(submarine.GetDirection()),300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
+            Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
+            h.c.state.MoveSubmarine(h.c.GetClientID(),-300*delta*Mathf.Sin(submarine.GetDirection()),300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_left"))
         {
-            client.state.MoveSubmarine(client.GetClientID(),0.0f,0.0f,-delta,0.0f);
+            h.c.state.MoveSubmarine(h.c.GetClientID(),0.0f,0.0f,-delta,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_right"))
         {
-            client.state.MoveSubmarine(client.GetClientID(),0.0f,0.0f,delta,0.0f);
+            h.c.state.MoveSubmarine(h.c.GetClientID(),0.0f,0.0f,delta,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
-
-        Render();
     }
 
     public void Render()
     {
-        Dictionary<int,Submarine> submarines = client.state.GetSubmarines();
+        int clientID = h.c.GetClientID();
+        Dictionary<int,Submarine> submarines = h.c.state.GetSubmarines();
 
-        if (!submarines.ContainsKey(client.GetClientID()) || client.GetClientID() < 0)
+        if (!submarines.ContainsKey(clientID) || clientID < 0)
             return;
 
+        Vector2 origin = 0.5f*GetViewport().Size;
+        Vector2 clientPosition = new Vector2(submarines[clientID].GetX(),submarines[clientID].GetY());
+        float clientRotation = submarines[clientID].GetDirection();
+        
         foreach (int id in submarines.Keys)
         {
+            Vector2 position = new Vector2(submarines[id].GetX(),submarines[id].GetY());
+            float rotation = submarines[id].GetDirection();
+
             if (!sprites.ContainsKey(id))
             {
                 sprites.Add(id,(Sprite)sprite.Duplicate());
                 AddChild(sprites[id]);
             }
-            sprites[id].Position = (new Vector2(submarines[id].GetX(),submarines[id].GetY())-new Vector2(submarines[client.GetClientID()].GetX(),submarines[client.GetClientID()].GetY())).Rotated(-submarines[client.GetClientID()].GetDirection())+0.5f*GetViewport().Size;
-            sprites[id].Rotation = submarines[id].GetDirection()-submarines[client.GetClientID()].GetDirection();
+
+            sprites[id].Position = (position-clientPosition).Rotated(-clientRotation)+origin;
+            sprites[id].Rotation = rotation-clientRotation;
         }
     }
 
-    public void SendPositionPacket()
+    // Sending values from our client state to our server state
+    public void SendPosition()
     {
-        Submarine submarine = client.state.GetSubmarines()[client.GetClientID()];
-        client.SendSubmarinePacket(submarine.GetX(),submarine.GetY(),submarine.GetDirection(),submarine.GetSteer());
-    }
-
-    public void ClientTick()
-    {
-        if (client.IsConnected())
-        {
-            client.Write();
-            client.Read();
-            client.Update();
-        }
-        else
-        {
-            client.Connect();
-        }
+        Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
+        h.c.SendSubmarinePacket(submarine.GetX(),submarine.GetY(),submarine.GetDirection(),submarine.GetSteer());
     }
 }
