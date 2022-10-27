@@ -63,25 +63,27 @@ public class Screen : Control
 
         if (Input.IsActionPressed("ui_up"))
         {
-            client.state.MoveSubmarine(client.GetClientID(),0.0f,-300*delta,0.0f,0.0f);
+            Submarine submarine = client.state.GetSubmarines()[client.GetClientID()];
+            client.state.MoveSubmarine(client.GetClientID(),300*delta*Mathf.Sin(submarine.GetDirection()),-300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_down"))
         {
-            client.state.MoveSubmarine(client.GetClientID(),0.0f,300*delta,0.0f,0.0f);
+            Submarine submarine = client.state.GetSubmarines()[client.GetClientID()];
+            client.state.MoveSubmarine(client.GetClientID(),-300*delta*Mathf.Sin(submarine.GetDirection()),300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_left"))
         {
-            client.state.MoveSubmarine(client.GetClientID(),-300*delta,0.0f,0.0f,0.0f);
+            client.state.MoveSubmarine(client.GetClientID(),0.0f,0.0f,-delta,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
         if (Input.IsActionPressed("ui_right"))
         {
-            client.state.MoveSubmarine(client.GetClientID(),300*delta,0.0f,0.0f,0.0f);
+            client.state.MoveSubmarine(client.GetClientID(),0.0f,0.0f,delta,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
         }
@@ -103,7 +105,8 @@ public class Screen : Control
                 sprites.Add(id,(Sprite)sprite.Duplicate());
                 AddChild(sprites[id]);
             }
-            sprites[id].Position = new Vector2(submarines[id].GetX(),submarines[id].GetY());//-new Vector2(submarines[client.GetClientID()].GetX(),submarines[client.GetClientID()].GetY())+0.5f*GetViewport().Size;
+            sprites[id].Position = (new Vector2(submarines[id].GetX(),submarines[id].GetY())-new Vector2(submarines[client.GetClientID()].GetX(),submarines[client.GetClientID()].GetY())).Rotated(-submarines[client.GetClientID()].GetDirection())+0.5f*GetViewport().Size;
+            sprites[id].Rotation = submarines[id].GetDirection()-submarines[client.GetClientID()].GetDirection();
         }
     }
 
