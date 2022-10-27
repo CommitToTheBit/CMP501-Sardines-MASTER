@@ -1,19 +1,17 @@
 using Godot;
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-public class Screen : Control
+public class Navigation : Control
 {
-    /*private Handler h;
+    private Handler h;
     private Timer positionTimer;
 
     // FIXME: Simple sprite set-up
-    Sprite sprite;
-    Dictionary<int,Sprite> sprites;
+    Node2D midground;
+    Dictionary<int,Vessel> vessels;
+
+    Vessel vessel;
 
     public override void _Ready()
     {
@@ -28,8 +26,10 @@ public class Screen : Control
         positionTimer.Connect("timeout",this,"SendPosition");
 
         // FIXME: Simple sprite management
-        sprite = GetNode<Sprite>("Sprite");
-        sprites = new Dictionary<int, Sprite>();
+        midground = GetNode<Node2D>("Sonar/Midground");
+        vessels = new Dictionary<int, Vessel>();
+
+        vessel = GetNode<Vessel>("Sonar/Foreground/Vessel");
 
     }
 
@@ -80,23 +80,26 @@ public class Screen : Control
         if (!submarines.ContainsKey(clientID) || clientID < 0)
             return;
 
-        Vector2 origin = 0.5f*GetViewport().Size;
+        Vector2 origin = Vector2.Zero;
         Vector2 clientPosition = new Vector2(submarines[clientID].GetX(),submarines[clientID].GetY());
         float clientRotation = submarines[clientID].GetDirection();
         
         foreach (int id in submarines.Keys)
         {
+            if (id == clientID)
+                continue;
+
             Vector2 position = new Vector2(submarines[id].GetX(),submarines[id].GetY());
             float rotation = submarines[id].GetDirection();
 
-            if (!sprites.ContainsKey(id))
+            if (!vessels.ContainsKey(id))
             {
-                sprites.Add(id,(Sprite)sprite.Duplicate());
-                AddChild(sprites[id]);
+                vessels.Add(id,ResourceLoader.Load<PackedScene>("res://scenes/Vessel.tscn").Instance<Vessel>());
+                midground.AddChild(vessels[id]);
             }
 
-            sprites[id].Position = (position-clientPosition).Rotated(-clientRotation)+origin;
-            sprites[id].Rotation = rotation-clientRotation;
+            vessels[id].Position = (position-clientPosition).Rotated(-clientRotation)+origin;
+            vessels[id].Rotation = rotation-clientRotation;
         }
     }
 
@@ -105,5 +108,5 @@ public class Screen : Control
     {
         Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
         h.c.SendSubmarinePacket(submarine.GetX(),submarine.GetY(),submarine.GetDirection(),submarine.GetSteer());
-    }*/
+    }
 }
