@@ -80,10 +80,21 @@ public struct SubmarinePacket
     public int clientID;
     public float x, y;
 
-    public SubmarinePacket(int init_clientID, float init_x, float init_y)
+    // CAR PHYSICS
+    public float direction;
+    public float steer;
+    public float speed;
+    public float structure; // What would this be?
+
+    public SubmarinePacket(int init_clientID, float init_x, float init_y, float init_direction, float init_steer)
     {
         clientID = init_clientID;
         x = init_x;
         y = init_y;
+
+        direction = init_direction;
+        steer = init_steer;
+        speed = 300.0f;
+        structure = 30.0f;
     }
 }

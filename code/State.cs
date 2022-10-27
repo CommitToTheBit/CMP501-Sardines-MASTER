@@ -16,24 +16,17 @@ public class State
         return submarines;
     }
 
-    public void UpdateSubmarine(int clientID, float x, float y)
+    public void UpdateSubmarine(int clientID, float x, float y, float direction, float steer)
     {
         if (submarines.ContainsKey(clientID))
-            submarines[clientID].Update(x, y);
+            submarines[clientID].Update(x, y, direction, steer);
         else
-            submarines.Add(clientID, new Submarine(x, y));
-        
-        foreach (int key in submarines.Keys)
-        {
-            GD.Print(key);
-            GD.Print(submarines[key].GetX());
-            GD.Print(submarines[key].GetY());
-        }
+            submarines.Add(clientID, new Submarine(x, y, direction, steer));
     }
 
-    public void MoveSubmarine(int clientID, float deltaX, float deltaY)
+    public void MoveSubmarine(int clientID, float deltaX, float deltaY, float deltaDirection, float deltaSteer)
     {
         if (submarines.ContainsKey(clientID))
-            submarines[clientID].Update(submarines[clientID].GetX()+deltaX, submarines[clientID].GetY()+deltaY);
+            submarines[clientID].Update(submarines[clientID].GetX()+deltaX, submarines[clientID].GetY()+deltaY, submarines[clientID].GetDirection()+deltaDirection, submarines[clientID].GetSteer()+deltaSteer);
     }
 }

@@ -56,7 +56,7 @@ public class Client
             disconnected = false;
 
             SendIDPacket();
-            SendSubmarinePacket(0.0f,0.0f);
+            SendSubmarinePacket(0.0f,0.0f,0.0f,0.0f);
         }
         catch
         {
@@ -131,10 +131,10 @@ public class Client
         serverConnection.SendPacket(packet);
     }
 
-    public void SendSubmarinePacket(float x, float y)
+    public void SendSubmarinePacket(float x, float y, float direction, float steer)
     {
         HeaderPacket header = new HeaderPacket(1);
-        SubmarinePacket submarine = new SubmarinePacket(clientID,x,y);
+        SubmarinePacket submarine = new SubmarinePacket(clientID,x,y,direction,steer);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
         serverConnection.SendPacket(packet);
     }
@@ -163,7 +163,10 @@ public class Client
 
     private void ReceiveSubmarinePacket(SubmarinePacket packet)
     {
-        state.UpdateSubmarine(packet.clientID,packet.x,packet.y);
+        if (packet.clientID < 0)
+            return;
+
+        state.UpdateSubmarine(packet.clientID,packet.x,packet.y,packet.direction,packet.steer);
     }
 
     //
