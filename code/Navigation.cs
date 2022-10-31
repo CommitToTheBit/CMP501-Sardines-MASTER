@@ -47,6 +47,10 @@ public class Navigation : Control
         if (Input.IsActionPressed("ui_up"))
         {
             Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
+            
+            float bowPlacement = 20.0f; // FIXME: Correct?
+            Vector2 bow = 
+
             h.c.state.MoveSubmarine(h.c.GetClientID(),300*delta*Mathf.Sin(submarine.GetDirection()),-300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
             if (positionTimer.IsStopped())
                 positionTimer.Start();
