@@ -93,23 +93,28 @@ public struct IDPacket
 public struct SubmarinePacket
 {
     public int clientID;
-    public float x, y;
 
-    // CAR PHYSICS
-    public float direction;
+    public float gas;
+    public float brakes;
     public float steer;
-    public float speed;
-    public float structure; // What would this be?
 
-    public SubmarinePacket(int init_clientID, float init_x, float init_y, float init_direction, float init_steer)
+    public float a;
+    public float u;
+    public float x, y;
+    public float theta;
+
+    public SubmarinePacket(int init_clientID, float init_gas, float init_brakes, float init_steer, float init_a, float init_u, float init_x, float init_y, float init_theta)
     {
         clientID = init_clientID;
+
+        gas = init_gas;
+        brakes = init_brakes;
+        steer = init_steer;
+
+        a = init_a;
+        u = init_u;
         x = init_x;
         y = init_y;
-
-        direction = init_direction;
-        steer = init_steer;
-        speed = 300.0f;
-        structure = 30.0f;
+        theta = init_theta;
     }
 }

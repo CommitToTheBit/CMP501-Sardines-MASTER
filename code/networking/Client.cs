@@ -144,14 +144,14 @@ public class Client
         serverConnection.SendPacket(packet);
     }
 
-    public void SendSubmarinePacket(float x, float y, float direction, float steer)
+    public void SendSubmarinePacket(int clientID, float gas, float brakes, float steer, float a, float u, float x, float y, float theta)
     {
         /*
         *   Send details of own submarine to server
         */
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(2);
-        SubmarinePacket submarine = new SubmarinePacket(clientID,x,y,direction,steer);
+        SubmarinePacket submarine = new SubmarinePacket(clientID,gas,brakes,steer,a,u,x,y,theta);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
         serverConnection.SendPacket(packet);
     }
@@ -205,7 +205,7 @@ public class Client
 
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*?
-        state.UpdateSubmarine(packet.clientID,packet.x,packet.y,packet.direction,packet.steer);
+        state.UpdateSubmarine(packet.clientID,packet.gas,packet.brakes,packet.steer,packet.a,packet.u,packet.x,packet.y,packet.theta);
     }
 
     // Accessors

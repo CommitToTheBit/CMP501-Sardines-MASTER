@@ -44,36 +44,32 @@ public class Navigation : Control
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?
     {
-        if (Input.IsActionPressed("ui_up"))
-        {
-            Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-            
-            float bowPlacement = 20.0f; // FIXME: Correct?
-            Vector2 bow = 
+        Dictionary<int, Submarine> submarines = h.c.state.GetSubmarines();
+        if (!submarines.ContainsKey(h.c.GetClientID()))
+            return;
 
-            h.c.state.MoveSubmarine(h.c.GetClientID(),300*delta*Mathf.Sin(submarine.GetDirection()),-300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
-            if (positionTimer.IsStopped())
-                positionTimer.Start();
-        }
-        if (Input.IsActionPressed("ui_down"))
-        {
-            Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-            h.c.state.MoveSubmarine(h.c.GetClientID(),-300*delta*Mathf.Sin(submarine.GetDirection()),300*delta*Mathf.Cos(submarine.GetDirection()),0.0f,0.0f);
-            if (positionTimer.IsStopped())
-                positionTimer.Start();
-        }
-        if (Input.IsActionPressed("ui_left"))
-        {
-            h.c.state.MoveSubmarine(h.c.GetClientID(),0.0f,0.0f,-delta,0.0f);
-            if (positionTimer.IsStopped())
-                positionTimer.Start();
-        }
-        if (Input.IsActionPressed("ui_right"))
-        {
-            h.c.state.MoveSubmarine(h.c.GetClientID(),0.0f,0.0f,delta,0.0f);
-            if (positionTimer.IsStopped())
-                positionTimer.Start();
-        }
+        Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
+
+        submarine.gas = (Input.IsActionPressed("ui_up")) ? 1 : 0;
+        submarine.brakes = (Input.IsActionPressed("ui_down")) ? 1 : 0;
+        submarine.steer += (Input.IsActionPressed("ui_left")) ? -1000*delta : 0;
+        submarine.steer += (Input.IsActionPressed("ui_right")) ? 1000*delta : 0;
+        submarine.steer = Mathf.Clamp(submarine.steer,-Mathf.Pi/2,Mathf.Pi/2);
+
+        submarine.a = submarine.gas-submarine.brakes;
+        submarine.u += 10.0f*delta*submarine.a; 
+
+        Vector2 position = new Vector2(submarine.x,submarine.y);
+
+        Vector2 prow = position+submarine.Structure*Vector2.Right.Rotated(Mathf.Pi*submarine.theta/180.0f);
+        prow += delta*submarine.u*Vector2.Right.Rotated(submarine.theta+Mathf.Pi/2);
+        
+        Vector2 rudder = position-submarine.Structure*Vector2.Right.Rotated(Mathf.Pi*submarine.theta/180.0f);
+        rudder += delta*submarine.u*Vector2.Right.Rotated(submarine.theta+submarine.steer+Mathf.Pi/2);
+
+        submarine.x = 0.5f*(prow+rudder).x;
+        submarine.y = 0.5f*(prow+rudder).y;
+        submarine.theta = Mathf.Atan2(prow.y-rudder.y, prow.x-rudder.x);
     }
 
     public void Render()
@@ -85,16 +81,16 @@ public class Navigation : Control
             return;
 
         Vector2 origin = Vector2.Zero;
-        Vector2 clientPosition = new Vector2(submarines[clientID].GetX(),submarines[clientID].GetY());
-        float clientRotation = submarines[clientID].GetDirection();
+        Vector2 clientPosition = new Vector2(submarines[clientID].x,submarines[clientID].y);
+        float clientRotation = submarines[clientID].theta;
         
         foreach (int id in submarines.Keys)
         {
             if (id == clientID)
                 continue;
 
-            Vector2 position = new Vector2(submarines[id].GetX(),submarines[id].GetY());
-            float rotation = submarines[id].GetDirection();
+            Vector2 position = new Vector2(submarines[id].x,submarines[id].y);
+            float rotation = submarines[id].theta;
 
             if (!vessels.ContainsKey(id))
             {
@@ -110,7 +106,8 @@ public class Navigation : Control
     // Sending values from our client state to our server state
     public void SendPosition()
     {
+        GD.Print("go!");
         Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-        h.c.SendSubmarinePacket(submarine.GetX(),submarine.GetY(),submarine.GetDirection(),submarine.GetSteer());
+        h.c.SendSubmarinePacket(h.c.GetClientID(),submarine.gas,submarine.brakes,submarine.steer,submarine.a,submarine.u,submarine.x,submarine.y,submarine.theta);
     }
 }
