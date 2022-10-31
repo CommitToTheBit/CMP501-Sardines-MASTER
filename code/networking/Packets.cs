@@ -34,8 +34,10 @@ public static class Packet
         switch (packetID)
         {
             case 0:
-                return Marshal.SizeOf(new IDPacket());
+                return Marshal.SizeOf(new SyncPacket());            
             case 1:
+                return Marshal.SizeOf(new IDPacket());
+            case 2:
                 return Marshal.SizeOf(new SubmarinePacket());
             default:
                 return 0;
@@ -58,12 +60,25 @@ public struct SendablePacket
 public struct HeaderPacket
 {
     public int bodyID;
+    public long sent;
 
     public HeaderPacket(int init_bodyID)
     {
         bodyID = init_bodyID;
+        sent = DateTime.UtcNow.Ticks;
     }
 }
+
+public struct SyncPacket
+{
+    public long sync;
+
+    public SyncPacket(long init_sync)
+    {
+        sync = init_sync;
+    }
+}
+
 
 public struct IDPacket
 {

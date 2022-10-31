@@ -20,6 +20,8 @@ public class Client
     private int clientID;
     public State state;
 
+    private long started;
+
     // Constructor
     public Client()
     {
@@ -31,6 +33,9 @@ public class Client
         // Initialise for New Game 
         clientID = -1;
         state = new State();
+
+        started = DateTime.UtcNow.Ticks;
+        Console.WriteLine("Console started at " + started+".");
     }
 
     // Destructor
@@ -117,12 +122,23 @@ public class Client
     }
 
     // Send functions
+    private void SendSyncPacket(long syncStarted)
+    {
+        /*
+        *
+        */
+        HeaderPacket header = new HeaderPacket(0);
+        SyncPacket sync = new SyncPacket(syncStarted);
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<SyncPacket>(sync));
+        serverConnection.SendPacket(packet);
+    }
+
     private void SendIDPacket()
     {
         /*
         *   Identify self to server on connection
         */
-        HeaderPacket header = new HeaderPacket(0);
+        HeaderPacket header = new HeaderPacket(1);
         IDPacket id = new IDPacket(clientID);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<IDPacket>(id));
         serverConnection.SendPacket(packet);
@@ -134,7 +150,7 @@ public class Client
         *   Send details of own submarine to server
         */
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
-        HeaderPacket header = new HeaderPacket(1);
+        HeaderPacket header = new HeaderPacket(2);
         SubmarinePacket submarine = new SubmarinePacket(clientID,x,y,direction,steer);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
         serverConnection.SendPacket(packet);
@@ -146,14 +162,28 @@ public class Client
         switch (packet.header.bodyID)
         {
             case 0:
+                SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
+                ReceiveSyncPacket(syncPacket,packet.header.sent);
+                break;
+            case 1:
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
                 ReceiveIDPacket(idPacket);
                 break;
-            case 1:
+            case 2:
                 SubmarinePacket submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
                 ReceiveSubmarinePacket(submarinePacket);
                 break;    
         }
+    }
+
+    private void ReceiveSyncPacket(SyncPacket packet, long syncStarted)
+    {
+        /*
+        *   The server has sent its 'official' start time
+        */
+        started = packet.sync;
+        Console.WriteLine("Server started at " + started+".");
+        SendSyncPacket(syncStarted);
     }
 
     private void ReceiveIDPacket(IDPacket packet)
