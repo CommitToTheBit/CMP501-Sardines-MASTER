@@ -52,24 +52,31 @@ public class Navigation : Control
 
         submarine.gas = (Input.IsActionPressed("ui_up")) ? 1 : 0;
         submarine.brakes = (Input.IsActionPressed("ui_down")) ? 1 : 0;
-        submarine.steer += (Input.IsActionPressed("ui_left")) ? -1000*delta : 0;
-        submarine.steer += (Input.IsActionPressed("ui_right")) ? 1000*delta : 0;
-        submarine.steer = Mathf.Clamp(submarine.steer,-Mathf.Pi/2,Mathf.Pi/2);
+        submarine.steer += (Input.IsActionPressed("ui_left")) ? 1.0f*delta : 0;
+        submarine.steer += (Input.IsActionPressed("ui_right")) ? -1.0f*delta : 0;
+        submarine.steer = Mathf.Clamp(submarine.steer,-Mathf.Pi/16,Mathf.Pi/16);
 
         submarine.a = submarine.gas-submarine.brakes;
-        submarine.u += 10.0f*delta*submarine.a; 
+        //submarine.u += 10.0f*delta*submarine.a; 
+        submarine.u = 50.0f;
 
         Vector2 position = new Vector2(submarine.x,submarine.y);
 
-        Vector2 prow = position+submarine.Structure*Vector2.Right.Rotated(Mathf.Pi*submarine.theta/180.0f);
-        prow += delta*submarine.u*Vector2.Right.Rotated(submarine.theta+Mathf.Pi/2);
+        Vector2 prow = position+submarine.Structure*Vector2.Up.Rotated(submarine.theta);
+        prow += delta*submarine.u*Vector2.Up.Rotated(submarine.theta);
         
-        Vector2 rudder = position-submarine.Structure*Vector2.Right.Rotated(Mathf.Pi*submarine.theta/180.0f);
-        rudder += delta*submarine.u*Vector2.Right.Rotated(submarine.theta+submarine.steer+Mathf.Pi/2);
+        Vector2 rudder = position-submarine.Structure*Vector2.Up.Rotated(submarine.theta);
+        rudder += delta*submarine.u*Vector2.Up.Rotated(submarine.theta+submarine.steer);
+
+        //GD.Print(180.0f*(submarine.theta+submarine.steer)/Mathf.Pi);
 
         submarine.x = 0.5f*(prow+rudder).x;
         submarine.y = 0.5f*(prow+rudder).y;
-        submarine.theta = Mathf.Atan2(prow.y-rudder.y, prow.x-rudder.x);
+        submarine.theta = Mathf.Atan2(prow.x-rudder.x,-prow.y+rudder.y);//-Mathf.Pi;
+        //GD.Print((prow.y-rudder.y)*(prow.x-rudder.x));
+
+        if (positionTimer.IsStopped())
+            positionTimer.Start();
     }
 
     public void Render()
@@ -106,7 +113,6 @@ public class Navigation : Control
     // Sending values from our client state to our server state
     public void SendPosition()
     {
-        GD.Print("go!");
         Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
         h.c.SendSubmarinePacket(h.c.GetClientID(),submarine.gas,submarine.brakes,submarine.steer,submarine.a,submarine.u,submarine.x,submarine.y,submarine.theta);
     }
