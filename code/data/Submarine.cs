@@ -21,12 +21,14 @@ public class Submarine
     public float x, y;
     public float theta;
 
+    public long t0;
+
     public Submarine()
     {
 
     }
 
-    public Submarine(float init_gas, float init_brakes, float init_steer, float init_a, float init_u, float init_x, float init_y, float init_theta)
+    public Submarine(float init_gas, float init_brakes, float init_steer, float init_a, float init_u, float init_x, float init_y, float init_theta, long init_t0)
     {
         gas = init_gas;
         brakes = init_brakes;
@@ -37,6 +39,8 @@ public class Submarine
         x = init_x;
         y = init_y;
         theta = init_theta;
+
+        t0 = init_t0;
     }
 
     ~Submarine()

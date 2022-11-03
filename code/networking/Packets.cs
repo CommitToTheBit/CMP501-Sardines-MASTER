@@ -103,7 +103,9 @@ public struct SubmarinePacket
     public float x, y;
     public float theta;
 
-    public SubmarinePacket(int init_clientID, float init_gas, float init_brakes, float init_steer, float init_a, float init_u, float init_x, float init_y, float init_theta)
+    public long t0;
+
+    public SubmarinePacket(int init_clientID, float init_gas, float init_brakes, float init_steer, float init_a, float init_u, float init_x, float init_y, float init_theta, long init_t0)
     {
         clientID = init_clientID;
 
@@ -116,5 +118,7 @@ public struct SubmarinePacket
         x = init_x;
         y = init_y;
         theta = init_theta;
+
+        t0 = init_t0;
     }
 }

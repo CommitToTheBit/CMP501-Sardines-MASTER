@@ -16,12 +16,12 @@ public class State
         return submarines;
     }
 
-    public void UpdateSubmarine(int clientID, float gas, float brakes, float steer, float a, float u, float x, float y, float theta)
+    public void UpdateSubmarine(int clientID, float gas, float brakes, float steer, float a, float u, float x, float y, float theta, long t0)
     {
         if (submarines.ContainsKey(clientID))
-            submarines[clientID] = new Submarine(gas, brakes, steer, a, u, x, y, theta);
+            submarines[clientID] = new Submarine(gas, brakes, steer, a, u, x, y, theta, t0);
         else
-            submarines.Add(clientID, new Submarine(gas, brakes, steer, a, u, x, y, theta));
+            submarines.Add(clientID, new Submarine(gas, brakes, steer, a, u, x, y, theta, t0));
     }
 
     /*public void MoveSubmarine(int clientID, float deltaX, float deltaY, float deltaDirection, float deltaSteer)

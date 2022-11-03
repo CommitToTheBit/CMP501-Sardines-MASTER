@@ -151,7 +151,7 @@ public class Client
         */
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(2);
-        SubmarinePacket submarine = new SubmarinePacket(clientID,gas,brakes,steer,a,u,x,y,theta);
+        SubmarinePacket submarine = new SubmarinePacket(clientID,gas,brakes,steer,a,u,x,y,theta,DateTime.Now.Ticks);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
         serverConnection.SendPacket(packet);
     }
@@ -205,7 +205,7 @@ public class Client
 
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*?
-        state.UpdateSubmarine(packet.clientID,packet.gas,packet.brakes,packet.steer,packet.a,packet.u,packet.x,packet.y,packet.theta);
+        state.UpdateSubmarine(packet.clientID,packet.gas,packet.brakes,packet.steer,packet.a,packet.u,packet.x,packet.y,packet.theta,packet.t0);
     }
 
     // Accessors

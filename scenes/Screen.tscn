@@ -51,6 +51,7 @@ texture = ExtResource( 3 )
 [node name="Navigation" parent="." instance=ExtResource( 5 )]
 
 [node name="ForegroundBuffer" type="BackBufferCopy" parent="."]
+visible = false
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="ForegroundShader" type="ColorRect" parent="ForegroundBuffer"]
