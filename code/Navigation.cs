@@ -48,15 +48,15 @@ public class Navigation : Control
         if (!submarines.ContainsKey(h.c.GetClientID()))
             return;
 
-        Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
+        Submarine submarine = submarines[h.c.GetClientID()];
 
         submarine.gas = (Input.IsActionPressed("ui_up")) ? 1 : 0;
         submarine.brakes = (Input.IsActionPressed("ui_down")) ? 1 : 0;
-        submarine.steer += (Input.IsActionPressed("ui_left")) ? 1.0f*delta : 0;
-        submarine.steer += (Input.IsActionPressed("ui_right")) ? -1.0f*delta : 0;
+        submarine.steer = (Input.IsActionPressed("ui_left")) ? 10.0f/*1.0f*delta*/ : 0;
+        submarine.steer += (Input.IsActionPressed("ui_right")) ? -10.0f/*-1.0f*delta*/ : 0;
         submarine.steer = Mathf.Clamp(submarine.steer,-Mathf.Pi/16,Mathf.Pi/16);
 
-        submarine.a = submarine.gas-submarine.brakes;
+        submarine.a += delta*(submarine.gas-submarine.brakes);
         submarine.u += 10.0f*delta*submarine.a; 
         //submarine.u = 50.0f;
 

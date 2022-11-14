@@ -60,22 +60,22 @@ public struct SendablePacket
 public struct HeaderPacket
 {
     public int bodyID;
-    public long sent;
+    public long timestamp;
 
     public HeaderPacket(int init_bodyID)
     {
         bodyID = init_bodyID;
-        sent = DateTime.UtcNow.Ticks;
+        timestamp = DateTime.UtcNow.Ticks;
     }
 }
 
 public struct SyncPacket
 {
-    public long sync;
+    public long syncTimestamp;
 
-    public SyncPacket(long init_sync)
+    public SyncPacket(long init_syncTimestamp)
     {
-        sync = init_sync;
+        syncTimestamp = init_syncTimestamp;
     }
 }
 
