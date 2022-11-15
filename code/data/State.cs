@@ -16,17 +16,16 @@ public class State
         return submarines;
     }
 
-    public void UpdateSubmarine(int clientID, float gas, float brakes, float steer, float a, float u, float x, float y, float theta, long t0)
+    public void UpdateSubmarine(int clientID, float x, float y, float theta, long timestamp)
     {
         if (submarines.ContainsKey(clientID))
-            submarines[clientID] = new Submarine(gas, brakes, steer, a, u, x, y, theta, t0);
+        {
+            if (submarines[clientID].UpdatePosition(x, y, theta, timestamp))
+                submarines[clientID].UpdatePredictionModel(); // Only updates prediction model if position has changed...
+        }    
         else
-            submarines.Add(clientID, new Submarine(gas, brakes, steer, a, u, x, y, theta, t0));
+        {
+            submarines.Add(clientID, new Submarine(x, y, theta, timestamp));
+        }    
     }
-
-    /*public void MoveSubmarine(int clientID, float deltaX, float deltaY, float deltaDirection, float deltaSteer)
-    {
-        if (submarines.ContainsKey(clientID))
-            submarines[clientID].Update(submarines[clientID].GetX()+deltaX, submarines[clientID].GetY()+deltaY, submarines[clientID].GetDirection()+deltaDirection, submarines[clientID].GetSteer()+deltaSteer);
-    }*/
 }

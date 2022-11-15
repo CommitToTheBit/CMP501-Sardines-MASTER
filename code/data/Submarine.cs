@@ -65,16 +65,18 @@ public class Submarine
     }
 
     // 'Logging' updates to position
-    public void UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp)
+    public bool UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp)
     {
         // Disregard any position updates sent out of order (makes no sense to factor something the player hasn't seen into any model!)
         if (init_timestamp <= timestamp[2])
-            return;
+            return false;
 
         x = new float[3] {x[0], x[1], init_x};
         y = new float[3] {y[0], y[1], init_y};
         theta = new float[3] {theta[0], theta[1], init_theta};
-        timestamp = new long[3] {timestamp[0], timestamp[1], init_timestamp};       
+        timestamp = new long[3] {timestamp[0], timestamp[1], init_timestamp}; 
+
+        return true;      
     }
 
     // Physics

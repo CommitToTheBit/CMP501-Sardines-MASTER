@@ -144,14 +144,14 @@ public class Client
         serverConnection.SendPacket(packet);
     }
 
-    public void SendSubmarinePacket(int clientID, float gas, float brakes, float steer, float a, float u, float x, float y, float theta)
+    public void SendPositionPacket(float x, float y, float theta, float timestamp)
     {
         /*
         *   Send details of own submarine to server
         */
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(2);
-        SubmarinePacket submarine = new SubmarinePacket(clientID,gas,brakes,steer,a,u,x,y,theta,DateTime.Now.Ticks);
+        PositionPacket submarine = new PositionPacket(clientID,x,y,theta,timestamp);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
         serverConnection.SendPacket(packet);
     }
@@ -170,8 +170,8 @@ public class Client
                 ReceiveIDPacket(idPacket);
                 break;
             case 2:
-                SubmarinePacket submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
-                ReceiveSubmarinePacket(submarinePacket);
+                PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
+                ReceivePositionPacket(positionPacket);
                 break;    
         }
     }
@@ -195,7 +195,7 @@ public class Client
             clientID = packet.clientID;
     }
 
-    private void ReceiveSubmarinePacket(SubmarinePacket packet)
+    private void ReceivePositionPacket(PositionPacket packet)
     {
         /*
         *   Update nearby submarines, and forget about submarines out of range. 
@@ -205,7 +205,7 @@ public class Client
 
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*?
-        state.UpdateSubmarine(packet.clientID,packet.gas,packet.brakes,packet.steer,packet.a,packet.u,packet.x,packet.y,packet.theta,packet.t0);
+        state.UpdateSubmarine(packet.clientID,packet.x,packet.y,packet.theta,packet.timestamp);
     }
 
     // Accessors

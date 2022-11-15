@@ -146,6 +146,6 @@ public class Navigation : Control
     public void SendPosition()
     {
         Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-        h.c.SendSubmarinePacket(h.c.GetClientID(),submarine.gas,submarine.brakes,submarine.steer,submarine.a,submarine.u,submarine.x,submarine.y,submarine.theta);
+        h.c.SendSubmarinePacket(h.c.GetClientID(),submarine.x,submarine.y,submarine.theta,DateTime.UtcNow.Ticks);
     }
 }
