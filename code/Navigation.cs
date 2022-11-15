@@ -7,6 +7,11 @@ public class Navigation : Control
     private Handler h;
     private Timer positionTimer;
 
+    // Submarine class control:
+    float thrust;
+    float steer;
+
+
     // FIXME: Simple sprite set-up
     Node2D midground;
     Dictionary<int,Vessel> vessels;
@@ -24,6 +29,9 @@ public class Navigation : Control
         positionTimer.OneShot = true;
         AddChild(positionTimer);
         positionTimer.Connect("timeout",this,"SendPosition");
+
+        thrust = 0.0f;
+        steer = 0.0f;
 
         // FIXME: Simple sprite management
         midground = GetNode<Node2D>("Sonar/Midground");
@@ -50,33 +58,22 @@ public class Navigation : Control
 
         Submarine submarine = submarines[h.c.GetClientID()];
 
-        submarine.gas = (Input.IsActionPressed("ui_up")) ? 1 : 0;
-        submarine.brakes = (Input.IsActionPressed("ui_down")) ? 1 : 0;
-        submarine.steer = (Input.IsActionPressed("ui_left")) ? 10.0f/*1.0f*delta*/ : 0;
-        submarine.steer += (Input.IsActionPressed("ui_right")) ? -10.0f/*-1.0f*delta*/ : 0;
-        submarine.steer = Mathf.Clamp(submarine.steer,-Mathf.Pi/16,Mathf.Pi/16);
+        bool up = Input.IsActionPressed("ui_up");
+        bool down = Input.IsActionPressed("ui_down");
+        bool left = Input.IsActionPressed("ui_left");
+        bool right = Input.IsActionPressed("ui_right");
 
-        submarine.a += delta*(submarine.gas-submarine.brakes);
-        submarine.u += 10.0f*delta*submarine.a; 
-        //submarine.u = 50.0f;
+        thrust = 0.0f;
+        thrust += (up) ? 1.0f : 0.0f;
+        thrust -= (down) ? 1.0f : 0.0f;
 
-        Vector2 position = new Vector2(submarine.x,submarine.y);
+        steer = 0.0f;
+        steer += (up) ? 1.0f : 0.0f;
+        steer -= (down) ? 1.0f : 0.0f;
 
-        Vector2 prow = position+submarine.Structure*Vector2.Up.Rotated(submarine.theta);
-        prow += delta*submarine.u*Vector2.Up.Rotated(submarine.theta);
-        
-        Vector2 rudder = position-submarine.Structure*Vector2.Up.Rotated(submarine.theta);
-        rudder += delta*submarine.u*Vector2.Up.Rotated(submarine.theta+submarine.steer);
+        submarine.DerivePosition(thrust,steer,delta);
 
-        //GD.Print(180.0f*(submarine.theta+submarine.steer)/Mathf.Pi);
-
-        submarine.x = 0.5f*(prow+rudder).x;
-        submarine.y = 0.5f*(prow+rudder).y;
-        submarine.theta = Mathf.Atan2(prow.x-rudder.x,-prow.y+rudder.y);//-Mathf.Pi;
-        //GD.Print((prow.y-rudder.y)*(prow.x-rudder.x));
-
-        submarine.t0 = DateTime.Now.Ticks;
-
+        // FIXME: Currently running this constantly, to factor in drag...
         if (positionTimer.IsStopped())
             positionTimer.Start();
     }
@@ -89,7 +86,6 @@ public class Navigation : Control
         if (!submarines.ContainsKey(clientID) || clientID < 0)
             return;
 
-        Vector2 origin = Vector2.Zero;
         Vector2 clientPosition = new Vector2(submarines[clientID].x,submarines[clientID].y);
         float clientRotation = submarines[clientID].theta;
         
@@ -98,10 +94,7 @@ public class Navigation : Control
             if (id == clientID)
                 continue;
 
-
-
-            Vector2 position = new Vector2(submarines[id].x,submarines[id].y);
-            float rotation = submarines[id].theta;
+            (float x, float y, float theta) prediction = submarines[id].QuadraticPredictPosition(DateTime.UtcNow.Ticks);
 
             if (!vessels.ContainsKey(id))
             {
@@ -109,36 +102,8 @@ public class Navigation : Control
                 midground.AddChild(vessels[id]);
             }
 
-            //Vector2 position = new Vector2(submarine[id].x,submarine.y);
-            long t = DateTime.Now.Ticks;
-
-            Vector2 prow = position+submarines[id].Structure*Vector2.Up.Rotated(submarines[id].theta);
-            prow += 0.0000001f*(t-submarines[id].t0)*submarines[id].u*Vector2.Up.Rotated(submarines[id].theta);
-            
-            Vector2 rudder = position-submarines[id].Structure*Vector2.Up.Rotated(submarines[id].theta);
-            rudder += 0.0000001f*(t-submarines[id].t0)*submarines[id].u*Vector2.Up.Rotated(submarines[id].theta+submarines[id].steer);   
-
-            //GD.Print(180.0f*(submarine.theta+submarine.steer)/Mathf.Pi);
-
-            position = 0.5f*(prow+rudder);
-            rotation = Mathf.Atan2(prow.x-rudder.x,-prow.y+rudder.y);
-
-            //submarines[id].x = 0.5f*(prow+rudder).x;
-            //submarine.y = 0.5f*(prow+rudder).y;
-            //submarine.theta = Mathf.Atan2(prow.x-rudder.x,-prow.y+rudder.y);
-
-            submarines[id].x = 0.5f*(prow+rudder).x;
-            submarines[id].y = 0.5f*(prow+rudder).y;
-            submarines[id].theta = Mathf.Atan2(prow.x-rudder.x,-prow.y+rudder.y);//-Mathf.Pi;
-            //GD.Print((prow.y-rudder.y)*(prow.x-rudder.x));
-
-
-            //GD.Print(0.0000001f*(t-submarines[id].t0));
-
-            submarines[id].t0 = DateTime.Now.Ticks;
-
-            vessels[id].Position = (position-clientPosition).Rotated(-clientRotation)+origin;
-            vessels[id].Rotation = rotation-clientRotation;
+            vessels[id].Position = (new Vector2(prediction.x,prediction.y)-clientPosition).Rotated(-clientRotation);
+            vessels[id].Rotation = prediction.theta-clientRotation;
         }
     }
 
