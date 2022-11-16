@@ -14,21 +14,24 @@ namespace server
 
         }
 
-        public static byte[] Serialise<T>(T data) where T : struct
+        public static byte[] Serialise<T>(T packet) where T : struct
         {
-            var result = new byte[Marshal.SizeOf(typeof(T))];
-            var pResult = GCHandle.Alloc(result, GCHandleType.Pinned);
-            Marshal.StructureToPtr(data, pResult.AddrOfPinnedObject(), true);
-            pResult.Free();
-            return result;
+            byte[] data = new byte[Marshal.SizeOf(typeof(T))];
+
+            GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
+            Marshal.StructureToPtr(packet, pData.AddrOfPinnedObject(), true);
+            pData.Free();
+
+            return data;
         }
 
         public static T Deserialise<T>(this byte[] data) where T : struct
         {
-            var pData = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var result = (T)Marshal.PtrToStructure(pData.AddrOfPinnedObject(), typeof(T));
+            GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
+            T packet = (T)Marshal.PtrToStructure(pData.AddrOfPinnedObject(), typeof(T));
             pData.Free();
-            return result;
+
+            return packet;
         }
 
         public static int GetSize(int packetID)
@@ -40,7 +43,7 @@ namespace server
                 case 1:
                     return Marshal.SizeOf(new IDPacket());
                 case 2:
-                    return Marshal.SizeOf(new SubmarinePacket());
+                    return Marshal.SizeOf(new PositionPacket());
                 default:
                     return 0;
             }
@@ -62,24 +65,25 @@ namespace server
     public struct HeaderPacket
     {
         public int bodyID;
-        public long sent;
+        public long timestamp;
 
         public HeaderPacket(int init_bodyID)
         {
             bodyID = init_bodyID;
-            sent = DateTime.UtcNow.Ticks;
+            timestamp = DateTime.UtcNow.Ticks;
         }
     }
 
     public struct SyncPacket
     {
-        public long sync;
+        public long syncTimestamp;
 
-        public SyncPacket(long init_sync)
+        public SyncPacket(long init_syncTimestamp)
         {
-            sync = init_sync;
+            syncTimestamp = init_syncTimestamp;
         }
     }
+
 
     public struct IDPacket
     {
@@ -91,35 +95,21 @@ namespace server
         }
     }
 
-    public struct SubmarinePacket
+    public struct PositionPacket
     {
-        public int clientID;
-
-        public float gas;
-        public float brakes;
-        public float steer;
-
-        public float a;
-        public float u;
+        public int clientID; // clientID of submarine
         public float x, y;
         public float theta;
+        public long timestamp; // Timestamp for when this position was true
 
-        public long t0;
-        public SubmarinePacket(int init_clientID, float init_gas, float init_brakes, float init_steer, float init_a, float init_u, float init_x, float init_y, float init_theta, long init_t0)
+        public PositionPacket(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)
         {
             clientID = init_clientID;
 
-            gas = init_gas;
-            brakes = init_brakes;
-            steer = init_steer;
-
-            a = init_a;
-            u = init_u;
             x = init_x;
             y = init_y;
             theta = init_theta;
-
-            t0 = init_t0;
+            timestamp = init_timestamp;
         }
     }
 }
