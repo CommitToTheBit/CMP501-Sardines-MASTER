@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj": {}
+    "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\client\\Sardines.csproj": {}
   },
   "projects": {
-    "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj": {
+    "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\client\\Sardines.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj",
+        "projectUniqueName": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\client\\Sardines.csproj",
         "projectName": "Sardines",
-        "projectPath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj",
+        "projectPath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\client\\Sardines.csproj",
         "packagesPath": "C:\\Users\\samdr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\.mono\\temp\\obj\\",
+        "outputPath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\client\\.mono\\temp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\samdr\\AppData\\Roaming\\NuGet\\NuGet.Config",

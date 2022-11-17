@@ -144,7 +144,7 @@ public class Client
         serverConnection.SendPacket(packet);
     }
 
-    public void SendPositionPacket(float x, float y, float theta, float timestamp)
+    public void SendPositionPacket(float x, float y, float theta, long timestamp)
     {
         /*
         *   Send details of own submarine to server
@@ -152,7 +152,7 @@ public class Client
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(2);
         PositionPacket submarine = new PositionPacket(clientID,x,y,theta,timestamp);
-        SendablePacket packet = new SendablePacket(header,Packet.Serialise<SubmarinePacket>(submarine));
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<PositionPacket>(submarine));
         serverConnection.SendPacket(packet);
     }
 
@@ -163,7 +163,7 @@ public class Client
         {
             case 0:
                 SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
-                ReceiveSyncPacket(syncPacket,packet.header.sent);
+                ReceiveSyncPacket(syncPacket,packet.header.timestamp);
                 break;
             case 1:
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
@@ -181,7 +181,7 @@ public class Client
         /*
         *   The server has sent its 'official' start time
         */
-        started = packet.sync;
+        started = packet.syncTimestamp;
         Console.WriteLine("Server started at " + started+".");
         SendSyncPacket(syncStarted);
     }

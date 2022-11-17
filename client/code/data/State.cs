@@ -22,10 +22,13 @@ public class State
         {
             if (submarines[clientID].UpdatePosition(x, y, theta, timestamp))
                 submarines[clientID].UpdatePredictionModel(); // Only updates prediction model if position has changed...
+            //else
+            //    Console.WriteLine("Update position failed...");
         }    
         else
         {
             submarines.Add(clientID, new Submarine(x, y, theta, timestamp));
+            Console.WriteLine("Submarine "+clientID+" comes into range!");
         }    
     }
 }

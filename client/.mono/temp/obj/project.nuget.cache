@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mzM1cZ3wD8fBUrxxktjUHKCwitL8Uu6dybLv+zxwPmAkx52opSUuDcYPqbJVPA/bzSjqzu0NqCA+lk/9HVvccw==",
+  "dgSpecHash": "ItsTcOPg1xp+bsfD6SmsaufSIMT7AmJ1RrIV3uoXQP5vlTOiqITsdFlcHbFii3g0Aqy/WTqUdy9JpbQqLmsnzQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\Sardines.csproj",
+  "projectFilePath": "C:\\Users\\samdr\\OneDrive\\Desktop\\Sardines\\client\\Sardines.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

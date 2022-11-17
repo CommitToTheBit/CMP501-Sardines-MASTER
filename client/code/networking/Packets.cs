@@ -15,11 +15,12 @@ public static class Packet
     public static byte[] Serialise<T>(T packet) where T : struct
     {
         byte[] data = new byte[Marshal.SizeOf(typeof(T))];
+        
         GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
         Marshal.StructureToPtr(packet, pData.AddrOfPinnedObject(), true);
-        pResult.Free();
+        pData.Free();
         
-        return result;
+        return data;
     }
 
     public static T Deserialise<T>(this byte[] data) where T : struct

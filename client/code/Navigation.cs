@@ -13,6 +13,7 @@ public class Navigation : Control
 
 
     // FIXME: Simple sprite set-up
+    Node2D foreground;
     Node2D midground;
     Dictionary<int,Vessel> vessels;
 
@@ -68,8 +69,8 @@ public class Navigation : Control
         thrust -= (down) ? 1.0f : 0.0f;
 
         steer = 0.0f;
-        steer += (up) ? 1.0f : 0.0f;
-        steer -= (down) ? 1.0f : 0.0f;
+        steer -= (left) ? 1.0f : 0.0f;
+        steer += (right) ? 1.0f : 0.0f;
 
         submarine.DerivePosition(thrust,steer,delta);
 
@@ -86,8 +87,9 @@ public class Navigation : Control
         if (!submarines.ContainsKey(clientID) || clientID < 0)
             return;
 
-        Vector2 clientPosition = new Vector2(submarines[clientID].x,submarines[clientID].y);
-        float clientRotation = submarines[clientID].theta;
+        float x = submarines[clientID].x[2];
+        float y = submarines[clientID].y[2];
+        float theta = submarines[clientID].theta[2];
         
         foreach (int id in submarines.Keys)
         {
@@ -102,8 +104,8 @@ public class Navigation : Control
                 midground.AddChild(vessels[id]);
             }
 
-            vessels[id].Position = (new Vector2(prediction.x,prediction.y)-clientPosition).Rotated(-clientRotation);
-            vessels[id].Rotation = prediction.theta-clientRotation;
+            vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
+            vessels[id].Rotation = prediction.theta-theta;
         }
     }
 
@@ -111,6 +113,6 @@ public class Navigation : Control
     public void SendPosition()
     {
         Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-        h.c.SendSubmarinePacket(h.c.GetClientID(),submarine.x,submarine.y,submarine.theta,DateTime.UtcNow.Ticks);
+        h.c.SendPositionPacket(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks);
     }
 }
