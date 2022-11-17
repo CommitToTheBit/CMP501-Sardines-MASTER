@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xBpbJJz4gZoq6A+9up+vW7bpDmXdEoOiY3d7D506RrZA1kQlv2zGxQQeblJxIb/XGF1coClRUf9GXG70kUNItQ==",
+  "dgSpecHash": "BJIVNzNTSRj2luO12SGX8KDK0pEdC0xgRtDSayM+enyGSpWg/UjdzQkaLwnCEYfxrs1ukhb/1T/40VLA66KKeA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\samdr\\Documents\\GitHub\\Sardines\\server\\server\\server.csproj",
+  "projectFilePath": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines\\server\\server\\server.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
