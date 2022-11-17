@@ -69,8 +69,8 @@ public class Navigation : Control
         thrust -= (down) ? 1.0f : 0.0f;
 
         steer = 0.0f;
-        steer -= (left) ? 1.0f : 0.0f;
-        steer += (right) ? 1.0f : 0.0f;
+        steer += (left) ? Mathf.Pi/4 : 0.0f;
+        steer -= (right) ? Mathf.Pi/4 : 0.0f;
 
         submarine.DerivePosition(thrust,steer,delta);
 
