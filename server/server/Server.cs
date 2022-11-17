@@ -178,13 +178,14 @@ namespace server
             tcpConnections[index].SendPacket(packet);
         }
 
-        private void SendSubmarinePacket(int clientID, float gas, float brakes, float steer, float a, float u, float x, float y, float theta, long t0, int index)
+        private void SendPositionPacket(int clientID, float x, float y, float theta, long timestamp, int index)
         {
             if (index < 0 || index >= tcpConnections.Count)
                 return;
+
             HeaderPacket header = new HeaderPacket(2);
-            SubmarinePacket submarine = new SubmarinePacket(clientID, gas, brakes, steer, a, u, x, y, theta, t0);
-            SendablePacket packet = new SendablePacket(header, Packet.Serialise<SubmarinePacket>(submarine));
+            PositionPacket submarine = new PositionPacket(clientID, x, y, theta, timestamp);
+            SendablePacket packet = new SendablePacket(header, Packet.Serialise<PositionPacket>(submarine));
             tcpConnections[index].SendPacket(packet);
         }
 
@@ -202,8 +203,8 @@ namespace server
                     ReceiveIDPacket(idPacket, index);
                     break;
                 case 2:
-                    SubmarinePacket submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
-                    ReceiveSubmarinePacket(submarinePacket, index);
+                    PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
+                    ReceiveSubmarinePacket(positionPacket, index);
                     break;
             }
         }
@@ -223,8 +224,8 @@ namespace server
             // If our client is new, assign a unique clientID
             clientIDs[index] = (!newClient) ? packet.clientID : ++maxClientID;
 
-            long t0 = DateTime.Now.Ticks;
-            Console.WriteLine(t0);
+            long timestamp = DateTime.Now.Ticks;
+            Console.WriteLine(timestamp);
 
             if (newClient)
             {
@@ -233,7 +234,7 @@ namespace server
                 SendIDPacket(clientIDs[index], index);
 
                 // Create the client's submarine in the master serverState
-                serverState.UpdateSubmarine(clientIDs[index], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, t0);
+                serverState.UpdateSubmarine(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp);
             }
 
             if (newConnection) // Note that newConnection => newClient
@@ -241,24 +242,27 @@ namespace server
                 // Send newly-connected clients details on all nearby submarines, including their own 
                 Dictionary<int, Submarine> submarines = serverState.GetSubmarines();
                 foreach (int clientID in submarines.Keys)
-                    SendSubmarinePacket(clientID, submarines[clientID].gas, submarines[clientID].brakes, submarines[clientID].steer, submarines[clientID].a, submarines[clientID].u, submarines[clientID].x, submarines[clientID].y, submarines[clientID].theta, submarines[clientID].t0, index);
+                {
+                    SendPositionPacket(clientID, submarines[clientID].x[2], submarines[clientID].y[2], submarines[clientID].theta[2], submarines[clientID].timestamp[2], index);
+                    Console.WriteLine("Sending client " + clientIDs[index] + " position of client " + clientID + "...");
+                }
 
                 // Send all other players the details of our newly-connected client
                 for (int i = 0; i < tcpConnections.Count; i++)
                     if (i != index)
-                        SendSubmarinePacket(clientIDs[index], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, t0, i);
+                        SendPositionPacket(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp, i);
             }
         }
 
-        private void ReceiveSubmarinePacket(SubmarinePacket packet, int index)
+        private void ReceiveSubmarinePacket(PositionPacket packet, int index)
         {
             if (packet.clientID < 0)
                 return;
 
-            serverState.UpdateSubmarine(packet.clientID, packet.gas, packet.brakes, packet.steer, packet.a, packet.u, packet.x, packet.y, packet.theta, packet.t0);
+            serverState.UpdateSubmarine(packet.clientID, packet.x, packet.y, packet.theta, packet.timestamp);
             for (int i = 0; i < tcpConnections.Count; i++)
                 if (i != index)
-                    SendSubmarinePacket(packet.clientID, packet.gas, packet.brakes, packet.steer, packet.a, packet.u, packet.x, packet.y, packet.theta, packet.t0, i);
+                    SendPositionPacket(packet.clientID, packet.x, packet.y, packet.theta, packet.timestamp, i);
         }
     }
 }

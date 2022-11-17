@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sam\\Documents\\GitHub\\Sardines-Server-\\server\\server\\server.csproj": {}
+    "C:\\Users\\samdr\\Documents\\GitHub\\Sardines\\server\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sam\\Documents\\GitHub\\Sardines-Server-\\server\\server\\server.csproj": {
+    "C:\\Users\\samdr\\Documents\\GitHub\\Sardines\\server\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines-Server-\\server\\server\\server.csproj",
+        "projectUniqueName": "C:\\Users\\samdr\\Documents\\GitHub\\Sardines\\server\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines-Server-\\server\\server\\server.csproj",
-        "packagesPath": "C:\\Users\\Sam\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sam\\Documents\\GitHub\\Sardines-Server-\\server\\server\\obj\\",
+        "projectPath": "C:\\Users\\samdr\\Documents\\GitHub\\Sardines\\server\\server\\server.csproj",
+        "packagesPath": "C:\\Users\\samdr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\samdr\\Documents\\GitHub\\Sardines\\server\\server\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Sam\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\samdr\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -58,7 +54,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }
