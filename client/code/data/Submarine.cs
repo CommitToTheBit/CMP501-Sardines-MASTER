@@ -76,20 +76,17 @@ public class Submarine
     public void DerivePosition(float thrust, float steer, float delta)
     {
         const float conversion = 10.0f;
-        const float length = 20.0f;
+        const float length = 40.0f;
 
         //UpdatePosition(x[2]-50.0f*delta*steer,y[2]-50.0f*delta*thrust,0.0f,timestamp[2]+(long)(Mathf.Pow(10,7)*delta));
         //return;
 
         // FIXME: Calculate x/y accelaterations, velocities *analytically*
         //a += conversion*delta*thrust;
-        //a = thrust;
-        //u += 100.0f*delta*a;
-        //u = Mathf.Clamp(u,0,100);
-        u = 20.0f;
-
-        GD.Print("Initial theta: "+theta[2]);
-        GD.Print("Initial steer: "+steer);
+        a = thrust-Mathf.Pow(u/40.0f,2);
+        u += 10.0f*delta*a;
+        u = Mathf.Clamp(u,0,40.0f);
+        //u = 20.0f;
 
         float xFront = x[2]+0.5f*length*Mathf.Sin(theta[2]); // x-coordinate of front of submarine
         xFront += delta*u*Mathf.Sin(theta[2]); // Horizontal movement
@@ -104,8 +101,6 @@ public class Submarine
         yBack += delta*u*(-Mathf.Cos(theta[2]+steer)); // Vertical movement
 
         //GD.Print("y comparison: "+0.5f*(yFront+yBack)+" vs. previous "+y[2]);
-
-        GD.Print("Final theta: "+Mathf.Atan2(xFront-xBack,-yFront+yBack)+"\n");
 
         // Set this as the player's new position (this derivation will always be true in resolving disputes)
         // FIXME: Use of timestamp[0]+delta here could be shaky if sending/receiving own position?
