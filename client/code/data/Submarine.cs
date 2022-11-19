@@ -75,7 +75,7 @@ public class Submarine
     // Physics
     public void DerivePosition(float thrust, float steer, float delta)
     {
-        const float conversion = 10.0f;
+        //const float conversion = 10.0f;
         const float length = 40.0f;
 
         //UpdatePosition(x[2]-50.0f*delta*steer,y[2]-50.0f*delta*thrust,0.0f,timestamp[2]+(long)(Mathf.Pow(10,7)*delta));
@@ -111,8 +111,6 @@ public class Submarine
         else if (theta[2]-2*Mathf.Pi*ithetaNew >= Mathf.Pi/2 && fthetaNew < -Mathf.Pi/2)
             ithetaNew++;
         float thetaNew = 2*Mathf.Pi*ithetaNew+fthetaNew;
-
-        GD.Print(thetaNew);
 
         // FIXME: Use of timestamp[2]+delta here could be shaky if sending/receiving own position?
         long timestampNew = timestamp[2]+(long)(Mathf.Pow(10,7)*delta);

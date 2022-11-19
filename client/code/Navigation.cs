@@ -81,6 +81,9 @@ public class Navigation : Control
 
     public void Render()
     {
+        const float SWEEP_PERIOD = 6.0f;
+        const float VISIBLE_PERIOD = 5.0f;
+
         int clientID = h.c.GetClientID();
         Dictionary<int,Submarine> submarines = h.c.state.GetSubmarines();
 
@@ -90,13 +93,18 @@ public class Navigation : Control
         float x = submarines[clientID].x[2];
         float y = submarines[clientID].y[2];
         float theta = submarines[clientID].theta[2];
+
+        long timestamp = DateTime.UtcNow.Ticks;
+        long ftimestamp = (timestamp-h.c.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
+
+        float sweep = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
         
         foreach (int id in submarines.Keys)
         {
             if (id == clientID)
                 continue;
 
-            (float x, float y, float theta) prediction = submarines[id].QuadraticPredictPosition(DateTime.UtcNow.Ticks);
+            (float x, float y, float theta) prediction = submarines[id].QuadraticPredictPosition(timestamp);
 
             if (!vessels.ContainsKey(id))
             {
@@ -107,7 +115,13 @@ public class Navigation : Control
             vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
             vessels[id].Rotation = prediction.theta-theta;
 
-            vessels[id].Modulate = new Color(1.0f,1.0f,1.0f,0.5f);
+            float ftheta = Mathf.Atan2(vessels[id].Position.y,vessels[id].Position.x);
+            if (ftheta > sweep)
+                ftheta -= 2*Mathf.Pi;
+            
+            float t = 1.0f-(SWEEP_PERIOD/VISIBLE_PERIOD)*(sweep-ftheta)/(2*Mathf.Pi);
+
+            vessels[id].Modulate = new Color(1.0f,1.0f,1.0f,t);
         }
     }
 

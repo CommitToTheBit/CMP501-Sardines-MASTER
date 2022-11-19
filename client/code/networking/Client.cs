@@ -213,5 +213,10 @@ public class Client
     {
         return clientID;
     }
+
+    public long GetStarted()
+    {
+        return started;
+    }
 }
 
