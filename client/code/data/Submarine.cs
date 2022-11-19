@@ -100,11 +100,25 @@ public class Submarine
         float yBack = y[2]-0.5f*(-length*Mathf.Cos(theta[2])); // y-coordinate of back of submarine
         yBack += delta*u*(-Mathf.Cos(theta[2]+steer)); // Vertical movement
 
-        //GD.Print("y comparison: "+0.5f*(yFront+yBack)+" vs. previous "+y[2]);
+        float xNew = 0.5f*(xFront+xBack);
+        float yNew = 0.5f*(yFront+yBack);
 
-        // Set this as the player's new position (this derivation will always be true in resolving disputes)
-        // FIXME: Use of timestamp[0]+delta here could be shaky if sending/receiving own position?
-        UpdatePosition(0.5f*(xFront+xBack),0.5f*(yFront+yBack),Mathf.Atan2(xFront-xBack,-yFront+yBack),timestamp[2]+(long)(Mathf.Pow(10,7)*delta));
+        // Accounting for discontinuities in theta...
+        float ithetaNew = Mathf.Floor((theta[2]+Mathf.Pi)/(2*Mathf.Pi));
+        float fthetaNew = Mathf.Atan2(xFront-xBack,-yFront+yBack);
+        if (theta[2]-2*Mathf.Pi*ithetaNew < -Mathf.Pi/2 && fthetaNew >= Mathf.Pi/2)
+            ithetaNew--;
+        else if (theta[2]-2*Mathf.Pi*ithetaNew >= Mathf.Pi/2 && fthetaNew < -Mathf.Pi/2)
+            ithetaNew++;
+        float thetaNew = 2*Mathf.Pi*ithetaNew+fthetaNew;
+
+        GD.Print(thetaNew);
+
+        // FIXME: Use of timestamp[2]+delta here could be shaky if sending/receiving own position?
+        long timestampNew = timestamp[2]+(long)(Mathf.Pow(10,7)*delta);
+
+        // Set the player's new position (this derivation will always be true in resolving disputes)
+        UpdatePosition(xNew,yNew,thetaNew,timestampNew);
 
         // No need to update quadratic model, as we will never have to predict our own position!
     }

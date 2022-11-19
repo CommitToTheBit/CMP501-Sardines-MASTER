@@ -106,6 +106,8 @@ public class Navigation : Control
 
             vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
             vessels[id].Rotation = prediction.theta-theta;
+
+            vessels[id].Modulate = new Color(1.0f,1.0f,1.0f,0.5f);
         }
     }
 
