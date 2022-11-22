@@ -116,7 +116,7 @@ public class Navigation : Control
             //vessels[id].Rotation = prediction.theta-theta;
 
             // DEBUG: Prediction turned off!
-            vessels[id].Position = new Vector2(submarines[id].x[2],submarines[id].y[2]);
+            vessels[id].Position = new Vector2(submarines[id].x[2]-x,submarines[id].y[2]-y).Rotated(-theta);
             vessels[id].Rotation = submarines[id].theta[2]-theta;
 
             float ftheta = Mathf.Atan2(vessels[id].Position.y,vessels[id].Position.x);
