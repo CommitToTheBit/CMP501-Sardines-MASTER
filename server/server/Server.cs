@@ -187,6 +187,8 @@ namespace server
             PositionPacket submarine = new PositionPacket(clientID, x, y, theta, timestamp);
             SendablePacket packet = new SendablePacket(header, Packet.Serialise<PositionPacket>(submarine));
             tcpConnections[index].SendPacket(packet);
+
+            Console.WriteLine("Sending position packet about Client "+clientID+" to Client "+index+"...");
         }
 
         // Receive functions

@@ -58,6 +58,9 @@ public class Navigation : Control
             return;
 
         Submarine submarine = submarines[h.c.GetClientID()];
+        float x = submarine.x[2];
+        float y = submarine.y[2];
+        float theta = submarine.theta[2];
 
         bool up = Input.IsActionPressed("ui_up");
         bool down = Input.IsActionPressed("ui_down");
@@ -74,8 +77,8 @@ public class Navigation : Control
 
         submarine.DerivePosition(thrust,steer,delta);
 
-        // FIXME: Currently running this constantly, to factor in drag...
-        if (positionTimer.IsStopped())
+        // FIXME: Even with this restriction, once the submarine starts it isn't likely to stop...
+        if (positionTimer.IsStopped() && (x != submarine.x[2] && y != submarine.y[2] && theta != submarine.theta[2]))
             positionTimer.Start();
     }
 
