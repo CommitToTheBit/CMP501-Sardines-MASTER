@@ -78,7 +78,7 @@ public class Navigation : Control
         submarine.DerivePosition(thrust,steer,delta);
 
         // FIXME: Even with this restriction, once the submarine starts it isn't likely to stop...
-        if (positionTimer.IsStopped() && (x != submarine.x[2] && y != submarine.y[2] && theta != submarine.theta[2]))
+        if (positionTimer.IsStopped() && (x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]))
             positionTimer.Start();
     }
 
