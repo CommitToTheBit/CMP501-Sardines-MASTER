@@ -202,11 +202,11 @@ namespace server
                     break;
                 case 1:
                     IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
-                    ReceiveIDPacket(idPacket, index);
 
                     // DEBUG:
                     Console.WriteLine("An ID Packet sent at timestamp "+packet.header.timestamp+"...");
 
+                    ReceiveIDPacket(idPacket, index);
                     break;
                 case 2:
                     PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
