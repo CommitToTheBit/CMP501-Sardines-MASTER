@@ -35,7 +35,7 @@ public class Client
         state = new State();
 
         started = DateTime.UtcNow.Ticks;
-        Console.WriteLine("Console started at " + started+".");
+        Console.WriteLine("Client started at " + started+".");
     }
 
     // Destructor

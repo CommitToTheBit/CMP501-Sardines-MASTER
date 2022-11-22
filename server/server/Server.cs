@@ -203,6 +203,10 @@ namespace server
                 case 1:
                     IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
                     ReceiveIDPacket(idPacket, index);
+
+                    // DEBUG:
+                    Console.WriteLine("An ID Packet sent at timestamp "+packet.header.timestamp+"...");
+
                     break;
                 case 2:
                     PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
@@ -226,8 +230,8 @@ namespace server
             // If our client is new, assign a unique clientID
             clientIDs[index] = (!newClient) ? packet.clientID : ++maxClientID;
 
-            long timestamp = DateTime.Now.Ticks;
-            Console.WriteLine(timestamp);
+            long timestamp = DateTime.UtcNow.Ticks;
+            Console.WriteLine("... is being received at "+timestamp);
 
             if (newClient)
             {
