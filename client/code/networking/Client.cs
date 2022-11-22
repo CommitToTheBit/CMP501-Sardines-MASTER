@@ -200,6 +200,8 @@ public class Client
         /*
         *   Update nearby submarines, and forget about submarines out of range. 
         */
+        Console.WriteLine("Client "+clientID+": Received position packet about Client "+packet.clientID+"...");
+
         if (packet.clientID < 0)
             return;
 
