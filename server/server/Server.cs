@@ -24,7 +24,7 @@ namespace server
         // Constructor
         public Server()
         {
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            IPAddress ipAddress = IPAddress.Parse("192.168.1.200");
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 5555);
 
             serverSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
