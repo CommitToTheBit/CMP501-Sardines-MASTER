@@ -82,7 +82,7 @@ public class Navigation : Control
     public void Render()
     {
         const float SWEEP_PERIOD = 6.0f;
-        const float VISIBLE_PERIOD = 5.0f;
+        const float VISIBLE_PERIOD = 12.0f;
 
         int clientID = h.c.GetClientID();
         Dictionary<int,Submarine> submarines = h.c.state.GetSubmarines();
@@ -112,8 +112,12 @@ public class Navigation : Control
                 midground.AddChild(vessels[id]);
             }
 
-            vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
-            vessels[id].Rotation = prediction.theta-theta;
+            //vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
+            //vessels[id].Rotation = prediction.theta-theta;
+
+            // DEBUG: Prediction turned off!
+            vessels[id].Position = new Vector2(submarines[id].x[2],submarines[id].y[2]);
+            vessels[id].Rotation = submarines[id].theta[2]-theta;
 
             float ftheta = Mathf.Atan2(vessels[id].Position.y,vessels[id].Position.x);
             if (ftheta > sweep)
