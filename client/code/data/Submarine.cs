@@ -62,7 +62,14 @@ public class Submarine
     {
         // Disregard any position updates sent out of order (makes no sense to factor something the player hasn't seen into any model!)
         if (init_timestamp <= timestamp[2])
+        {
+            // DEBUG:
+            Console.WriteLine("Update failed: This submarine's position was updated at time "+timestamp[2]+", no there is no need to register its position at "+init_timestamp);
+            
             return false;
+        }    
+
+        
 
         x = new float[3] {x[1], x[2], init_x};
         y = new float[3] {y[1], y[2], init_y};
