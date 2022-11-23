@@ -97,7 +97,7 @@ public class Navigation : Control
         float y = submarines[clientID].y[2];
         float theta = submarines[clientID].theta[2];
 
-        long timestamp = DateTime.UtcNow.Ticks;
+        long timestamp = DateTime.UtcNow.Ticks+h.c.delay;
         long ftimestamp = (timestamp-h.c.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
         float sweep = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
@@ -136,6 +136,6 @@ public class Navigation : Control
     public void SendPosition()
     {
         Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-        h.c.SendPositionPacket(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks);
+        h.c.SendPositionPacket(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+h.c.delay);
     }
 }
