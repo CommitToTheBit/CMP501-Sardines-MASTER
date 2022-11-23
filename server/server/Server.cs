@@ -157,13 +157,13 @@ namespace server
         }
 
         // Send functions
-        private void SendSyncPacket(int index)
+        private void SendSyncPacket(long syncTimestamp, int index)
         {
             /*
             *
             */
             HeaderPacket header = new HeaderPacket(0);
-            SyncPacket sync = new SyncPacket(started);
+            SyncPacket sync = new SyncPacket(syncTimestamp);
             SendablePacket packet = new SendablePacket(header, Packet.Serialise<SyncPacket>(sync));
             tcpConnections[index].SendPacket(packet);
         }
@@ -198,7 +198,7 @@ namespace server
             {
                 case 0:
                     SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
-                    ReceiveSyncPacket(syncPacket, index);
+                    ReceiveSyncPacket(packet.header.timestamp, index);
                     break;
                 case 1:
                     IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
@@ -215,11 +215,9 @@ namespace server
             }
         }
 
-        private void ReceiveSyncPacket(SyncPacket packet, int index)
+        private void ReceiveSyncPacket(long syncTimestamp, int index)
         {
-            // FIXME: Add delays to connections!
-            //tcpConnections[index].delay = (DateTime.UtcNow.Ticks - packet.sync)/2;
-            //Console.WriteLine(tcpConnections[index].delay);
+            SendSyncPacket(syncTimestamp, index);
         }
 
         private void ReceiveIDPacket(IDPacket packet, int index)
@@ -235,8 +233,7 @@ namespace server
 
             if (newClient)
             {
-                // Sync, send the new client their unique clientID
-                SendSyncPacket(index);
+                // Send the new client their unique clientID
                 SendIDPacket(clientIDs[index], index);
 
                 // Create the client's submarine in the master serverState

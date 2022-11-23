@@ -22,6 +22,8 @@ public class Client
 
     private long started;
 
+    public long delay;
+
     // Constructor
     public Client()
     {
@@ -58,7 +60,7 @@ public class Client
             clientSocket.Connect(new IPEndPoint(IPAddress.Parse(SERVERIP),SERVERPORT));
             disconnected = false;
 
-            SendIDPacket();
+            SendSyncPacket();
         }
         catch
         {
@@ -122,13 +124,13 @@ public class Client
     }
 
     // Send functions
-    private void SendSyncPacket(long syncStarted)
+    private void SendSyncPacket()
     {
         /*
         *
         */
         HeaderPacket header = new HeaderPacket(0);
-        SyncPacket sync = new SyncPacket(syncStarted);
+        SyncPacket sync = new SyncPacket(0);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<SyncPacket>(sync));
         serverConnection.SendPacket(packet);
     }
@@ -176,14 +178,24 @@ public class Client
         }
     }
 
-    private void ReceiveSyncPacket(SyncPacket packet, long syncStarted)
+    private void ReceiveSyncPacket(SyncPacket packet, long serverMoment)
     {
         /*
         *   The server has sent its 'official' start time
         */
-        started = packet.syncTimestamp;
-        Console.WriteLine("Server started at " + started+".");
-        SendSyncPacket(syncStarted);
+
+        // clientMoment and serverMoment should occur at (roughly) the same time
+        long clientMoment = (packet.syncTimestamp+DateTime.UtcNow.Ticks)/2;
+
+        // If clientMoment < serverMoment, the client is delayed behind the server
+        // We add this delay to future client calculations, to 'catch them up' with the server
+        delay = serverMoment-clientMoment;
+
+        // DEBUG:
+        Console.WriteLine("We are a delay of "+delay+" behind the server...");
+
+        // Now that we've (re-)synced, we send our initial ID Packet...
+        SendIDPacket();
     }
 
     private void ReceiveIDPacket(IDPacket packet)
