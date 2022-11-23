@@ -115,12 +115,12 @@ public class Navigation : Control
                 midground.AddChild(vessels[id]);
             }
 
-            //vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
-            //vessels[id].Rotation = prediction.theta-theta;
+            vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta);
+            vessels[id].Rotation = prediction.theta-theta;
 
             // DEBUG: Prediction turned off!
-            vessels[id].Position = new Vector2(submarines[id].x[2]-x,submarines[id].y[2]-y).Rotated(-theta);
-            vessels[id].Rotation = submarines[id].theta[2]-theta;
+            //vessels[id].Position = new Vector2(submarines[id].x[2]-x,submarines[id].y[2]-y).Rotated(-theta);
+            //vessels[id].Rotation = submarines[id].theta[2]-theta;
 
             float ftheta = Mathf.Atan2(vessels[id].Position.y,vessels[id].Position.x);
             if (ftheta > sweep)
