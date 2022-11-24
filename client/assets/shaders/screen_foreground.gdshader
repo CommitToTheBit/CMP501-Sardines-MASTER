@@ -76,7 +76,7 @@ void fragment()
 	vec4 colour;
 	if (uv.x > 0.0 && uv.x < 1.0 && uv.y > 0.0 && uv.y < 1.0)
 		// If point lies 'on' the CRT screen, return it unchanged
-		colour = texture(SCREEN_TEXTURE,uv);
+		colour = texture(SCREEN_TEXTURE,vec2(round(4.0*uv.x)/4.0,round(4.0*uv.y)/4.0));
 	else
 		// Otherwise, calculate distance (and therefore glow) from CRT monitor
 		colour = vec4(vec3(get_crt_falloff(uv)),1.0);

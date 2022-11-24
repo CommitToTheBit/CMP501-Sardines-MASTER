@@ -1,8 +1,6 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://code/Screen.cs" type="Script" id=1]
-[ext_resource path="res://assets/fonts/Pointless.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://assets/Diplomat P3 Icon.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Background Panel.png" type="Texture" id=4]
 [ext_resource path="res://scenes/Navigation.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/shaders/screen_scanlines.gdshader" type="Shader" id=7]
@@ -11,10 +9,6 @@
 [sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 7 )
 shader_param/scanlines = 80.0
-
-[sub_resource type="DynamicFont" id=8]
-size = 64
-font_data = ExtResource( 2 )
 
 [sub_resource type="ShaderMaterial" id=7]
 shader = ExtResource( 8 )
@@ -36,22 +30,9 @@ margin_bottom = 2160.0
 rect_scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 4 )
 
-[node name="Messenger" type="Label" parent="."]
-margin_left = 40.0
-margin_top = 40.0
-margin_right = 492.0
-margin_bottom = 120.0
-custom_fonts/font = SubResource( 8 )
-text = "Pending..."
-
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -380, 122 )
-texture = ExtResource( 3 )
-
 [node name="Navigation" parent="." instance=ExtResource( 5 )]
 
 [node name="ForegroundBuffer" type="BackBufferCopy" parent="."]
-visible = false
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="ForegroundShader" type="ColorRect" parent="ForegroundBuffer"]
