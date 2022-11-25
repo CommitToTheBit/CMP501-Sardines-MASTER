@@ -1,0 +1,137 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://scenes/Monitor.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/shaders/pixellation.gdshader" type="Shader" id=2]
+[ext_resource path="res://assets/fonts/AlteHaasGroteskBold.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://assets/shaders/glow.gdshader" type="Shader" id=5]
+[ext_resource path="res://assets/fonts/AlteHaasGroteskRegular.ttf" type="DynamicFontData" id=6]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 2 )
+shader_param/bitdepth = 4.0
+shader_param/black = Plane( 0.01, 0.02, 0.02, 1 )
+shader_param/white = Plane( 0.1, 0.8, 0.4, 1 )
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 5 )
+shader_param/crt_dark = Vector3( 0.01, 0.02, 0.02 )
+shader_param/crt_light = Vector3( 0.1, 0.8, 0.4 )
+shader_param/crt_falloff_exponent = 32.0
+shader_param/bloom_radius = 1.0
+shader_param/bloom_normalisation = 0.6
+
+[sub_resource type="DynamicFont" id=2]
+size = 120
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 42
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 42
+font_data = ExtResource( 6 )
+
+[node name="Main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Monitor" parent="." instance=ExtResource( 1 )]
+margin_left = 180.0
+margin_top = 180.0
+margin_right = 340.0
+margin_bottom = 300.0
+
+[node name="PixellationBuffer" type="BackBufferCopy" parent="."]
+rect = Rect2( 0, 0, 1920, 1080 )
+
+[node name="Pixellation" type="ColorRect" parent="PixellationBuffer"]
+material = SubResource( 1 )
+margin_right = 160.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 1920, 1080 )
+mouse_filter = 2
+color = Color( 0, 0, 0, 0 )
+
+[node name="GlowBuffer" type="BackBufferCopy" parent="."]
+rect = Rect2( 0, 0, 1920, 1080 )
+
+[node name="Glow" type="ColorRect" parent="GlowBuffer"]
+material = SubResource( 6 )
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 1920, 1080 )
+color = Color( 1, 1, 1, 0 )
+
+[node name="Menu" type="VBoxContainer" parent="."]
+margin_left = 1230.0
+margin_right = 1770.0
+margin_bottom = 1080.0
+rect_min_size = Vector2( 540, 1080 )
+custom_constants/separation = 10
+
+[node name="Spacing #1" type="Control" parent="Menu"]
+margin_right = 540.0
+margin_bottom = 334.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Menu"]
+margin_top = 344.0
+margin_right = 540.0
+margin_bottom = 488.0
+custom_colors/font_color = Color( 0.909804, 0.941176, 0.941176, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Sardines"
+
+[node name="Spacing #2" type="Control" parent="Menu"]
+margin_top = 498.0
+margin_right = 540.0
+margin_bottom = 498.0
+size_flags_horizontal = 3
+
+[node name="Play" type="Label" parent="Menu"]
+margin_top = 508.0
+margin_right = 540.0
+margin_bottom = 559.0
+custom_colors/font_color = Color( 0.909804, 0.941176, 0.941176, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 4 )
+text = ">  Join a lobby"
+
+[node name="Host" type="Label" parent="Menu"]
+margin_top = 569.0
+margin_right = 540.0
+margin_bottom = 618.0
+custom_colors/font_color = Color( 0.819608, 0.878431, 0.894118, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "    Host a lobby"
+
+[node name="Options" type="Label" parent="Menu"]
+margin_top = 628.0
+margin_right = 540.0
+margin_bottom = 677.0
+custom_colors/font_color = Color( 0.819608, 0.878431, 0.894118, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "    Options"
+
+[node name="Quit" type="Label" parent="Menu"]
+margin_top = 687.0
+margin_right = 540.0
+margin_bottom = 736.0
+custom_colors/font_color = Color( 0.819608, 0.878431, 0.894118, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "    Quit"
+
+[node name="Spacing #3" type="Control" parent="Menu"]
+margin_top = 746.0
+margin_right = 540.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3

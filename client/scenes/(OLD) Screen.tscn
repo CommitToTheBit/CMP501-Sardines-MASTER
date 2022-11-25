@@ -2,7 +2,7 @@
 
 [ext_resource path="res://code/Screen.cs" type="Script" id=1]
 [ext_resource path="res://Assets/Background Panel.png" type="Texture" id=4]
-[ext_resource path="res://scenes/Navigation.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/(OLD) Navigation.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/shaders/screen_scanlines.gdshader" type="Shader" id=7]
 [ext_resource path="res://assets/shaders/screen_foreground.gdshader" type="Shader" id=8]
 
