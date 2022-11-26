@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Alte Haas Grotesk example.jpg-fbf2e283868a97eb7876c38f2851dbba.stex"
+path="res://.import/Host Game Button (Main Menu, Hover).png-d027939c61f7cc7b6513db49be031616.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/fonts/Alte Haas Grotesk example.jpg"
-dest_files=[ "res://.import/Alte Haas Grotesk example.jpg-fbf2e283868a97eb7876c38f2851dbba.stex" ]
+source_file="res://assets/Host Game Button (Main Menu, Hover).png"
+dest_files=[ "res://.import/Host Game Button (Main Menu, Hover).png-d027939c61f7cc7b6513db49be031616.stex" ]
 
 [params]
 

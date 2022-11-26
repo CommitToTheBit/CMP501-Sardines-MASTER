@@ -1,10 +1,17 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scenes/Monitor.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/shaders/pixellation.gdshader" type="Shader" id=2]
 [ext_resource path="res://assets/fonts/AlteHaasGroteskBold.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://assets/Join Game Button (Main Menu, Normal).png" type="Texture" id=4]
 [ext_resource path="res://assets/shaders/glow.gdshader" type="Shader" id=5]
-[ext_resource path="res://assets/fonts/AlteHaasGroteskRegular.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://assets/Join Game Button (Main Menu, Hover).png" type="Texture" id=7]
+[ext_resource path="res://assets/Host Game Button (Main Menu, Normal).png" type="Texture" id=8]
+[ext_resource path="res://assets/Host Game Button (Main Menu, Hover).png" type="Texture" id=9]
+[ext_resource path="res://assets/Quit Button (Main Menu, Normal).png" type="Texture" id=10]
+[ext_resource path="res://assets/Settings Button (Main Menu, Hover).png" type="Texture" id=11]
+[ext_resource path="res://assets/Quit Button (Main Menu, Hover).png" type="Texture" id=12]
+[ext_resource path="res://assets/Settings Button (Main Menu, Normal).png" type="Texture" id=13]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 2 )
@@ -25,14 +32,6 @@ size = 120
 use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 3 )
-
-[sub_resource type="DynamicFont" id=4]
-size = 42
-font_data = ExtResource( 3 )
-
-[sub_resource type="DynamicFont" id=5]
-size = 42
-font_data = ExtResource( 6 )
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -74,63 +73,55 @@ custom_constants/separation = 10
 
 [node name="Spacing #1" type="Control" parent="Menu"]
 margin_right = 540.0
-margin_bottom = 334.0
+margin_bottom = 333.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Title" type="Label" parent="Menu"]
-margin_top = 344.0
+margin_top = 343.0
 margin_right = 540.0
-margin_bottom = 488.0
+margin_bottom = 487.0
 custom_colors/font_color = Color( 0.909804, 0.941176, 0.941176, 1 )
 custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 2 )
 text = "Sardines"
 
 [node name="Spacing #2" type="Control" parent="Menu"]
-margin_top = 498.0
+margin_top = 497.0
 margin_right = 540.0
-margin_bottom = 498.0
+margin_bottom = 497.0
 size_flags_horizontal = 3
 
-[node name="Play" type="Label" parent="Menu"]
-margin_top = 508.0
+[node name="JoinButton" type="TextureButton" parent="Menu"]
+margin_top = 507.0
 margin_right = 540.0
-margin_bottom = 559.0
-custom_colors/font_color = Color( 0.909804, 0.941176, 0.941176, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 4 )
-text = ">  Join a lobby"
+margin_bottom = 557.0
+texture_normal = ExtResource( 4 )
+texture_hover = ExtResource( 7 )
 
-[node name="Host" type="Label" parent="Menu"]
-margin_top = 569.0
+[node name="HostGameButton" type="TextureButton" parent="Menu"]
+margin_top = 567.0
 margin_right = 540.0
-margin_bottom = 618.0
-custom_colors/font_color = Color( 0.819608, 0.878431, 0.894118, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 5 )
-text = "    Host a lobby"
+margin_bottom = 617.0
+texture_normal = ExtResource( 8 )
+texture_hover = ExtResource( 9 )
 
-[node name="Options" type="Label" parent="Menu"]
-margin_top = 628.0
+[node name="SettingsButton" type="TextureButton" parent="Menu"]
+margin_top = 627.0
 margin_right = 540.0
 margin_bottom = 677.0
-custom_colors/font_color = Color( 0.819608, 0.878431, 0.894118, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 5 )
-text = "    Options"
+texture_normal = ExtResource( 13 )
+texture_hover = ExtResource( 11 )
 
-[node name="Quit" type="Label" parent="Menu"]
+[node name="QuitButton" type="TextureButton" parent="Menu"]
 margin_top = 687.0
 margin_right = 540.0
-margin_bottom = 736.0
-custom_colors/font_color = Color( 0.819608, 0.878431, 0.894118, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 5 )
-text = "    Quit"
+margin_bottom = 737.0
+texture_normal = ExtResource( 10 )
+texture_hover = ExtResource( 12 )
 
 [node name="Spacing #3" type="Control" parent="Menu"]
-margin_top = 746.0
+margin_top = 747.0
 margin_right = 540.0
 margin_bottom = 1080.0
 size_flags_horizontal = 3
