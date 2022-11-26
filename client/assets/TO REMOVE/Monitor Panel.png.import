@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Monitor Background.png-67f5870ca156f3de37ac35187119a430.stex"
+path="res://.import/Monitor Panel.png-87805941e4cc34abe712faff3ab66e42.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Monitor Background.png"
-dest_files=[ "res://.import/Monitor Background.png-67f5870ca156f3de37ac35187119a430.stex" ]
+source_file="res://assets/TO REMOVE/Monitor Panel.png"
+dest_files=[ "res://.import/Monitor Panel.png-87805941e4cc34abe712faff3ab66e42.stex" ]
 
 [params]
 

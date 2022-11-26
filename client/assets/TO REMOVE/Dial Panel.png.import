@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Sonar Ring.png-bd9f4d493d16612bb61026a13ec803da.stex"
+path="res://.import/Dial Panel.png-983ebde7a5c9e1f3f1d0a9e90d127131.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Sonar Ring.png"
-dest_files=[ "res://.import/Sonar Ring.png-bd9f4d493d16612bb61026a13ec803da.stex" ]
+source_file="res://assets/TO REMOVE/Dial Panel.png"
+dest_files=[ "res://.import/Dial Panel.png-983ebde7a5c9e1f3f1d0a9e90d127131.stex" ]
 
 [params]
 

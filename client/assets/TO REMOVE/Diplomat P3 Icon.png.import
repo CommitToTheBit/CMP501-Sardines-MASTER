@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Submarine (Idle).png-a124d17b75bc4eb9732d6f79ff3e344e.stex"
+path="res://.import/Diplomat P3 Icon.png-0da75cd2c49981c952ba30fecaf40d7f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Submarine (Idle).png"
-dest_files=[ "res://.import/Submarine (Idle).png-a124d17b75bc4eb9732d6f79ff3e344e.stex" ]
+source_file="res://assets/TO REMOVE/Diplomat P3 Icon.png"
+dest_files=[ "res://.import/Diplomat P3 Icon.png-0da75cd2c49981c952ba30fecaf40d7f.stex" ]
 
 [params]
 

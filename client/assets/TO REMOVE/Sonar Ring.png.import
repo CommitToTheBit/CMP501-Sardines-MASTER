@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Sonar Panel.png-007eebbdc188428f8d9e26235794d4f2.stex"
+path="res://.import/Sonar Ring.png-28800a71f695eb42575ce36b572ce55b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Sonar Panel.png"
-dest_files=[ "res://.import/Sonar Panel.png-007eebbdc188428f8d9e26235794d4f2.stex" ]
+source_file="res://assets/TO REMOVE/Sonar Ring.png"
+dest_files=[ "res://.import/Sonar Ring.png-28800a71f695eb42575ce36b572ce55b.stex" ]
 
 [params]
 

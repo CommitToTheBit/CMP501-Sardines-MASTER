@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Diplomat P3 Icon.png-a0cb97e37953c39e4f2b37c4924cbcd8.stex"
+path="res://.import/Sonar Panel.png-927fdcc2b523aa0fc44a08b9eb13e764.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Diplomat P3 Icon.png"
-dest_files=[ "res://.import/Diplomat P3 Icon.png-a0cb97e37953c39e4f2b37c4924cbcd8.stex" ]
+source_file="res://assets/TO REMOVE/Sonar Panel.png"
+dest_files=[ "res://.import/Sonar Panel.png-927fdcc2b523aa0fc44a08b9eb13e764.stex" ]
 
 [params]
 

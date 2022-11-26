@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Background Panel.png-aefe8417a28f4acd62ad2b26972470a6.stex"
+path="res://.import/Submarine (Idle).png-cfc8542c46ab6ad12d0fe3c4e0011b39.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Background Panel.png"
-dest_files=[ "res://.import/Background Panel.png-aefe8417a28f4acd62ad2b26972470a6.stex" ]
+source_file="res://assets/TO REMOVE/Submarine (Idle).png"
+dest_files=[ "res://.import/Submarine (Idle).png-cfc8542c46ab6ad12d0fe3c4e0011b39.stex" ]
 
 [params]
 
