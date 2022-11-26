@@ -103,8 +103,8 @@ public class NavigationDisplay : Control
         long timestamp = DateTime.UtcNow.Ticks+h.c.delay;
         long ftimestamp = (timestamp-h.c.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
-        float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7)); 
-        sweep.Rotation = sweepTheta-Mathf.Pi/2;
+        float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
+        sweep.Rotation = sweepTheta+3*Mathf.Pi/2;
         
         foreach (int id in submarines.Keys)
         {
