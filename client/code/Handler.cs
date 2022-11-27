@@ -22,7 +22,7 @@ public class Handler : Node
         }
         else
         {
-            //c.Connect();
+            c.Connect();
         }
     }
 }

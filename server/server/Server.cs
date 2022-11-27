@@ -24,10 +24,27 @@ namespace server
         // Constructor
         public Server()
         {
-            IPAddress ipAddress = IPAddress.Parse("192.168.1.200");
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 5555);
+            /*
+            *   CC: https://www.c-sharpcorner.com/blogs/how-to-get-public-ip-address-using-c-sharp1, 12.42pm, 27.11.22 
+            */
+            String address = "";
+            WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
+            using (WebResponse response = request.GetResponse())
+            using (StreamReader stream = new StreamReader(response.GetResponseStream()))
+            {
+                address = stream.ReadToEnd();
+            }
 
-            serverSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            int first = address.IndexOf("Address: ") + 9;
+            int last = address.LastIndexOf("</body>");
+            address = address.Substring(first, last - first);
+            //
+
+            IPAddress ipAddress = IPAddress.Parse((ReadOnlySpan<char>)address);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, 5555);
+            Console.WriteLine(localEndPoint.Address);
+
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(localEndPoint);
             serverSocket.Listen(/*MAXCONNECTIONS*/);
 

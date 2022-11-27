@@ -1,15 +1,11 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/fonts/AlteHaasGroteskBold.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/Join Game Button (Main Menu, Normal).png" type="Texture" id=2]
-[ext_resource path="res://assets/Quit Button (Main Menu, Hover).png" type="Texture" id=3]
 [ext_resource path="res://assets/Host Game Button (Main Menu, Normal).png" type="Texture" id=4]
-[ext_resource path="res://assets/Settings Button (Main Menu, Hover).png" type="Texture" id=5]
-[ext_resource path="res://assets/Join Game Button (Main Menu, Hover).png" type="Texture" id=6]
-[ext_resource path="res://assets/Host Game Button (Main Menu, Hover).png" type="Texture" id=7]
 [ext_resource path="res://assets/Settings Button (Main Menu, Normal).png" type="Texture" id=8]
 [ext_resource path="res://assets/Quit Button (Main Menu, Normal).png" type="Texture" id=9]
-[ext_resource path="res://scenes/MainMenuText.cs" type="Script" id=10]
+[ext_resource path="res://code/MainMenuText.cs" type="Script" id=10]
 
 [sub_resource type="DynamicFont" id=1]
 size = 120
@@ -47,53 +43,37 @@ margin_bottom = 502.0
 rect_min_size = Vector2( 0, 10 )
 size_flags_horizontal = 3
 
-[node name="JoinGameButtonCentering" type="CenterContainer" parent="."]
+[node name="JoinGameButton" type="TextureButton" parent="."]
 margin_top = 512.0
 margin_right = 540.0
 margin_bottom = 562.0
-rect_min_size = Vector2( 540, 50 )
-
-[node name="JoinGameButton" type="TextureButton" parent="JoinGameButtonCentering"]
-margin_right = 540.0
-margin_bottom = 50.0
+focus_neighbour_top = NodePath("../QuitButton")
+focus_neighbour_bottom = NodePath("../HostGameButton")
 texture_normal = ExtResource( 2 )
-texture_hover = ExtResource( 6 )
 
-[node name="HostGameButtonCentering" type="CenterContainer" parent="."]
+[node name="HostGameButton" type="TextureButton" parent="."]
 margin_top = 572.0
 margin_right = 540.0
 margin_bottom = 622.0
-rect_min_size = Vector2( 540, 50 )
-
-[node name="HostGameButton" type="TextureButton" parent="HostGameButtonCentering"]
-margin_right = 540.0
-margin_bottom = 50.0
+focus_neighbour_top = NodePath("../JoinGameButton")
+focus_neighbour_bottom = NodePath("../SettingsButton")
 texture_normal = ExtResource( 4 )
-texture_hover = ExtResource( 7 )
 
-[node name="SettingsButtonCentering" type="CenterContainer" parent="."]
+[node name="SettingsButton" type="TextureButton" parent="."]
 margin_top = 632.0
 margin_right = 540.0
 margin_bottom = 682.0
-rect_min_size = Vector2( 540, 50 )
-
-[node name="SettingsButton" type="TextureButton" parent="SettingsButtonCentering"]
-margin_right = 540.0
-margin_bottom = 50.0
+focus_neighbour_top = NodePath("../HostGameButton")
+focus_neighbour_bottom = NodePath("../QuitButton")
 texture_normal = ExtResource( 8 )
-texture_hover = ExtResource( 5 )
 
-[node name="QuitButtonCentering" type="CenterContainer" parent="."]
+[node name="QuitButton" type="TextureButton" parent="."]
 margin_top = 692.0
 margin_right = 540.0
 margin_bottom = 742.0
-rect_min_size = Vector2( 540, 50 )
-
-[node name="QuitButton" type="TextureButton" parent="QuitButtonCentering"]
-margin_right = 540.0
-margin_bottom = 50.0
+focus_neighbour_top = NodePath("../SettingsButton")
+focus_neighbour_bottom = NodePath("../JoinGameButton")
 texture_normal = ExtResource( 9 )
-texture_hover = ExtResource( 3 )
 
 [node name="Spacing #3" type="Control" parent="."]
 margin_top = 752.0

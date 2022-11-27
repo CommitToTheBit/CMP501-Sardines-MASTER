@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class Client
 {
     private const string CLIENTIP = "127.0.0.1";
-    private const string SERVERIP = "192.168.1.200";
+    private const string SERVERIP = "192.168.1.200";//"80.44.238.161";
     private const int SERVERPORT = 5555;
 
     // Variables
