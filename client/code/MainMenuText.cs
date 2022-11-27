@@ -3,10 +3,15 @@ using System;
 
 public class MainMenuText : VBoxContainer
 {
+    [Signal]
+    delegate void ChangeScene(string textID, string displayID);
+
     TextureButton joinGame;
     TextureButton hostGame;
     TextureButton settings;
     TextureButton quit;
+
+    Tween tween;
 
     public override void _Ready()
     {
@@ -33,7 +38,9 @@ public class MainMenuText : VBoxContainer
         quit.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {quit,"res://assets/Quit Button (Main Menu, Hover).png"});
         quit.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {quit,"res://assets/Quit Button (Main Menu, Normal).png"});
         quit.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {quit});
-        quit.Connect("pressed",this,"QuitPressed");        
+        quit.Connect("pressed",this,"QuitPressed");
+
+        tween = GetNode<Tween>("Tween");        
     }
 
     public void ButtonFocused(TextureButton button, string path)
@@ -48,7 +55,7 @@ public class MainMenuText : VBoxContainer
 
     public void JoinGamePressed()
     {
-
+        EmitSignal("Lobby","Lobby");
     }
 
     public void HostGamePressed()
