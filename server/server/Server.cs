@@ -40,11 +40,10 @@ namespace server
             address = address.Substring(first, last - first);
             //
 
-            IPAddress ipAddress = IPAddress.Parse((ReadOnlySpan<char>)address);
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, 5555);
-            Console.WriteLine(localEndPoint.Address);
+            IPAddress ipAddress = IPAddress.Parse("192.168.1.200");
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 5555);
 
-            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(localEndPoint);
             serverSocket.Listen(/*MAXCONNECTIONS*/);
 
