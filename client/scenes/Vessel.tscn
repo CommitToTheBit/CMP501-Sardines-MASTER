@@ -3,7 +3,6 @@
 [ext_resource path="res://assets/TO REMOVE/vessel_spriteframes.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://code/Vessel.cs" type="Script" id=2]
 
-
 [node name="Vessel" type="AnimatedSprite"]
 frames = ExtResource( 1 )
 animation = "Submarine (Idle)"

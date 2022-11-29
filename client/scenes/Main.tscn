@@ -57,6 +57,5 @@ margin_left = 1290.0
 margin_right = 1290.0
 
 [node name="MainMenuText" parent="TextControl" instance=ExtResource( 3 )]
-rect_pivot_offset = Vector2( 0, 0 )
 
 [node name="Tween" type="Tween" parent="."]

@@ -20,6 +20,7 @@ public class Main : Control
         textControl.GetChild<Text>(0).Fade(false);
 
         // STEP 2: Switch text while hidden...
+        text.Disconnect("ChangeUI",this,"ChangeUI");
         textControl.GetChild(0).QueueFree();
         await ToSignal(GetTree(),"idle_frame");
 

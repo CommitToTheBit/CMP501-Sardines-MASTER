@@ -48,7 +48,6 @@ public class MainMenuText : Text
     {
         EmitSignal("ChangeUI","Lobby","Lobby");
 
-        /*
         handler.c.Connect();
 
         if (handler.c.IsConnected())
@@ -56,7 +55,6 @@ public class MainMenuText : Text
         else
             // DEBUG:
             GD.Print("Cannot connect!");
-        */
     }
 
     public void HostGamePressed()

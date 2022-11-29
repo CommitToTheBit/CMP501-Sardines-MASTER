@@ -88,7 +88,7 @@ public class NavigationDisplay : Control
     public void Render()
     {
         const float SWEEP_PERIOD = 6.0f;
-        const float VISIBLE_PERIOD = 4.5f;
+        const float VISIBLE_PERIOD = 5.4f;
 
         int clientID = h.c.GetClientID();
         Dictionary<int,Submarine> submarines = h.c.state.GetSubmarines();
@@ -115,7 +115,7 @@ public class NavigationDisplay : Control
 
             if (!vessels.ContainsKey(id))
             {
-                vessels.Add(id,ResourceLoader.Load<PackedScene>("res://scenes/(OLD) Vessel.tscn").Instance<Vessel>());
+                vessels.Add(id,ResourceLoader.Load<PackedScene>("res://scenes/Vessel.tscn").Instance<Vessel>());
                 midground.AddChild(vessels[id]);
             }
 
@@ -130,7 +130,7 @@ public class NavigationDisplay : Control
             if (ftheta > sweepTheta)
                 ftheta -= 2*Mathf.Pi;
             
-            float t = 1.0f-Mathf.Pow((SWEEP_PERIOD/VISIBLE_PERIOD)*(sweepTheta-ftheta)/(2*Mathf.Pi),1.5f);
+            float t = 1.0f-Mathf.Pow((SWEEP_PERIOD/VISIBLE_PERIOD)*(sweepTheta-ftheta)/(2*Mathf.Pi),1.8f);
 
             vessels[id].Modulate = new Color(1.0f,1.0f,1.0f,t);
         }
