@@ -3,7 +3,8 @@ using System;
 
 public class MainMenuText : Text
 {
-    Label title;
+    private Handler handler;
+
     TextureButton joinGame;
     TextureButton hostGame;
     TextureButton settings;
@@ -13,7 +14,7 @@ public class MainMenuText : Text
 
     public override void _Ready()
     {
-        title = GetNode<Label>("Title");
+        handler = GetNode<Handler>("/root/Handler");
 
         joinGame = GetNode<TextureButton>("JoinGameButton");
         joinGame.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {joinGame,"res://assets/Join Game Button (Main Menu, Hover).png"});
@@ -43,24 +44,24 @@ public class MainMenuText : Text
         tween = GetNode<Tween>("Tween");      
     }
 
-    public void ButtonFocused(TextureButton button, string path)
-    {
-        button.TextureNormal = GD.Load<Texture>(path);
-    }
-
-    public void ButtonHovered(TextureButton button)
-    {
-        button.GrabFocus();
-    }
-
     public void JoinGamePressed()
     {
         EmitSignal("ChangeUI","Lobby","Lobby");
+
+        /*
+        handler.c.Connect();
+
+        if (handler.c.IsConnected())
+            EmitSignal("ChangeUI","Lobby","Lobby");
+        else
+            // DEBUG:
+            GD.Print("Cannot connect!");
+        */
     }
 
     public void HostGamePressed()
     {
-
+        EmitSignal("ChangeUI","Lobby","Lobby");
     }
 
     public void SettingsPressed()

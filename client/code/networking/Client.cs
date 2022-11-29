@@ -64,6 +64,7 @@ public class Client
         }
         catch
         {
+            GD.Print("Failure!");
             disconnected = true;
         }
     }

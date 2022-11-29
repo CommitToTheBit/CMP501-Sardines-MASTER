@@ -1,12 +1,13 @@
 using Godot;
 using System;
 
-public class LobbyText : VBoxContainer
+public class LobbyText : Text
 {
     [Signal]
     delegate void ChangeScene(string textID, string displayID);
 
     TextureButton startGame;
+    TextureButton back;
 
     Tween tween;
 
@@ -19,35 +20,22 @@ public class LobbyText : VBoxContainer
         startGame.Connect("pressed",this,"StartGamePressed");
         startGame.GrabFocus();
 
+        back = GetNode<TextureButton>("BackButton");
+        back.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {back,"res://assets/Back Button (Lobby, Hover).png"});
+        back.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {back,"res://assets/Back Button (Lobby, Normal).png"});
+        back.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {back});
+        back.Connect("pressed",this,"BackPressed");
+
         tween = GetNode<Tween>("Tween");      
-    }
-
-    public void Fade(bool fadeIn)
-    {
-        if (fadeIn)
-        {
-            foreach (var child in GetChildren())
-                Show();
-        }
-        else
-        {
-            foreach (var child in GetChildren())
-                Hide();
-        }
-    }
-
-    public void ButtonFocused(TextureButton button, string path)
-    {
-        button.TextureNormal = GD.Load<Texture>(path);
-    }
-
-    public void ButtonHovered(TextureButton button)
-    {
-        button.GrabFocus();
     }
 
     public void StartGamePressed()
     {
 
+    }
+
+    public void BackPressed()
+    {
+        EmitSignal("ChangeUI","MainMenu","MainMenu");
     }
 }

@@ -17,7 +17,6 @@ font_data = ExtResource( 1 )
 margin_right = 540.0
 margin_bottom = 1080.0
 rect_min_size = Vector2( 540, 1080 )
-rect_pivot_offset = Vector2( -1091, -457 )
 custom_constants/separation = 10
 script = ExtResource( 10 )
 

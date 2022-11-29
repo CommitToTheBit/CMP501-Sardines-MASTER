@@ -6,7 +6,6 @@ public class Main : Control
     public Control textControl;
     public Text text;
 
-
     public override void _Ready()
     {
         textControl = GetNode<Control>("TextControl");
@@ -15,22 +14,20 @@ public class Main : Control
         text.Fade(true);
     }
 
-    public void ChangeUI(string textID, string displayID)
+    public async void ChangeUI(string textID, string displayID)
     {
-        // STEP 1: Fade text out
-        text.Fade(false);
+        // STEP 1: Fade current text out...
+        textControl.GetChild<Text>(0).Fade(false);
 
-        // STEP 2: Switch scene
+        // STEP 2: Switch text while hidden...
         textControl.GetChild(0).QueueFree();
-        //text.CallDeferred("free");
+        await ToSignal(GetTree(),"idle_frame");
 
-        GD.Print(textID);
-
-        //text = ;
         textControl.AddChild(ResourceLoader.Load<PackedScene>("res://scenes/"+textID+"Text.tscn").Instance());
         text = textControl.GetChild<Text>(0);
+        text.Connect("ChangeUI",this,"ChangeUI");
 
-        // STEP 3: Fade text in
-        text.Fade(true);
+        // STEP 3: Fade new text in...
+        textControl.GetChild<Text>(0).Fade(true);
     }
 }

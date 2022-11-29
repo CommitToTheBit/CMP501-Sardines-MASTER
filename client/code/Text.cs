@@ -24,4 +24,14 @@ public class Text : VBoxContainer
                 Hide();
         }
     }
+
+    public void ButtonFocused(TextureButton button, string path)
+    {
+        button.TextureNormal = GD.Load<Texture>(path);
+    }
+
+    public void ButtonHovered(TextureButton button)
+    {
+        button.GrabFocus();
+    }
 }
