@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scenes/Monitor.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/shaders/pixellation.gdshader" type="Shader" id=2]
 [ext_resource path="res://scenes/MainMenuText.tscn" type="PackedScene" id=3]
+[ext_resource path="res://code/Main.cs" type="Script" id=4]
 [ext_resource path="res://assets/shaders/glow.gdshader" type="Shader" id=5]
 
 [sub_resource type="ShaderMaterial" id=1]
@@ -22,6 +23,7 @@ shader_param/bloom_normalisation = 0.4
 [node name="Main" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 4 )
 
 [node name="Monitor" parent="." instance=ExtResource( 1 )]
 margin_left = 180.0

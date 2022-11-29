@@ -6,6 +6,7 @@ public class MainMenuText : VBoxContainer
     [Signal]
     delegate void ChangeScene(string textID, string displayID);
 
+    Label title;
     TextureButton joinGame;
     TextureButton hostGame;
     TextureButton settings;
@@ -15,12 +16,15 @@ public class MainMenuText : VBoxContainer
 
     public override void _Ready()
     {
+        title = GetNode<Label>("Title");
+
         joinGame = GetNode<TextureButton>("JoinGameButton");
         joinGame.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {joinGame,"res://assets/Join Game Button (Main Menu, Hover).png"});
         joinGame.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {joinGame,"res://assets/Join Game Button (Main Menu, Normal).png"});
         joinGame.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {joinGame});
         joinGame.Connect("pressed",this,"JoinGamePressed");
         joinGame.GrabFocus();
+
         
         hostGame = GetNode<TextureButton>("HostGameButton");
         hostGame.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {hostGame,"res://assets/Host Game Button (Main Menu, Hover).png"});
@@ -40,7 +44,24 @@ public class MainMenuText : VBoxContainer
         quit.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {quit});
         quit.Connect("pressed",this,"QuitPressed");
 
-        tween = GetNode<Tween>("Tween");        
+        tween = GetNode<Tween>("Tween");      
+
+        // Hide everything...
+        Fade(false);  
+    }
+
+    public void Fade(bool fadeIn)
+    {
+        if (fadeIn)
+        {
+            foreach (var child in GetChildren())
+                Show();
+        }
+        else
+        {
+            foreach (var child in GetChildren())
+                Hide();
+        }
     }
 
     public void ButtonFocused(TextureButton button, string path)
