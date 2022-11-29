@@ -3,17 +3,23 @@ using System;
 
 public class Main : Control
 {
-    public Monitor monitor;
+    public Control textControl;
+    public Text text;
 
 
     public override void _Ready()
     {
-        
+        textControl = GetNode<Control>("TextControl");
+        text = textControl.GetNode<Text>("MainMenuText");
+        text.Connect("ChangeScene",this,"ChangeScene");
+        text.Fade(true);
     }
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+    public void ChangeScene(string textID, string displayID)
+    {
+        // STEP 1: Fade text out
+        text.Fade(false);
+
+        // STEP 2
+    }
 }

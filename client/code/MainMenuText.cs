@@ -1,11 +1,8 @@
 using Godot;
 using System;
 
-public class MainMenuText : VBoxContainer
+public class MainMenuText : Text
 {
-    [Signal]
-    delegate void ChangeScene(string textID, string displayID);
-
     Label title;
     TextureButton joinGame;
     TextureButton hostGame;
@@ -24,7 +21,6 @@ public class MainMenuText : VBoxContainer
         joinGame.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {joinGame});
         joinGame.Connect("pressed",this,"JoinGamePressed");
         joinGame.GrabFocus();
-
         
         hostGame = GetNode<TextureButton>("HostGameButton");
         hostGame.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {hostGame,"res://assets/Host Game Button (Main Menu, Hover).png"});
@@ -45,23 +41,6 @@ public class MainMenuText : VBoxContainer
         quit.Connect("pressed",this,"QuitPressed");
 
         tween = GetNode<Tween>("Tween");      
-
-        // Hide everything...
-        Fade(false);  
-    }
-
-    public void Fade(bool fadeIn)
-    {
-        if (fadeIn)
-        {
-            foreach (var child in GetChildren())
-                Show();
-        }
-        else
-        {
-            foreach (var child in GetChildren())
-                Hide();
-        }
     }
 
     public void ButtonFocused(TextureButton button, string path)
@@ -76,7 +55,7 @@ public class MainMenuText : VBoxContainer
 
     public void JoinGamePressed()
     {
-        EmitSignal("Lobby","Lobby");
+        
     }
 
     public void HostGamePressed()
