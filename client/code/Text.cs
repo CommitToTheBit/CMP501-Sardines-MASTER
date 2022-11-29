@@ -4,7 +4,7 @@ using System;
 public class Text : VBoxContainer
 {
     [Signal]
-    delegate void ChangeScene(string textID, string displayID);
+    delegate void ChangeUI(string textID, string displayID);
 
     public override void _Ready()
     {

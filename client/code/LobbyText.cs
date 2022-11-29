@@ -19,10 +19,7 @@ public class LobbyText : VBoxContainer
         startGame.Connect("pressed",this,"StartGamePressed");
         startGame.GrabFocus();
 
-        tween = GetNode<Tween>("Tween");  
-
-        // Hide everything...
-        Fade(false);        
+        tween = GetNode<Tween>("Tween");      
     }
 
     public void Fade(bool fadeIn)

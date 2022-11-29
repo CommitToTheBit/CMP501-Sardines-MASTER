@@ -55,7 +55,7 @@ public class MainMenuText : Text
 
     public void JoinGamePressed()
     {
-        
+        EmitSignal("ChangeUI","Lobby","Lobby");
     }
 
     public void HostGamePressed()
