@@ -44,13 +44,16 @@ public class Main : Control
         var to_fill = playback.GetFramesAvailable();
         for (int i = 0; i < playback.GetFramesAvailable(); i++)
         {
-            try
+            if (Input.IsActionPressed("ui_talk"))
             {
-                playback.PushFrame(frames[i]);
-            }
-            catch 
-            {
-                //playback.PushFrame(Vector2.Zero);
+                try
+                {
+                    playback.PushFrame(frames[i]);
+                }
+                catch 
+                {
+                    //playback.PushFrame(Vector2.Zero);
+                }
             }
         }
 
