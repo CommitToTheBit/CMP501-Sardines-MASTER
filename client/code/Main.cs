@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Main : Control
 {
@@ -35,9 +36,13 @@ public class Main : Control
     {
         if (Input.IsActionPressed("ui_cancel"))
         {
-            if (!(text is MainMenuText))
+            if (text is PauseText)
             {
-                ChangeUI("MainMenu","MainMenu");
+                //ChangeUI("MainMenu","MainMenu",new List<string>());
+            }
+            else if (!(text is MainMenuText))
+            {
+                //ChangeUI("Pause","Pause");
             }
             else
             {
@@ -72,7 +77,7 @@ public class Main : Control
         audioStreamPlayer.Play();
     }
 
-    public async void ChangeUI(string textID, string displayID)
+    public async void ChangeUI(string textID, string displayID, List<string> init_history)
     {
         // STEP 1: Fade current text out...
         textControl.GetChild<Text>(0).Fade(false);
@@ -85,6 +90,9 @@ public class Main : Control
         textControl.AddChild(ResourceLoader.Load<PackedScene>("res://scenes/"+textID+"Text.tscn").Instance());
         text = textControl.GetChild<Text>(0);
         text.Connect("ChangeUI",this,"ChangeUI");
+
+        // FIXME: Consider the protection level here...
+        text.history = init_history;
 
         // STEP 3: Fade new text in...
         textControl.GetChild<Text>(0).Fade(true);

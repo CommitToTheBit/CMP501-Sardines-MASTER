@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/fonts/AlteHaasGroteskBold.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://assets/Join Game Button (Main Menu, Normal).png" type="Texture" id=2]
-[ext_resource path="res://assets/Host Game Button (Main Menu, Normal).png" type="Texture" id=4]
-[ext_resource path="res://assets/Settings Button (Main Menu, Normal).png" type="Texture" id=8]
-[ext_resource path="res://assets/Quit Button (Main Menu, Normal).png" type="Texture" id=9]
+[ext_resource path="res://assets/art/text buttons/MainMenuJoinGameNormal.png" type="Texture" id=2]
+[ext_resource path="res://assets/art/text buttons/MainMenuHostGameNormal.png" type="Texture" id=4]
+[ext_resource path="res://assets/art/text buttons/MainMenuSettingsNormal.png" type="Texture" id=8]
+[ext_resource path="res://assets/art/text buttons/MainMenuQuitNormal.png" type="Texture" id=9]
 [ext_resource path="res://code/MainMenuText.cs" type="Script" id=10]
 
 [sub_resource type="DynamicFont" id=1]
@@ -80,5 +80,3 @@ margin_right = 540.0
 margin_bottom = 1080.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="Tween" type="Tween" parent="."]

@@ -1,22 +1,21 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class SettingsText : Text
 {
-    TextureButton back;
-
     public override void _Ready()
     {
-        back = GetNode<TextureButton>("BackButton");
-        back.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {back,"res://assets/Back Button (Settings, Hover).png"});
-        back.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {back,"res://assets/Back Button (Settings, Normal).png"});
-        back.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {back});
-        back.Connect("pressed",this,"BackPressed"); 
-        back.GrabFocus();
+        InitialiseText();
+        GetNode<TextureButton>("BackButton").GrabFocus();
     }
 
     public void BackPressed()
     {
-        EmitSignal("ChangeUI","MainMenu","MainMenu");
+        string backID = history[history.Count-1];
+        List<string> newHistory = new List<string>(history);
+        newHistory.RemoveAt(history.Count-1);
+
+        EmitSignal("ChangeUI",backID,backID,newHistory);
     }
 }

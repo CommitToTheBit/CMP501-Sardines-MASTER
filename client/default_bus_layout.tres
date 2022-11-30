@@ -1,10 +1,14 @@
-[gd_resource type="AudioBusLayout" load_steps=5 format=2]
+[gd_resource type="AudioBusLayout" load_steps=7 format=2]
 
 [sub_resource type="AudioEffectLowPassFilter" id=5]
 resource_name = "LowPassFilter"
 
 [sub_resource type="AudioEffectLowShelfFilter" id=4]
 resource_name = "LowShelfFilter"
+
+[sub_resource type="AudioEffectHighPassFilter" id=7]
+resource_name = "HighPassFilter"
+cutoff_hz = 100.0
 
 [sub_resource type="AudioEffectRecord" id=1]
 resource_name = "Record"
@@ -13,12 +17,17 @@ resource_name = "Record"
 resource_name = "Capture"
 buffer_length = 1.0
 
+[sub_resource type="AudioEffectCompressor" id=6]
+resource_name = "Compressor"
+
 [resource]
-bus/0/volume_db = -0.030508
+bus/0/volume_db = -10.2947
 bus/0/effect/0/effect = SubResource( 5 )
 bus/0/effect/0/enabled = true
 bus/0/effect/1/effect = SubResource( 4 )
-bus/0/effect/1/enabled = true
+bus/0/effect/1/enabled = false
+bus/0/effect/2/effect = SubResource( 7 )
+bus/0/effect/2/enabled = true
 bus/1/name = "Record"
 bus/1/solo = false
 bus/1/mute = true
@@ -29,3 +38,5 @@ bus/1/effect/0/effect = SubResource( 1 )
 bus/1/effect/0/enabled = false
 bus/1/effect/1/effect = SubResource( 2 )
 bus/1/effect/1/enabled = true
+bus/1/effect/2/effect = SubResource( 6 )
+bus/1/effect/2/enabled = false

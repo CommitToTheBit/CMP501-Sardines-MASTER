@@ -1,30 +1,48 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Text : VBoxContainer
 {
     [Signal]
-    delegate void ChangeUI(string textID, string displayID);
+    delegate void ChangeUI(string textID, string displayID, List<string> textHistory);
 
     Tween tween;
 
-    public override void _Ready()
-    {
-        tween = new Tween();
+    protected string id;
+    public List<string> history;
 
-        Fade(false);  
+    public void InitialiseText()
+    {
+        id = Name.Substring(0,Name.Length-4);
+
+        foreach (Node child in GetChildren())
+        {
+            if (child is TextureButton)
+            {
+                string buttonID = child.Name.Substring(0,child.Name.Length-6);
+                child.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {child,"res://assets/art/text buttons/"+id+buttonID+"Hover.png"});
+                child.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {child,"res://assets/art/text buttons/"+id+buttonID+"Normal.png"});
+                child.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {child});
+                child.Connect("pressed",this,buttonID+"Pressed");
+            }
+
+            Hide();
+        }
+
+        tween = new Tween();
     }
 
     public void Fade(bool fadeIn)
     {
         if (fadeIn)
         {
-            foreach (var child in GetChildren())
+            foreach (Node child in GetChildren())
                 Show();
         }
         else
         {
-            foreach (var child in GetChildren())
+            foreach (Node child in GetChildren())
                 Hide();
         }
     }
