@@ -43,6 +43,10 @@ ui_playback={
  ]
 }
 
+[mono]
+
+project/assembly_name="Sardines"
+
 [physics]
 
 common/enable_pause_aware_picking=true

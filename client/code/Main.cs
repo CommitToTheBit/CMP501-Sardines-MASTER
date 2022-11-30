@@ -8,9 +8,6 @@ public class Main : Control
 
     // Recordings vars
     private AudioEffectCapture _effect;
-    private AudioStreamSample _recording;
-
-    int frameCount;
 
     public override void _Ready()
     {
@@ -19,14 +16,19 @@ public class Main : Control
         text.Connect("ChangeUI",this,"ChangeUI");
         text.Fade(true);
 
-        // Recording set-up
-        // We get the index of the "Record" bus.
-        int idx = AudioServer.GetBusIndex("Record");
-        // And use it to retrieve its first effect, which has been defined
-        // as an "AudioEffectRecord" resource.
-        _effect = (AudioEffectCapture)AudioServer.GetBusEffect(idx, 0);
-        _effect.BufferLength = 0.1f;
-        frameCount = 0;
+        // AudioStreamGenerator testing...
+        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
+
+        _effect = (AudioEffectCapture)AudioServer.GetBusEffect(1, 1);
+        _effect.BufferLength = 1.0f;
+
+        for (int i = 0; i < playback.GetFramesAvailable(); i++)
+        {
+            playback.PushFrame(Vector2.Zero);
+        }
+
+        audioStreamPlayer.Play();
     }
 
     public override void _Input(InputEvent @event)
@@ -47,15 +49,24 @@ public class Main : Control
 
     public override void _Process(float delta)
     {
+        // AudioStreamGenerator testing...
         AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
-        AudioStreamGenerator generator = new AudioStreamGenerator();
+        AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
 
-        Godot.Vector2[] data = _effect.GetBuffer(_effect.GetBufferLengthFrames());
-        _effect.ClearBuffer();
-        
-        foreach (Vector2 frame in data)
+        Vector2[] frames = _effect.GetBuffer(_effect.GetFramesAvailable());
+        //_effect.ClearBuffer();
+
+        var to_fill = playback.GetFramesAvailable();
+        for (int i = 0; i < playback.GetFramesAvailable(); i++)
         {
-            generator.
+            try
+            {
+                playback.PushFrame(frames[i]);
+            }
+            catch 
+            {
+                playback.PushFrame(Vector2.Zero);
+            }
         }
 
         audioStreamPlayer.Play();
