@@ -12,6 +12,29 @@ public class Text : VBoxContainer
     protected string id;
     public List<string> history;
 
+    public override void _Input(InputEvent @event)
+    {
+        if (Input.IsActionPressed("ui_cancel"))
+        {
+            if (this is PauseText)
+            {
+                //ChangeUI("MainMenu","MainMenu",new List<string>());
+            }
+            else if (!(this is MainMenuText))
+            {
+                List<string> newHistory = new List<string>(history);
+                newHistory.Add(id);
+
+                EmitSignal("ChangeUI","Pause","Pause",newHistory);
+            }
+            else
+            {
+                GetTree().Quit();
+            }
+
+        }
+    }
+
     public void InitialiseText()
     {
         id = Name.Substring(0,Name.Length-4);

@@ -22,7 +22,7 @@ size_flags_vertical = 3
 margin_top = 455.0
 margin_right = 540.0
 margin_bottom = 505.0
-focus_neighbour_top = NodePath("../SettingsButton")
+focus_neighbour_top = NodePath("../DesertButton")
 focus_neighbour_bottom = NodePath("../SettingsButton")
 texture_normal = ExtResource( 1 )
 
@@ -31,7 +31,7 @@ margin_top = 515.0
 margin_right = 540.0
 margin_bottom = 565.0
 focus_neighbour_top = NodePath("../ResumeButton")
-focus_neighbour_bottom = NodePath("../ResumeButton")
+focus_neighbour_bottom = NodePath("../DesertButton")
 texture_normal = ExtResource( 3 )
 
 [node name="DesertButton" type="TextureButton" parent="."]
@@ -39,7 +39,7 @@ margin_top = 575.0
 margin_right = 540.0
 margin_bottom = 625.0
 focus_neighbour_top = NodePath("../SettingsButton")
-focus_neighbour_bottom = NodePath("../SettingsButton")
+focus_neighbour_bottom = NodePath("../ResumeButton")
 texture_normal = ExtResource( 2 )
 
 [node name="Spacing #2" type="Control" parent="."]

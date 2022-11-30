@@ -32,26 +32,6 @@ public class Main : Control
         audioStreamPlayer.Play();
     }
 
-    public override void _Input(InputEvent @event)
-    {
-        if (Input.IsActionPressed("ui_cancel"))
-        {
-            if (text is PauseText)
-            {
-                //ChangeUI("MainMenu","MainMenu",new List<string>());
-            }
-            else if (!(text is MainMenuText))
-            {
-                //ChangeUI("Pause","Pause");
-            }
-            else
-            {
-                GetTree().Quit();
-            }
-
-        }
-    }
-
     public override void _Process(float delta)
     {
         // AudioStreamGenerator testing...
