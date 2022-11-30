@@ -6,8 +6,12 @@ public class Text : VBoxContainer
     [Signal]
     delegate void ChangeUI(string textID, string displayID);
 
+    Tween tween;
+
     public override void _Ready()
     {
+        tween = new Tween();
+
         Fade(false);  
     }
 

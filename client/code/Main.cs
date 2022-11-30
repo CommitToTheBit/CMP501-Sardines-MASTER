@@ -14,6 +14,23 @@ public class Main : Control
         text.Fade(true);
     }
 
+    public override void _Input(InputEvent @event)
+    {
+        if (Input.IsActionPressed("ui_cancel"))
+        {
+            if (!(text is MainMenuText))
+            {
+                ChangeUI("MainMenu","MainMenu");
+            }
+            else
+            {
+                GetTree().Quit();
+            }
+
+        }
+
+    }
+
     public async void ChangeUI(string textID, string displayID)
     {
         // STEP 1: Fade current text out...

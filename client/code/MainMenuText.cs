@@ -10,8 +10,6 @@ public class MainMenuText : Text
     TextureButton settings;
     TextureButton quit;
 
-    Tween tween;
-
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
@@ -39,22 +37,20 @@ public class MainMenuText : Text
         quit.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {quit,"res://assets/Quit Button (Main Menu, Hover).png"});
         quit.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {quit,"res://assets/Quit Button (Main Menu, Normal).png"});
         quit.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {quit});
-        quit.Connect("pressed",this,"QuitPressed");
-
-        tween = GetNode<Tween>("Tween");      
+        quit.Connect("pressed",this,"QuitPressed");    
     }
 
     public void JoinGamePressed()
     {
         EmitSignal("ChangeUI","Lobby","Lobby");
 
-        handler.c.Connect();
+        /*handler.c.Connect();
 
         if (handler.c.IsConnected())
             EmitSignal("ChangeUI","Lobby","Lobby");
         else
             // DEBUG:
-            GD.Print("Cannot connect!");
+            GD.Print("Cannot connect!");*/
     }
 
     public void HostGamePressed()
@@ -64,7 +60,7 @@ public class MainMenuText : Text
 
     public void SettingsPressed()
     {
-
+        EmitSignal("ChangeUI","Settings","Settings");
     }
 
     public void QuitPressed()

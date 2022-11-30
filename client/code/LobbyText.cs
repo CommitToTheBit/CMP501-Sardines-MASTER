@@ -3,13 +3,8 @@ using System;
 
 public class LobbyText : Text
 {
-    [Signal]
-    delegate void ChangeScene(string textID, string displayID);
-
     TextureButton startGame;
     TextureButton back;
-
-    Tween tween;
 
     public override void _Ready()
     {
@@ -24,9 +19,7 @@ public class LobbyText : Text
         back.Connect("focus_entered",this,"ButtonFocused",new Godot.Collections.Array() {back,"res://assets/Back Button (Lobby, Hover).png"});
         back.Connect("focus_exited",this,"ButtonFocused",new Godot.Collections.Array() {back,"res://assets/Back Button (Lobby, Normal).png"});
         back.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {back});
-        back.Connect("pressed",this,"BackPressed");
-
-        tween = GetNode<Tween>("Tween");      
+        back.Connect("pressed",this,"BackPressed"); 
     }
 
     public void StartGamePressed()
