@@ -28,11 +28,11 @@ public class Text : VBoxContainer
 
                 EmitSignal("ChangeUI",history[resumeIndex],history[resumeIndex],newHistory);
             }
-            else if (!(this is MainMenuText))
+            else if (!(this is MainMenuText) || !(this is LobbyText) || !(this is SettingsText)) // FIXME: For LobbyText, need to edit Desert to something less... severe...
             {
                 EmitSignal("ChangeUI","Pause","Pause",newHistory);
             }
-            else
+            else if (this is MainMenuText)
             {
                 GetTree().Quit();
             }

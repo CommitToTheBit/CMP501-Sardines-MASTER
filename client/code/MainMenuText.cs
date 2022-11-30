@@ -19,7 +19,6 @@ public class MainMenuText : Text
         List<string> newHistory = new List<string>() {"MainMenu"};
 
         handler.c.Connect();
-
         if (handler.c.IsConnected())
             EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         else
@@ -31,7 +30,12 @@ public class MainMenuText : Text
     {
         List<string> newHistory = new List<string>() {"MainMenu"};
 
-        EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
+        handler.c.Connect();
+        if (handler.c.IsConnected())
+            EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
+        else
+            // DEBUG:
+            GD.Print("Cannot connect!");
     }
 
     public void SettingsPressed()
