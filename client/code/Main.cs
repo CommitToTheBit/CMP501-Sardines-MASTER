@@ -7,8 +7,10 @@ public class Main : Control
     public Text text;
 
     // Recordings vars
-    private AudioEffectRecord _effect;
+    private AudioEffectCapture _effect;
     private AudioStreamSample _recording;
+
+    int frameCount;
 
     public override void _Ready()
     {
@@ -22,7 +24,9 @@ public class Main : Control
         int idx = AudioServer.GetBusIndex("Record");
         // And use it to retrieve its first effect, which has been defined
         // as an "AudioEffectRecord" resource.
-        _effect = (AudioEffectRecord)AudioServer.GetBusEffect(idx, 0);
+        _effect = (AudioEffectCapture)AudioServer.GetBusEffect(idx, 0);
+        _effect.BufferLength = 0.1f;
+        frameCount = 0;
     }
 
     public override void _Input(InputEvent @event)
@@ -45,10 +49,10 @@ public class Main : Control
         {
             if (_effect.IsRecordingActive())
             {
-                _recording = _effect.GetRecording();
+                //_recording = _effect.GetRecording();
                 //GetNode<Button>("PlayButton").Disabled = false;
                 //GetNode<Button>("SaveButton").Disabled = false;
-                _effect.SetRecordingActive(false);
+                //_effect.SetRecordingActive(false);
                 //GetNode<Button>("RecordButton").Text = "Record";
                 //GetNode<Label>("Status").Text = "";
                 GD.Print("Stopping...");
@@ -57,7 +61,7 @@ public class Main : Control
             {
                 //GetNode<Button>("PlayButton").Disabled = true;
                 //GetNode<Button>("SaveButton").Disabled = true;
-                _effect.SetRecordingActive(true);
+                //_effect.SetRecordingActive(true);
                 //GetNode<Button>("RecordButton").Text = "Stop";
                 //GetNode<Label>("Status").Text = "Recording...";
                 GD.Print("Recording...");
@@ -75,11 +79,21 @@ public class Main : Control
             GD.Print(_recording.Stereo);
             byte[] data = _recording.Data;
             GD.Print(data.Length);
-            var audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamRecord");
+            var audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
             audioStreamPlayer.Stream = _recording;
             audioStreamPlayer.Play();
         }
 
+    }
+
+    public override void _Process(float delta)
+    {
+        Godot.Vector2[] data = _effect.GetBuffer(_effect.GetBufferLengthFrames());
+        _effect.ClearBuffer();
+
+        var audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        audioStreamPlayer.Stream = data;
+        audioStreamPlayer.Play();
     }
 
     public async void ChangeUI(string textID, string displayID)
