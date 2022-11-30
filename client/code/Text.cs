@@ -16,9 +16,16 @@ public class Text : VBoxContainer
     {
         if (Input.IsActionPressed("ui_cancel"))
         {
-            if (this is PauseText)
+            // If paused, return from the pause menu
+            int resumeIndex = history.FindIndex(x => x.Equals("Pause"))-1;
+
+            if (resumeIndex >= 0)
             {
-                //ChangeUI("MainMenu","MainMenu",new List<string>());
+                List<string> newHistory = new List<string>();
+                for (int i = 0; i < resumeIndex; i++)
+                    newHistory.Add(history[i]);
+
+                EmitSignal("ChangeUI",history[resumeIndex],history[resumeIndex],newHistory);
             }
             else if (!(this is MainMenuText))
             {
