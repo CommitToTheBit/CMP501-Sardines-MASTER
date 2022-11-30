@@ -16,25 +16,20 @@ public class Text : VBoxContainer
     {
         if (Input.IsActionPressed("ui_cancel"))
         {
-            // If paused, return from the pause menu
-            int resumeIndex = history.FindIndex(x => x.Equals("Pause"))-1;
+            List<string> newHistory = new List<string>(history);
+            newHistory.Add(id);
+
+            int resumeIndex = newHistory.FindIndex(x => x.Equals("Pause"))-1;
 
             if (resumeIndex >= 0)
             {
-                List<string> newHistory = new List<string>();
-                for (int i = 0; i < resumeIndex; i++)
-                    newHistory.Add(history[i]);
+                for (int i = newHistory.Count-1; i >= resumeIndex; i--)
+                    newHistory.RemoveAt(i);
 
                 EmitSignal("ChangeUI",history[resumeIndex],history[resumeIndex],newHistory);
-
-                // DEBUG:
-                GD.Print()
             }
             else if (!(this is MainMenuText))
             {
-                List<string> newHistory = new List<string>(history);
-                newHistory.Add(id);
-
                 EmitSignal("ChangeUI","Pause","Pause",newHistory);
             }
             else
