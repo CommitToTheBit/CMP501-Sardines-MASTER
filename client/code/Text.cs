@@ -26,6 +26,9 @@ public class Text : VBoxContainer
                     newHistory.Add(history[i]);
 
                 EmitSignal("ChangeUI",history[resumeIndex],history[resumeIndex],newHistory);
+
+                // DEBUG:
+                GD.Print()
             }
             else if (!(this is MainMenuText))
             {

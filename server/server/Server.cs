@@ -27,7 +27,7 @@ namespace server
             /*
             *   CC: https://www.c-sharpcorner.com/blogs/how-to-get-public-ip-address-using-c-sharp1, 12.42pm, 27.11.22 
             */
-            String address = "";
+            /*String address = "";
             WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
             using (WebResponse response = request.GetResponse())
             using (StreamReader stream = new StreamReader(response.GetResponseStream()))
@@ -37,10 +37,9 @@ namespace server
 
             int first = address.IndexOf("Address: ") + 9;
             int last = address.LastIndexOf("</body>");
-            address = address.Substring(first, last - first);
-            //
+            address = address.Substring(first, last - first);*/
 
-            IPAddress ipAddress = IPAddress.Parse("192.168.1.200");
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");// IPAddress.Parse("192.168.1.200");
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 5555);
 
             serverSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);

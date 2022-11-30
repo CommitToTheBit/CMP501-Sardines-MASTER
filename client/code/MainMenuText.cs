@@ -18,15 +18,13 @@ public class MainMenuText : Text
     {
         List<string> newHistory = new List<string>() {"MainMenu"};
 
-        EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
-
-        /*handler.c.Connect();
+        handler.c.Connect();
 
         if (handler.c.IsConnected())
-            EmitSignal("ChangeUI","Lobby","Lobby");
+            EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         else
             // DEBUG:
-            GD.Print("Cannot connect!");*/
+            GD.Print("Cannot connect!");
     }
 
     public void HostGamePressed()
