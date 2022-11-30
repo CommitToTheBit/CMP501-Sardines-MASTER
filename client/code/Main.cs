@@ -25,7 +25,7 @@ public class Main : Control
 
         for (int i = 0; i < playback.GetFramesAvailable(); i++)
         {
-            playback.PushFrame(Vector2.Zero);
+            //playback.PushFrame(Vector2.Zero);
         }
 
         audioStreamPlayer.Play();
@@ -65,7 +65,7 @@ public class Main : Control
             }
             catch 
             {
-                playback.PushFrame(Vector2.Zero);
+                //playback.PushFrame(Vector2.Zero);
             }
         }
 
