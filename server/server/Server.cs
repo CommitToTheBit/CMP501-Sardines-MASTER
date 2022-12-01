@@ -9,6 +9,9 @@ namespace server
 {
     public class Server
     {
+        // Constants
+        const int MAX_CONNECTIONS = 8;
+
         // Variables
         private Socket serverSocket;
 
@@ -88,8 +91,22 @@ namespace server
                 try
                 {
                     Socket clientSocket = serverSocket.Accept();
-                    tcpConnections.Add(new TCPConnection(clientSocket));
-                    clientIDs.Add(-1);
+
+
+                    if (tcpConnections.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
+                    {
+                        tcpConnections.Add(new TCPConnection(clientSocket));
+                        clientIDs.Add(-1);
+                    }
+                    else
+                    {
+                        TCPConnection tcpConnection = new TCPConnection(clientSocket);
+                        // Send error message: "Server full!"
+                        //conn->Terminate();
+                        tcpConnection.GetSocket().Dispose();
+                        return; // FIXME: Is there any need to return here?
+                    }
+
                 }
                 catch
                 {
@@ -106,7 +123,7 @@ namespace server
 
                 if (dead)
                 {
-                    tcpConnections[i].GetSocket().Dispose();
+                    tcpConnections[i].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
                     tcpConnections.RemoveAt(i);
                     clientIDs.RemoveAt(i);
                 }
@@ -230,6 +247,10 @@ namespace server
             }
         }
 
+        /*
+        *   JOINING A LOBBY:
+        *   STEP 1: Client IDs self
+        */
         private void ReceiveSyncPacket(long syncTimestamp, int index)
         {
             SendSyncPacket(syncTimestamp, index);

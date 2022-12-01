@@ -65,10 +65,10 @@ public class NavigationDisplay : Control
         float y = submarine.y[2];
         float theta = submarine.theta[2];
 
-        bool up = Input.IsActionPressed("ui_up");
-        bool down = Input.IsActionPressed("ui_down");
-        bool left = Input.IsActionPressed("ui_left");
-        bool right = Input.IsActionPressed("ui_right");
+        bool up = Input.IsActionPressed("ui_accelerate");
+        bool down = Input.IsActionPressed("ui_decelerate");
+        bool left = Input.IsActionPressed("ui_port");
+        bool right = Input.IsActionPressed("ui_starboard");
 
         thrust = 0.0f;
         thrust += (up) ? 1.0f : 0.0f;
