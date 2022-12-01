@@ -4,21 +4,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
 
-namespace server
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+
+        Server server = new Server();
+
+        while (true)
         {
-
-            Server server = new Server();
-
-            while (true)
-            {
-                server.Read();
-                server.Update();
-                server.Write();
-            }
+            server.Read();
+            server.Update();
+            server.Write();
         }
     }
 }

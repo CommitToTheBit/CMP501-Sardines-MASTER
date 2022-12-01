@@ -4,112 +4,108 @@ using System.Net.Sockets;
 using System.Text;
 using System.Runtime.InteropServices;
 
-
-namespace server
+public static class Packet
 {
-    public static class Packet
+    static Packet()
     {
-        static Packet()
-        {
 
-        }
-
-        public static byte[] Serialise<T>(T packet) where T : struct
-        {
-            byte[] data = new byte[Marshal.SizeOf(typeof(T))];
-
-            GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
-            Marshal.StructureToPtr(packet, pData.AddrOfPinnedObject(), true);
-            pData.Free();
-
-            return data;
-        }
-
-        public static T Deserialise<T>(this byte[] data) where T : struct
-        {
-            GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
-            T packet = (T)Marshal.PtrToStructure(pData.AddrOfPinnedObject(), typeof(T));
-            pData.Free();
-
-            return packet;
-        }
-
-        public static int GetSize(int packetID)
-        {
-            switch (packetID)
-            {
-                case 0:
-                    return Marshal.SizeOf(new SyncPacket());
-                case 1:
-                    return Marshal.SizeOf(new IDPacket());
-                case 2:
-                    return Marshal.SizeOf(new PositionPacket());
-                default:
-                    return 0;
-            }
-        }
     }
 
-    public struct SendablePacket
+    public static byte[] Serialise<T>(T packet) where T : struct
     {
-        public HeaderPacket header;
-        public byte[] serialisedBody;
+        byte[] data = new byte[Marshal.SizeOf(typeof(T))];
 
-        public SendablePacket(HeaderPacket init_header, byte[] init_serialisedBody)
-        {
-            header = init_header;
-            serialisedBody = init_serialisedBody;
-        }
+        GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
+        Marshal.StructureToPtr(packet, pData.AddrOfPinnedObject(), true);
+        pData.Free();
+
+        return data;
     }
 
-    public struct HeaderPacket
+    public static T Deserialise<T>(this byte[] data) where T : struct
     {
-        public int bodyID;
-        public long timestamp;
+        GCHandle pData = GCHandle.Alloc(data, GCHandleType.Pinned);
+        T packet = (T)Marshal.PtrToStructure(pData.AddrOfPinnedObject(), typeof(T));
+        pData.Free();
 
-        public HeaderPacket(int init_bodyID)
-        {
-            bodyID = init_bodyID;
-            timestamp = DateTime.UtcNow.Ticks;
-        }
+        return packet;
     }
 
-    public struct SyncPacket
+    public static int GetSize(int packetID)
     {
-        public long syncTimestamp;
-
-        public SyncPacket(long init_syncTimestamp)
+        switch (packetID)
         {
-            syncTimestamp = init_syncTimestamp;
+            case 0:
+                return Marshal.SizeOf(new SyncPacket());
+            case 1:
+                return Marshal.SizeOf(new IDPacket());
+            case 2:
+                return Marshal.SizeOf(new PositionPacket());
+            default:
+                return 0;
         }
     }
+}
 
+public struct SendablePacket
+{
+    public HeaderPacket header;
+    public byte[] serialisedBody;
 
-    public struct IDPacket
+    public SendablePacket(HeaderPacket init_header, byte[] init_serialisedBody)
     {
-        public int clientID;
-
-        public IDPacket(int init_clientID)
-        {
-            clientID = init_clientID;
-        }
+        header = init_header;
+        serialisedBody = init_serialisedBody;
     }
+}
 
-    public struct PositionPacket
+public struct HeaderPacket
+{
+    public int bodyID;
+    public long timestamp;
+
+    public HeaderPacket(int init_bodyID)
     {
-        public int clientID; // clientID of submarine
-        public float x, y;
-        public float theta;
-        public long timestamp; // Timestamp for when this position was true
+        bodyID = init_bodyID;
+        timestamp = DateTime.UtcNow.Ticks;
+    }
+}
 
-        public PositionPacket(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)
-        {
-            clientID = init_clientID;
+public struct SyncPacket
+{
+    public long syncTimestamp;
 
-            x = init_x;
-            y = init_y;
-            theta = init_theta;
-            timestamp = init_timestamp;
-        }
+    public SyncPacket(long init_syncTimestamp)
+    {
+        syncTimestamp = init_syncTimestamp;
+    }
+}
+
+
+public struct IDPacket
+{
+    public int clientID;
+
+    public IDPacket(int init_clientID)
+    {
+        clientID = init_clientID;
+    }
+}
+
+public struct PositionPacket
+{
+    public int clientID; // clientID of submarine
+    public float x, y;
+    public float theta;
+    public long timestamp; // Timestamp for when this position was true
+
+    public PositionPacket(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)
+    {
+        clientID = init_clientID;
+
+        x = init_x;
+        y = init_y;
+        theta = init_theta;
+        timestamp = init_timestamp;
     }
 }
