@@ -10,10 +10,11 @@ namespace server
     public class Server
     {
         // Constants
-        const int MAX_CONNECTIONS = 1;
-        const int MAX_PENDING_CONNECTIONS = 8;
+        const int MAX_CONNECTIONS = 8;
+        const int MAX_PENDING_CONNECTIONS = 1;
 
         // Variables
+
         private Socket serverSocket;
 
         private List<TCPConnection> tcpConnections;
@@ -21,9 +22,6 @@ namespace server
         private int maxClientID;
 
         private State serverState;
-
-        private long started;
-
 
         // Constructor
         public Server()
@@ -55,9 +53,6 @@ namespace server
             maxClientID = -1;
 
             serverState = new State();
-
-            started = DateTime.UtcNow.Ticks;
-            Console.WriteLine("Server started at " + started+".");
         }
 
         // Destructor
