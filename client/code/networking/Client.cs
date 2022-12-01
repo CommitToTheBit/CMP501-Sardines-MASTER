@@ -58,7 +58,7 @@ public class Client
         try
         {
             clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(SERVERIP),SERVERPORT));
-            disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: 
+            disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
 
             if (!disconnected)
                 SendSyncPacket();

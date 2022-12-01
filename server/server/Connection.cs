@@ -30,8 +30,7 @@ namespace server
         private List<SendablePacket> recvQueue;
         private List<SendablePacket> sendQueue;
 
-        // FIXME: Add delays to connections!
-        //public long delay; // Used for predicting backwards?
+        // FIXME: Add delays to connections?
 
         // Constructor
         public TCPConnection(Socket init_socket)

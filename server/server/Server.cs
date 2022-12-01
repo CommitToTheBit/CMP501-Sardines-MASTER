@@ -10,7 +10,8 @@ namespace server
     public class Server
     {
         // Constants
-        const int MAX_CONNECTIONS = 8;
+        const int MAX_CONNECTIONS = 1;
+        const int MAX_PENDING_CONNECTIONS = 8;
 
         // Variables
         private Socket serverSocket;
@@ -47,9 +48,9 @@ namespace server
 
             serverSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(localEndPoint);
-            serverSocket.Listen(/*MAXCONNECTIONS*/);
+            serverSocket.Listen();
 
-            tcpConnections = new List<TCPConnection>();
+            tcpConnections = new List<TCPConnection>(MAX_PENDING_CONNECTIONS);
             clientIDs = new List<int>();
             maxClientID = -1;
 
@@ -136,12 +137,15 @@ namespace server
 
         public void Update()
         {
+            // STEP 1: Process all packets received
             for (int i = 0; i < tcpConnections.Count; i++)
                 while (tcpConnections[i].isRecvPacket())
                 {
                     SendablePacket packet = tcpConnections[i].RecvPacket();
                     ReceivePacket(packet,i);
                 }
+
+            // STEP 2: Process changes to state (including those changed by server?)
         }
 
         public void Write()
