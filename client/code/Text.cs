@@ -28,15 +28,18 @@ public class Text : VBoxContainer
 
                 EmitSignal("ChangeUI",history[resumeIndex],history[resumeIndex],newHistory);
             }
-            else if (!(this is MainMenuText) || !(this is LobbyText) || !(this is SettingsText)) // FIXME: For LobbyText, need to edit Desert to something less... severe...
+            else if (!(id == "MainMenu") && !(id == "Settings")) // FIXME: For LobbyText, need to edit Desert to something less... severe... not "&& !(id == "Lobby")"!
             {
                 EmitSignal("ChangeUI","Pause","Pause",newHistory);
             }
-            else if (this is MainMenuText)
+            else if (!(id == "MainMenu"))
+            {
+                EmitSignal("ChangeUI","MainMenu","MainMenu",new List<string>());
+            }
+            else
             {
                 GetTree().Quit();
             }
-
         }
     }
 

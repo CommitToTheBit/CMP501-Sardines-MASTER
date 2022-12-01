@@ -19,7 +19,7 @@ public class MainMenuText : Text
         List<string> newHistory = new List<string>() {"MainMenu"};
 
         handler.c.Connect();
-        if (handler.c.IsConnected())
+        if (true || handler.c.IsConnected()) // FIXME: This should redirect to an "Enter Lobby IP" anyway...
             EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         else
             // DEBUG:
@@ -31,7 +31,7 @@ public class MainMenuText : Text
         List<string> newHistory = new List<string>() {"MainMenu"};
 
         handler.c.Connect();
-        if (handler.c.IsConnected())
+        if (true || handler.c.IsConnected())
             EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         else
             // DEBUG:

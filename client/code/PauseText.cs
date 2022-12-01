@@ -29,6 +29,9 @@ public class PauseText : Text
 
     public void DesertPressed()
     {
+        List<string> newHistory = new List<string>(history);
+        newHistory.Add(id);
 
+        EmitSignal("ChangeUI","Desert","Desert",newHistory);
     }
 }
