@@ -36,12 +36,12 @@ public class State
     }
 
     // Switching Server Mode
-    public void ServerStartLobby()
+    public void StartLobby()
     {
 
     }
 
-    public void ServerStartMatch(List<int> init_clientIDs, List<string> init_clientIPs)
+    public void StartMatch(List<int> init_clientIDs, List<string> init_clientIPs)
     {
         // STEP 0: Set 'start of game'
         globalStart = DateTime.UtcNow.Ticks;

@@ -141,6 +141,7 @@ public class Server
 
         // STEP 2: Process changes to state (including those changed by server?)
         // ...Or will this just be handled by send/receives? Barring minimal points like time intervals, etc...
+        // ...Or will this just use certain "Server 'Responses'" as appropriate?
     }
 
     public void Write()
@@ -187,16 +188,107 @@ public class Server
         }
     }
 
+    // Client 'Calls'
+    private void ReceivePacket(SendablePacket packet, int index)
+    {
+        // FIXME: Assign clearer numbering to header IDs
+        // i.e. 100, 101, ..., as 'universal', connect/disconnect headers, 200, 201, ... , as lobby headers (i.e. start game with these settings)
+        switch (packet.header.bodyID)
+        {
+            case 0:
+                SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
+                ReceiveSyncPacket(packet.header.timestamp, index);
+                break;
+            case 1:
+                IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
+
+                // DEBUG:
+                Console.WriteLine("An ID Packet sent at timestamp " + packet.header.timestamp + "...");
+
+                ReceiveIDPacket(idPacket, index);
+                break;
+            case 2:
+                PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
+                ReceiveSubmarinePacket(positionPacket, index);
+                break;
+        }
+    }
+
+
+    private void ReceiveSyncPacket(long syncTimestamp, int index) // header.bodyID: 100
+    {
+        // Client 'bounces packet off' server to synchronise DateTime.UtcNow.Ticks
+        // Server does not need to commit this to memory
+        HeaderPacket header = new HeaderPacket(0);
+        SyncPacket sync = new SyncPacket(syncTimestamp);
+        SendablePacket packet = new SendablePacket(header, Packet.Serialise<SyncPacket>(sync));
+        tcpConnections[index].SendPacket(packet);
+    }
+
+    private void ReceiveIDPacket(IDPacket packet, int index) // header.bodyID: 101
+    {
+        // Client sends the server its ID and (FIXME: currently, local) IP address, to be approved and recorded
+        // Server accepts, reassigns or rejects its ID, and sends this back
+        // FIXME: How will we handle case where client is trying to replace a leaver?
+        bool newClient = packet.clientID < 0;
+        bool newConnection = clientIDs[index] == -1;
+
+        // If our client is new, assign a unique clientID
+        clientIDs[index] = (!newClient) ? packet.clientID : ++maxClientID;
+
+        long timestamp = DateTime.UtcNow.Ticks;
+        Console.WriteLine("... is being received at " + timestamp);
+
+        if (newClient)
+        {
+            // Send the new client their unique clientID
+            SendIDPacket(clientIDs[index], index);
+
+            // Create the client's submarine in the master serverState
+            serverState.UpdateSubmarine(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp);
+        }
+
+        if (newConnection) // Note that newConnection => newClient
+        {
+            // Send newly-connected clients details on all nearby submarines, including their own 
+            Dictionary<int, Submarine> submarines = serverState.GetSubmarines();
+            foreach (int clientID in submarines.Keys)
+            {
+                SendPositionPacket(clientID, submarines[clientID].x[2], submarines[clientID].y[2], submarines[clientID].theta[2], submarines[clientID].timestamp[2], index);
+                Console.WriteLine("Sending client " + clientIDs[index] + " position of client " + clientID + "...");
+            }
+
+            // Send all other players the details of our newly-connected client
+            for (int i = 0; i < tcpConnections.Count; i++)
+                if (i != index)
+                    SendPositionPacket(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp, i);
+        }
+    }
+
+
+    // Server 'Responses'
+    private void StartMatch()
+    {
+        // STEP 0: Initialise match conditions
+        serverState.StartMatch();
+
+        // STEP 1: Send client IP details to one another, as necessary
+
+        // STEP 2: Send each client all initial positions
+
+        // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
+    }
+
+
+
+
     // Send functions
     private void SendSyncPacket(long syncTimestamp, int index)
     {
         /*
         *
         */
-        HeaderPacket header = new HeaderPacket(0);
-        SyncPacket sync = new SyncPacket(syncTimestamp);
-        SendablePacket packet = new SendablePacket(header, Packet.Serialise<SyncPacket>(sync));
-        tcpConnections[index].SendPacket(packet);
+
     }
 
     private void SendIDPacket(int clientID, int index)
@@ -250,10 +342,6 @@ public class Server
     *   JOINING A LOBBY:
     *   STEP 1: Client IDs self
     */
-    private void ReceiveSyncPacket(long syncTimestamp, int index)
-    {
-        SendSyncPacket(syncTimestamp, index);
-    }
 
     private void ReceiveIDPacket(IDPacket packet, int index)
     {
