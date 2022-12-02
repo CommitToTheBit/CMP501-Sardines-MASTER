@@ -48,8 +48,12 @@ public static class Packet
                 return Marshal.SizeOf(new SyncPacket());
             case 1001: // Client ID
                 return Marshal.SizeOf(new IDPacket());
-            case 2000: // Host starts game
-                return Marshal.SizeOf(new ModePacket());
+            case 2300: // Host starts game: match
+                return Marshal.SizeOf(new EmptyPacket());
+            case 2301: // Host starts game: sandbox
+                return Marshal.SizeOf(new EmptyPacket());
+            case 3200: // Finished game switches back to lobby
+                return Marshal.SizeOf(new EmptyPacket());
             case 4000: // Diplomat ID
                 return Marshal.SizeOf(new IDPacket());
             case 4100: // Captain ID
@@ -57,7 +61,7 @@ public static class Packet
             case 4101: // Submarine Position
                 return Marshal.SizeOf(new PositionPacket());
             default:
-                return 0;
+                return Marshal.SizeOf(new EmptyPacket());
         }
     }
 }
@@ -86,6 +90,14 @@ public struct HeaderPacket
     }
 }
 
+public struct EmptyPacket
+{
+    public EmptyPacket()
+    {
+
+    }
+}
+
 public struct SyncPacket
 {
     public long syncTimestamp;
@@ -111,15 +123,6 @@ public struct IDPacket
     {
         clientID = init_clientID;
         clientIP = init_clientIP; // CHECKME: What happens to arrays of size > 15?
-    }
-}
-
-public struct ModePacket
-{
-    // FIXME: Enter 'mode settings' details
-    public ModePacket()
-    {
-
     }
 }
 

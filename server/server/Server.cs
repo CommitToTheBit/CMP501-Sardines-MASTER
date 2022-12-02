@@ -204,6 +204,15 @@ public class Server
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
                 Receive1001(idPacket.clientID, string.Join("", idPacket.clientIP), index);
                 break;
+            case 2300:
+                // FIXME: How do we handle actually starting a game?
+                break;
+            case 2301:
+                // FIXME: How do we handle actually starting a game?
+                break;
+            case 3200:
+                // FIXME: How do we handle actually starting a lobby?
+                break;
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection?
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
                 Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
@@ -242,6 +251,36 @@ public class Server
         tcpConnections[index].SendPacket(packet);
     }
 
+    private void Receive2300()
+    {
+        // STEP 0: Initialise match conditions
+        serverState.StartMatch(clientIDs, clientIPs);
+
+        // STEP 1: Send client IP details to one another, as necessary
+
+        // STEP 2: Send each client all initial positions
+
+        // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
+    }
+
+    private void Receive2301()
+    {
+        // STEP 0: Initialise match conditions
+        // FIXME: serverState.StartSandbox(clientIDs, clientIPs);
+        // FIXME: Presumably - sandbox settings allow each player to choose their (preferred?) role?
+
+        // STEP 1: Send client IP details to one another, as necessary
+
+        // STEP 2: Send each client all initial positions
+
+        // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
+    }
+
+    private void Receive3200()
+    {
+        // FIXME: Need to 'wipe' remaining clients of their knowledge, connections, etc...
+    }
+
     private void Receive4101(int clientID, float x, float y, float theta, long timestamp, int index)
     {
         // Captain sends the server their new position
@@ -260,13 +299,6 @@ public class Server
     // Server 'Responses'
     private void StartMatch()
     {
-        // STEP 0: Initialise match conditions
-        serverState.StartMatch(clientIDs, clientIPs);
 
-        // STEP 1: Send client IP details to one another, as necessary
-
-        // STEP 2: Send each client all initial positions
-
-        // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
     }
 }
