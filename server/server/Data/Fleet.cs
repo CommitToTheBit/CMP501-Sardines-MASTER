@@ -6,37 +6,39 @@ using System.Threading.Tasks;
 
 public class Fleet
 {
-    public int defcon;
-
     public Diplomat diplomat;
     public Dictionary<int, Submarine> submarines;
 
-    // Constructor
-    public Fleet(int init_clientID)
-    {
-        defcon = 1;
+    public int defcon;
 
-        diplomat = new Diplomat(init_clientID);
+    // Constructor
+    public Fleet(int init_clientID, string init_clientIP)
+    {
+        diplomat = new Diplomat(init_clientID, init_clientIP);
         submarines = new Dictionary<int, Submarine>();
+
+        defcon = 5; // NB: This is the lowest DEFCON
     }
 
     // Functions
-    public void AddSubmarine(int init_clientID)
+    public void AddSubmarine(int init_submarineID, int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
-        // FIXME: Get this up and running!
+        submarines.Add(init_submarineID, new Submarine(init_submarineID, init_clientID, init_clientIP, init_nuclearCapability));
     }
 }
 
 public class Diplomat
 {
     public int clientID;
+    public string clientIP;
 
     public int deltaDefcon;
 
-    public Diplomat(int init_clientID)
+    public Diplomat(int init_clientID, string init_clientIP)
     {
         clientID = init_clientID;
+        clientIP = init_clientIP;
 
-        deltaDefcon = 1;
+        deltaDefcon = -1; // NB: Raising DEFCON by default
     }
 }

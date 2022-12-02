@@ -2,12 +2,17 @@
 
 public class Submarine
 {
-    // Public variables:
+    // Public status variables:
+    public int submarineID;
+
+    public Crew captain;
+    public Dictionary<string, Crew> crew;
+
     public bool nuclearCapability;
     public bool contactCapability;
 
-    public Captain captain;
-    public List<Crew> crew;
+    // Private status variables
+    private bool positionInitialised;
 
     // Public variables: sent to/from server in submarine packet
     public float[] x, y;
@@ -24,25 +29,40 @@ public class Submarine
     private long TIMESTAMP;
 
     // Constructor
-    public Submarine(float init_x, float init_y, float init_theta, long init_timestamp)
+    public Submarine(int init_submarineID, int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
-        // Initialise position of submarine
-        x = new float[3] { init_x, init_x, init_x };
-        y = new float[3] { init_y, init_y, init_y };
-        theta = new float[3] { init_theta, init_theta, init_theta };
-        timestamp = new long[3] { init_timestamp - 2, init_timestamp - 1, init_timestamp }; // 'Cheat' timestamps to avoid division by zero
+        submarineID = init_submarineID;
 
-        // Initialise submarine to start at rest (only affects player-controlled submarine)
+        captain = new Crew(init_clientID, init_clientIP);
+        Dictionary<int, Crew> crew = new Dictionary<int, Crew>(); // FIXME: No crew mechanics implemented yet...
+
+        nuclearCapability = init_nuclearCapability;
+        contactCapability = true; // FIXME: Ignoring this mechanic - for now
+
+        // Assign dummy entries 
+        positionInitialised = false;
+
+        x = new float[3] { 0.0f, 0.0f, 0.0f };
+        y = new float[3] { 0.0f, 0.0f, 0.0f };
+        theta = new float[3] { 0.0f, 0.0f, 0.0f };
+        timestamp = new long[3] { -2, -1, 0 }; // 'Cheat' timestamps to avoid division by zero
+
         a = 0.0f;
         u = 0.0f;
 
-        // Initialise prediction variables via UpdateQuadraticModel
         UpdatePredictionModel();
     }
 
     // Copy Constructor
     public Submarine(Submarine init_submarine)
     {
+        submarineID = init_submarine.submarineID;
+
+        nuclearCapability = init_submarine.nuclearCapability;
+        contactCapability = init_submarine.contactCapability;
+
+        positionInitialised = init_submarine.positionInitialised;
+
         x = init_submarine.x;
         y = init_submarine.y;
         theta = init_submarine.theta;
@@ -61,6 +81,32 @@ public class Submarine
     ~Submarine()
     {
 
+    }
+
+    // Initialising position
+    public void InitialisePosition(float init_x, float init_y, float init_theta, long init_timestamp)
+    {
+        // Has position already been initialised? 
+        if (positionInitialised)
+        {
+            UpdatePosition(init_x, init_y, init_theta, init_timestamp);
+            return;
+        }
+
+        positionInitialised = true;
+
+        // Initialise position of submarine
+        x = new float[3] { init_x, init_x, init_x };
+        y = new float[3] { init_y, init_y, init_y };
+        theta = new float[3] { init_theta, init_theta, init_theta };
+        timestamp = new long[3] { init_timestamp - 2, init_timestamp - 1, init_timestamp }; // 'Cheat' timestamps to avoid division by zero
+
+        // Initialise submarine to start at rest (only affects player-controlled submarine)
+        a = 0.0f;
+        u = 0.0f;
+
+        // Initialise prediction variables via UpdateQuadraticModel
+        UpdatePredictionModel();
     }
 
     // 'Logging' updates to position
@@ -147,9 +193,11 @@ public class Submarine
 public class Crew
 {
     public int clientID;
-}
+    public string clientIP;
 
-public class Captain : Crew
-{
-
+    public Crew(int init_clientID, string init_clientIP)
+    {
+        clientID = init_clientID;
+        clientIP = init_clientIP;
+    }
 }
