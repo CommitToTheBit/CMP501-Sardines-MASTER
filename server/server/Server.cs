@@ -13,12 +13,12 @@ public class Server
     const int MAX_PENDING_CONNECTIONS = 1;
 
     // Variables
-
     private Socket serverSocket;
-
     private List<TCPConnection> tcpConnections;
-    private List<int> clientIDs;
+
     private int maxClientID;
+    private List<int> clientIDs;
+    private List<string> clientIPs;
 
     private State serverState;
 
@@ -192,6 +192,7 @@ public class Server
     private void ReceivePacket(SendablePacket packet, int index)
     {
         // Catch-all for all requests a client could send to the server
+        // All deserialisation is handled in this function
         // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
         switch (packet.header.bodyID)
         {
@@ -201,7 +202,7 @@ public class Server
                 break;
             case 1001:
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
-                Receive1001(idPacket.clientID, index);
+                Receive1001(idPacket.clientID, string.Join("", idPacket.clientIP), index);
                 break;
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection?
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
@@ -210,7 +211,7 @@ public class Server
         }
     }
 
-    private void Receive1000(long syncTimestamp, int index) // header.bodyID: 100
+    private void Receive1000(long syncTimestamp, int index)
     {
         // Client 'bounces packet off' server to synchronise DateTime.UtcNow.Ticks
         // Server does not need to commit this to memory
@@ -220,7 +221,7 @@ public class Server
         tcpConnections[index].SendPacket(packet);
     }
 
-    private void Receive1001(int clientID, int index) // header.bodyID: 101
+    private void Receive1001(int clientID, string clientIP, int index)
     {
         // Client sends the server its ID and (FIXME: currently, local) IP address, to be approved and recorded
         // Server accepts, reassigns or rejects its ID, and sends this back
@@ -230,12 +231,13 @@ public class Server
 
         // If our client is new, assign a unique clientID
         clientIDs[index] = (clientID >= 0) ? clientID : ++maxClientID;
+        clientIPs[index] = clientIP;
         //FIXME: if condition to remove client ID/IP if over MAX_CONNECTIONS?
 
         // Confirm/reject client entry
         // FIXME: Rejection - assigning an ID of -1
         HeaderPacket header = new HeaderPacket(1001);
-        IDPacket id = new IDPacket(clientID,"".ToCharArray());
+        IDPacket id = new IDPacket(clientID, clientIP.ToCharArray());
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
         tcpConnections[index].SendPacket(packet);
     }
@@ -259,7 +261,7 @@ public class Server
     private void StartMatch()
     {
         // STEP 0: Initialise match conditions
-        //serverState.StartMatch();
+        serverState.StartMatch(clientIDs, clientIPs);
 
         // STEP 1: Send client IP details to one another, as necessary
 

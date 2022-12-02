@@ -11,6 +11,8 @@ public static class Packet
 
     }
 
+    /* --------------------------------------------------------------------------------------------------------------- */
+    /* CC: https://stackoverflow.com/questions/47649798/convert-object-to-byte-array-without-serialization-nor-padding */
     public static byte[] Serialise<T>(T packet) where T : struct
     {
         byte[] data = new byte[Marshal.SizeOf(typeof(T))];
@@ -30,6 +32,7 @@ public static class Packet
 
         return packet;
     }
+    /* --------------------------------------------------------------------------------------------------------------- */
 
     public static int GetSize(int packetID)
     {
@@ -45,6 +48,8 @@ public static class Packet
                 return Marshal.SizeOf(new SyncPacket());
             case 1001: // Client ID
                 return Marshal.SizeOf(new IDPacket());
+            case 2000: // Host starts game
+                return Marshal.SizeOf(new ModePacket());
             case 4000: // Diplomat ID
                 return Marshal.SizeOf(new IDPacket());
             case 4100: // Captain ID
@@ -106,6 +111,15 @@ public struct IDPacket
     {
         clientID = init_clientID;
         clientIP = init_clientIP; // CHECKME: What happens to arrays of size > 15?
+    }
+}
+
+public struct ModePacket
+{
+    // FIXME: Enter 'mode settings' details
+    public ModePacket()
+    {
+
     }
 }
 
