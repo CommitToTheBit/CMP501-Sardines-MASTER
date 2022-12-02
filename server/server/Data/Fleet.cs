@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 public class Fleet
 {
+    // FIXME: Do clients need such a complicated structure?
     public Diplomat diplomat;
     public Dictionary<int, Submarine> submarines;
 
@@ -23,7 +24,7 @@ public class Fleet
     // Functions
     public void AddSubmarine(int init_submarineID, int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
-        submarines.Add(init_submarineID, new Submarine(init_submarineID, init_clientID, init_clientIP, init_nuclearCapability));
+        submarines.Add(init_clientID, new Submarine(init_clientID, init_clientIP, init_nuclearCapability));
     }
 }
 

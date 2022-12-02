@@ -3,8 +3,6 @@
 public class Submarine
 {
     // Public status variables:
-    public int submarineID;
-
     public Crew captain;
     public Dictionary<string, Crew> crew;
 
@@ -29,10 +27,8 @@ public class Submarine
     private long TIMESTAMP;
 
     // Constructor
-    public Submarine(int init_submarineID, int init_clientID, string init_clientIP, bool init_nuclearCapability)
+    public Submarine(int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
-        submarineID = init_submarineID;
-
         captain = new Crew(init_clientID, init_clientIP);
         Dictionary<int, Crew> crew = new Dictionary<int, Crew>(); // FIXME: No crew mechanics implemented yet...
 
@@ -56,8 +52,6 @@ public class Submarine
     // Copy Constructor
     public Submarine(Submarine init_submarine)
     {
-        submarineID = init_submarine.submarineID;
-
         nuclearCapability = init_submarine.nuclearCapability;
         contactCapability = init_submarine.contactCapability;
 

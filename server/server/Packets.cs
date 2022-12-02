@@ -33,13 +33,23 @@ public static class Packet
 
     public static int GetSize(int packetID)
     {
+        // Header keys:
+        // - 1XXX: 'Universal' join/leave packets
+        // - 2XXX: Lobby packets
+        // - 3XXX: Game packets
+        // - 40XX: Diplomat-related packets
+        // - 41XX: Captain-related packets
         switch (packetID)
         {
-            case 0:
+            case 1000: // Client Time Sync
                 return Marshal.SizeOf(new SyncPacket());
-            case 1:
+            case 1001: // Client ID
                 return Marshal.SizeOf(new IDPacket());
-            case 2:
+            case 4000: // Diplomat ID
+                return Marshal.SizeOf(new IDPacket());
+            case 4100: // Captain ID
+                return Marshal.SizeOf(new IDPacket());
+            case 4101: // Submarine Position
                 return Marshal.SizeOf(new PositionPacket());
             default:
                 return 0;
@@ -86,9 +96,16 @@ public struct IDPacket
 {
     public int clientID;
 
-    public IDPacket(int init_clientID)
+    /* ---------------------------------------------------------------------------------------- */
+    /* CC: https://stackoverflow.com/questions/46279646/safe-fixed-size-array-in-struct-c-sharp */
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4*4)] // An IP address has at most 15 characters
+    public char[] clientIP;
+    /* ---------------------------------------------------------------------------------------- */
+
+    public IDPacket(int init_clientID, char[] init_clientIP)
     {
         clientID = init_clientID;
+        clientIP = init_clientIP; // CHECKME: What happens to arrays of size > 15?
     }
 }
 

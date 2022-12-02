@@ -82,7 +82,7 @@ public class State
 
     public void UpdateSubmarine(int submarineID, float x, float y, float theta, long timestamp)
     {
-        // FIXME: Maybe needs to be more 'in 'range'?
+        // FIXME: Maybe needs to be more 'in range'?
         Superpower superpower = GetSubmarineSuperpower(submarineID);
         if (superpower != Superpower.Null)
         {

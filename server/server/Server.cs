@@ -88,7 +88,7 @@ public class Server
                 Socket clientSocket = serverSocket.Accept();
 
 
-                if (tcpConnections.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
+                if (tcpConnections.Count() <= MAX_CONNECTIONS) // FIXME: Need stricter condition to stop new joiners mid-game (i.e. clientIDs.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
                 {
                     tcpConnections.Add(new TCPConnection(clientSocket));
                     clientIDs.Add(-1);
@@ -191,78 +191,67 @@ public class Server
     // Client 'Calls'
     private void ReceivePacket(SendablePacket packet, int index)
     {
-        // FIXME: Assign clearer numbering to header IDs
-        // i.e. 100, 101, ..., as 'universal', connect/disconnect headers, 200, 201, ... , as lobby headers (i.e. start game with these settings)
+        // Catch-all for all requests a client could send to the server
+        // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
         switch (packet.header.bodyID)
         {
-            case 0:
+            case 1000:
                 SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
-                ReceiveSyncPacket(packet.header.timestamp, index);
+                Receive1000(packet.header.timestamp, index);
                 break;
-            case 1:
+            case 1001:
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
-
-                // DEBUG:
-                Console.WriteLine("An ID Packet sent at timestamp " + packet.header.timestamp + "...");
-
-                ReceiveIDPacket(idPacket, index);
+                Receive1001(idPacket.clientID, index);
                 break;
-            case 2:
+            case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection?
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                ReceiveSubmarinePacket(positionPacket, index);
+                Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
                 break;
         }
     }
 
-
-    private void ReceiveSyncPacket(long syncTimestamp, int index) // header.bodyID: 100
+    private void Receive1000(long syncTimestamp, int index) // header.bodyID: 100
     {
         // Client 'bounces packet off' server to synchronise DateTime.UtcNow.Ticks
         // Server does not need to commit this to memory
-        HeaderPacket header = new HeaderPacket(0);
+        HeaderPacket header = new HeaderPacket(1000);
         SyncPacket sync = new SyncPacket(syncTimestamp);
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<SyncPacket>(sync));
         tcpConnections[index].SendPacket(packet);
     }
 
-    private void ReceiveIDPacket(IDPacket packet, int index) // header.bodyID: 101
+    private void Receive1001(int clientID, int index) // header.bodyID: 101
     {
         // Client sends the server its ID and (FIXME: currently, local) IP address, to be approved and recorded
         // Server accepts, reassigns or rejects its ID, and sends this back
         // FIXME: How will we handle case where client is trying to replace a leaver?
-        bool newClient = packet.clientID < 0;
+        bool newClient = clientID < 0;
         bool newConnection = clientIDs[index] == -1;
 
         // If our client is new, assign a unique clientID
-        clientIDs[index] = (!newClient) ? packet.clientID : ++maxClientID;
+        clientIDs[index] = (clientID >= 0) ? clientID : ++maxClientID;
+        //FIXME: if condition to remove client ID/IP if over MAX_CONNECTIONS?
 
-        long timestamp = DateTime.UtcNow.Ticks;
-        Console.WriteLine("... is being received at " + timestamp);
+        // Confirm/reject client entry
+        // FIXME: Rejection - assigning an ID of -1
+        HeaderPacket header = new HeaderPacket(1001);
+        IDPacket id = new IDPacket(clientID,"".ToCharArray());
+        SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
+        tcpConnections[index].SendPacket(packet);
+    }
 
-        if (newClient)
-        {
-            // Send the new client their unique clientID
-            SendIDPacket(clientIDs[index], index);
+    private void Receive4101(int clientID, float x, float y, float theta, long timestamp, int index)
+    {
+        // Captain sends the server their new position
+        // Server updates its current state, then forwards on to all other clients
+        serverState.UpdateSubmarine(clientID, x, y, theta, timestamp);
 
-            // Create the client's submarine in the master serverState
-            serverState.UpdateSubmarine(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp);
-        }
-
-        if (newConnection) // Note that newConnection => newClient
-        {
-            // Send newly-connected clients details on all nearby submarines, including their own 
-            Dictionary<int, Submarine> submarines = serverState.GetSubmarines();
-            foreach (int clientID in submarines.Keys)
-            {
-                SendPositionPacket(clientID, submarines[clientID].x[2], submarines[clientID].y[2], submarines[clientID].theta[2], submarines[clientID].timestamp[2], index);
-                Console.WriteLine("Sending client " + clientIDs[index] + " position of client " + clientID + "...");
-            }
-
-            // Send all other players the details of our newly-connected client
-            for (int i = 0; i < tcpConnections.Count; i++)
-                if (i != index)
-                    SendPositionPacket(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp, i);
-        }
+        HeaderPacket header = new HeaderPacket(4101);
+        PositionPacket submarine = new PositionPacket(clientID, x, y, theta, timestamp);
+        SendablePacket packet = new SendablePacket(header, Packet.Serialise<PositionPacket>(submarine));
+        for (int i = 0; i < tcpConnections.Count; i++)
+            if (i != index) // FIXME: No discretion about who we send to could mean spam?
+                tcpConnections[i].SendPacket(packet);
     }
 
 
@@ -270,124 +259,12 @@ public class Server
     private void StartMatch()
     {
         // STEP 0: Initialise match conditions
-        serverState.StartMatch();
+        //serverState.StartMatch();
 
         // STEP 1: Send client IP details to one another, as necessary
 
         // STEP 2: Send each client all initial positions
 
         // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
-    }
-
-
-
-
-    // Send functions
-    private void SendSyncPacket(long syncTimestamp, int index)
-    {
-        /*
-        *
-        */
-
-    }
-
-    private void SendIDPacket(int clientID, int index)
-    {
-        if (index < 0 || index >= tcpConnections.Count)
-            return;
-        HeaderPacket header = new HeaderPacket(1);
-        IDPacket id = new IDPacket(clientID);
-        SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
-        tcpConnections[index].SendPacket(packet);
-    }
-
-    private void SendPositionPacket(int clientID, float x, float y, float theta, long timestamp, int index)
-    {
-        if (index < 0 || index >= tcpConnections.Count)
-            return;
-
-        HeaderPacket header = new HeaderPacket(2);
-        PositionPacket submarine = new PositionPacket(clientID, x, y, theta, timestamp);
-        SendablePacket packet = new SendablePacket(header, Packet.Serialise<PositionPacket>(submarine));
-        tcpConnections[index].SendPacket(packet);
-
-        Console.WriteLine("Sending position packet about Client "+clientID+" to Client "+index+"...");
-    }
-
-    // Receive functions
-    private void ReceivePacket(SendablePacket packet, int index)
-    {
-        switch (packet.header.bodyID)
-        {
-            case 0:
-                SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
-                ReceiveSyncPacket(packet.header.timestamp, index);
-                break;
-            case 1:
-                IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
-
-                // DEBUG:
-                Console.WriteLine("An ID Packet sent at timestamp "+packet.header.timestamp+"...");
-
-                ReceiveIDPacket(idPacket, index);
-                break;
-            case 2:
-                PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                ReceiveSubmarinePacket(positionPacket, index);
-                break;
-        }
-    }
-
-    /*
-    *   JOINING A LOBBY:
-    *   STEP 1: Client IDs self
-    */
-
-    private void ReceiveIDPacket(IDPacket packet, int index)
-    {
-        bool newClient = packet.clientID < 0;
-        bool newConnection = clientIDs[index] == -1;
-
-        // If our client is new, assign a unique clientID
-        clientIDs[index] = (!newClient) ? packet.clientID : ++maxClientID;
-
-        long timestamp = DateTime.UtcNow.Ticks;
-        Console.WriteLine("... is being received at "+timestamp);
-
-        if (newClient)
-        {
-            // Send the new client their unique clientID
-            SendIDPacket(clientIDs[index], index);
-
-            // Create the client's submarine in the master serverState
-            serverState.UpdateSubmarine(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp);
-        }
-
-        if (newConnection) // Note that newConnection => newClient
-        {
-            // Send newly-connected clients details on all nearby submarines, including their own 
-            Dictionary<int, Submarine> submarines = serverState.GetSubmarines();
-            foreach (int clientID in submarines.Keys)
-            {
-                SendPositionPacket(clientID, submarines[clientID].x[2], submarines[clientID].y[2], submarines[clientID].theta[2], submarines[clientID].timestamp[2], index);
-                Console.WriteLine("Sending client " + clientIDs[index] + " position of client " + clientID + "...");
-            }
-
-            // Send all other players the details of our newly-connected client
-            for (int i = 0; i < tcpConnections.Count; i++)
-                if (i != index)
-                    SendPositionPacket(clientIDs[index], 0.0f, 0.0f, 0.0f, timestamp, i);
-        }
-    }
-
-    private void ReceiveSubmarinePacket(PositionPacket packet, int index)
-    {
-        if (packet.clientID < 0)
-            return;
-
-        serverState.UpdateSubmarine(packet.clientID, packet.x, packet.y, packet.theta, packet.timestamp);
-        for (int i = 0; i < tcpConnections.Count; i++)
-            if (i != index)
-                SendPositionPacket(packet.clientID, packet.x, packet.y, packet.theta, packet.timestamp, i);
     }
 }

@@ -8,14 +8,14 @@ class Program
 {
     static void Main(string[] args)
     {
-
-        Server server = new Server();
+        Console.WriteLine(Packet.GetSize(1001));
+        /*Server server = new Server();
 
         while (true)
         {
             server.Read();
             server.Update();
             server.Write();
-        }
+        }*/
     }
 }
