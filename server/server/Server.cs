@@ -207,8 +207,8 @@ public class Server
             case 2300:
                 // FIXME: How do we handle actually starting a game?
                 break;
-            case 2301:
-                // FIXME: How do we handle actually starting a game?
+            case 2310:
+                Receive2310(); // NB: Client does most of *its* initialisation on receiving this; due to TCP's A before B before C, it will have all necessary information (right?)
                 break;
             case 3200:
                 // FIXME: How do we handle actually starting a lobby?
@@ -254,6 +254,9 @@ public class Server
     private void Receive2300()
     {
         // STEP 0: Initialise match conditions
+        if (tcpConnections.Count < MIN_CONNECTIONS)
+            return;
+
         serverState.StartMatch(clientIDs, clientIPs);
 
         // STEP 1: Send client IP details to one another, as necessary
@@ -263,17 +266,63 @@ public class Server
         // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
     }
 
-    private void Receive2301()
+    private void Receive2310()
     {
         // STEP 0: Initialise match conditions
-        // FIXME: serverState.StartSandbox(clientIDs, clientIPs);
+        serverState.StartSandbox(clientIDs, clientIPs);
         // FIXME: Presumably - sandbox settings allow each player to choose their (preferred?) role?
 
-        // STEP 1: Send client IP details to one another, as necessary
+        // STEP 1: Send client role, IP details to one another, as necessary
+        HeaderPacket header = new HeaderPacket(2310);
+        EmptyPacket empty = new EmptyPacket();
+        SendablePacket packet = new SendablePacket(header, Packet.Serialise<EmptyPacket>(empty));
+        for (int i = 0; i < tcpConnections.Count; i++)
+            tcpConnections[i].SendPacket(packet);
 
-        // STEP 2: Send each client all initial positions
+        foreach (State.Superpower superpower in serverState.fleets.Keys)
+        {
+            int superpowerID;
+            switch (superpower)
+            {
+                case State.Superpower.East:
+                    superpowerID = 0;
+                    break;
+                case State.Superpower.West:
+                    superpowerID = 1;
+                    break;
+                default:
+                    superpowerID = -1;
+                    break;
+            }
 
-        // FIXME: Should we wait for a 'player ready!' packet (or timeout?) from each player to set global timestamp?
+            header = new HeaderPacket(4000);
+            RolePacket role = new RolePacket(serverState.fleets[superpower].diplomat.clientID,superpowerID);
+            packet = new SendablePacket(header, Packet.Serialise<RolePacket>(role));
+            for (int i = 0; i < tcpConnections.Count; i++)
+                tcpConnections[i].SendPacket(packet);
+
+            foreach (int clientID in serverState.fleets[superpower].submarines.Keys)
+            {
+                header = new HeaderPacket(4100); // FIXME: No accounting for crew here
+                role = new RolePacket(clientID, superpowerID);
+                packet = new SendablePacket(header, Packet.Serialise<RolePacket>(role));
+                for (int i = 0; i < tcpConnections.Count; i++)
+                    tcpConnections[i].SendPacket(packet);
+
+                header = new HeaderPacket(4101); // FIXME: No accounting for crew here
+                PositionPacket positionPacket = new PositionPacket(clientID, serverState.fleets[superpower].submarines[clientID].x[2], serverState.fleets[superpower].submarines[clientID].y[2], serverState.fleets[superpower].submarines[clientID].theta[2], serverState.fleets[superpower].submarines[clientID].timestamp[2]);
+                packet = new SendablePacket(header, Packet.Serialise<RolePacket>(role));
+                for (int i = 0; i < tcpConnections.Count; i++)
+                    if (i != clientID) // FIXME: Add extra, proximity condition!
+                        tcpConnections[i].SendPacket(packet);
+            }
+        }
+
+        header = new HeaderPacket(2311);
+        empty = new EmptyPacket();
+        packet = new SendablePacket(header, Packet.Serialise<EmptyPacket>(empty));
+        for (int i = 0; i < tcpConnections.Count; i++)
+            tcpConnections[i].SendPacket(packet);
     }
 
     private void Receive3200()
@@ -293,12 +342,5 @@ public class Server
         for (int i = 0; i < tcpConnections.Count; i++)
             if (i != index) // FIXME: No discretion about who we send to could mean spam?
                 tcpConnections[i].SendPacket(packet);
-    }
-
-
-    // Server 'Responses'
-    private void StartMatch()
-    {
-
     }
 }

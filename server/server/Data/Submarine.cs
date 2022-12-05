@@ -4,7 +4,7 @@ public class Submarine
 {
     // Public status variables:
     public Crew captain;
-    public Dictionary<string, Crew> crew;
+    public Dictionary<int, Crew> crew;
 
     public bool nuclearCapability;
     public bool contactCapability;

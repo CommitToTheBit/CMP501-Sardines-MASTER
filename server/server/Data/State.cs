@@ -74,6 +74,27 @@ public class State
                 fleets[superpower].submarines[submarineID].InitialisePosition(0.0f,0.0f,0.0f,globalStart);
     }
 
+    public void StartSandbox(List<int> init_clientIDs, List<string> init_clientIPs)
+    {
+        // STEP 0: Set 'start of game'
+        globalStart = DateTime.UtcNow.Ticks;
+
+        // STEP 1: Set player roles
+        List<int> clientIDs = new List<int>(init_clientIDs);
+        List<string> clientIPs = new List<string>(init_clientIPs);
+
+        fleets.Add(Superpower.East, new Fleet(clientIDs[0], clientIPs[0]));
+
+        for (int i = 4; i < clientIDs.Count; i++)
+            fleets[Superpower.East].AddSubmarine(i, clientIDs[i], clientIPs[i], false);
+
+        // STEP 2: Set game state
+        // i.e. Submarine positions... superpower codes? (Code as covert signals to one another?)
+        foreach (Superpower superpower in fleets.Keys)
+            foreach (int submarineID in fleets[superpower].submarines.Keys)
+                fleets[superpower].submarines[submarineID].InitialisePosition(0.0f, 0.0f, 0.0f, globalStart);
+    }
+
 
     public Dictionary<int, Submarine> GetSubmarines()
     {
