@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 public class Client
 {
-    private const string CLIENTIP = "127.0.0.1";
+    private const string CLIENTIP = "127.0.0.1";// FIXME: How to get own IP?
     private const string SERVERIP = "127.0.0.1";//"192.168.1.200";//"80.44.238.161";
     private const int SERVERPORT = 5555;
 
@@ -18,6 +18,7 @@ public class Client
     private bool disconnected;
 
     private int clientID;
+    private Dictionary<int,string> npcClients;
     public State state;
 
     private long started;
@@ -60,8 +61,13 @@ public class Client
             clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(SERVERIP),SERVERPORT));
             disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
 
-            if (!disconnected)
-                SendSyncPacket();
+            if (!disconnected) // Immediately sync on connection...
+            {
+                HeaderPacket header = new HeaderPacket(1000);
+                SyncPacket sync = new SyncPacket(0);
+                SendablePacket packet = new SendablePacket(header,Packet.Serialise<SyncPacket>(sync));
+                serverConnection.SendPacket(packet);
+            }
         }
         catch
         {
@@ -125,28 +131,96 @@ public class Client
             disconnected |= serverConnection.Write();
     }
 
-    // Send functions
-    private void SendSyncPacket()
+    // Server 'Calls'
+    private void ReceivePacket(SendablePacket packet, int index)
     {
-        /*
-        *
-        */
-        HeaderPacket header = new HeaderPacket(0);
-        SyncPacket sync = new SyncPacket(0);
-        SendablePacket packet = new SendablePacket(header,Packet.Serialise<SyncPacket>(sync));
-        serverConnection.SendPacket(packet);
+        // Catch-all for all requests a client could send to the server
+        // All deserialisation is handled in this function
+        // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
+        switch (packet.header.bodyID)
+        {
+            case 1000:
+                SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
+                Receive1000(packet.header.timestamp, syncPacket.syncTimestamp);
+                break;
+            case 1001:
+                IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
+                Receive1001(idPacket.clientID);
+                break;
+            case 2000:
+                break;
+            case 2300:
+                // FIXME: Cues initialisation...
+                break;
+            case 2301:
+                // FIXME: How do we handle actually starting a game?
+                break;
+            case 2310:
+                // FIXME: Cues initialisation...
+                break;
+            case 2311:
+                //Receive2311();
+                // FIXME: This is where we incorporate everything from the lobby!
+                break;
+            case 3200:
+                // FIXME: Cues initialisation...
+                break;
+            case 3201:
+                // FIXME: How do we handle actually starting a lobby?
+                break;
+            case 4000:
+                // FIXME: Introducing Diplomat
+                break;
+            case 4100:
+                // FIXME: Introducing Captain
+                break;
+            case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection?
+                PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
+                //Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
+                break;
+        }
     }
 
-    private void SendIDPacket()
+    public void Receive1000(long serverTimestamp, long syncTimestamp)
     {
-        /*
-        *   Identify self to server on connection
-        */
-        HeaderPacket header = new HeaderPacket(1);
-        IDPacket id = new IDPacket(clientID);
+        // Client receives a packet 'bounced off' the server
+        // Client uses syncTimestamp to estimate when the bounce occurred, then compares to serverTimestamp to estimate the delay between device clocks
+
+        // clientMoment and serverMoment should occur at (roughly) the same time
+        long clientTimestamp = (syncTimestamp+DateTime.UtcNow.Ticks)/2;
+
+        // If clientTimestamp < serverTimestamp, the client is delayed behind the server
+        // We add this delay to future client calculations, to 'catch them up' with the server
+        delay = serverTimestamp-clientTimestamp;
+
+        // DEBUG:
+        Console.WriteLine("We are a delay of "+delay+" behind the server...");
+
+        // Now that we've (re-)synced, we send our initial ID Packet...
+        HeaderPacket header = new HeaderPacket(1001);
+        IDPacket id = new IDPacket(clientID,CLIENTIP.ToCharArray());
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<IDPacket>(id));
         serverConnection.SendPacket(packet);
     }
+
+    public void Receive1001(int init_clientID)
+    {
+        // Client receives ID confirmation/rejection
+        clientID = init_clientID;
+
+        // FIXME: Ask for server details? - No, just wait for server to say we're... initialising whichever mode!
+    }
+
+    public void Receive1002(/* FIXME: ??? */)
+    {
+
+    }
+
+    // Client 'Calls'
+
+// FIXME: DEPRECATED
+    // Send functions
+
 
     public void SendPositionPacket(float x, float y, float theta, long timestamp)
     {
@@ -161,7 +235,7 @@ public class Client
     }
 
     // Receive functions
-    private void ReceivePacket(SendablePacket packet) // Redirects each type of packet
+    /*private void ReceivePacket(SendablePacket packet) // Redirects each type of packet
     {
         switch (packet.header.bodyID)
         {
@@ -178,36 +252,7 @@ public class Client
                 ReceivePositionPacket(positionPacket);
                 break;    
         }
-    }
-
-    private void ReceiveSyncPacket(SyncPacket packet, long serverMoment)
-    {
-        /*
-        *   The server has sent its 'official' start time
-        */
-
-        // clientMoment and serverMoment should occur at (roughly) the same time
-        long clientMoment = (packet.syncTimestamp+DateTime.UtcNow.Ticks)/2;
-
-        // If clientMoment < serverMoment, the client is delayed behind the server
-        // We add this delay to future client calculations, to 'catch them up' with the server
-        delay = serverMoment-clientMoment;
-
-        // DEBUG:
-        Console.WriteLine("We are a delay of "+delay+" behind the server...");
-
-        // Now that we've (re-)synced, we send our initial ID Packet...
-        SendIDPacket();
-    }
-
-    private void ReceiveIDPacket(IDPacket packet)
-    {
-        /*
-        *   If clientID is null (-1), assign a new ID.
-        */
-        if (clientID < 0)
-            clientID = packet.clientID;
-    }
+    }*/
 
     private void ReceivePositionPacket(PositionPacket packet)
     {

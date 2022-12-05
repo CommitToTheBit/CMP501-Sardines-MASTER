@@ -96,8 +96,6 @@ public class Server
                 else
                 {
                     TCPConnection tcpConnection = new TCPConnection(clientSocket);
-                    // Send error message: "Server full!"
-                    //conn->Terminate();
                     tcpConnection.GetSocket().Dispose();
                     return; // FIXME: Is there any need to return here?
                 }
@@ -244,11 +242,30 @@ public class Server
         //FIXME: if condition to remove client ID/IP if over MAX_CONNECTIONS?
 
         // Confirm/reject client entry
-        // FIXME: Rejection - assigning an ID of -1
+        // FIXME: Rejection - should this just be handled by breaking connection?
         HeaderPacket header = new HeaderPacket(1001);
         IDPacket id = new IDPacket(clientID, clientIP.ToCharArray());
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
         tcpConnections[index].SendPacket(packet);
+
+        // Send client details of all other clients, and vice versa
+        for (int i = 0; i < tcpConnections.Count; i++)
+        {
+            if (i == index)
+                continue;
+
+            // Sending to other clients...
+            header = new HeaderPacket(1002);
+            id = new IDPacket(clientID, clientIP.ToCharArray());
+            packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
+            tcpConnections[i].SendPacket(packet);
+
+            // ...And vice versa
+            header = new HeaderPacket(1002);
+            id = new IDPacket(clientIDs[i], clientIPs[i].ToCharArray());
+            packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
+            tcpConnections[index].SendPacket(packet);
+        }
     }
 
     private void Receive2300()

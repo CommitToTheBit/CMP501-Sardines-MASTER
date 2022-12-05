@@ -46,7 +46,9 @@ public static class Packet
         {
             case 1000: // Client Time Sync
                 return Marshal.SizeOf(new SyncPacket());
-            case 1001: // Client ID
+            case 1001: // Client Self-ID
+                return Marshal.SizeOf(new IDPacket());
+            case 1002: // (NPC) Client ID
                 return Marshal.SizeOf(new IDPacket());
             case 2300: // Host starts game: match
                 return Marshal.SizeOf(new EmptyPacket());
@@ -57,6 +59,8 @@ public static class Packet
             case 2311: // Server has initialised sandbox
                 return Marshal.SizeOf(new EmptyPacket());
             case 3200: // Finished game switches back to lobby
+                return Marshal.SizeOf(new EmptyPacket());
+            case 3201: // Server has initialised lobby
                 return Marshal.SizeOf(new EmptyPacket());
             case 4000: // Diplomat ID
                 return Marshal.SizeOf(new RolePacket());
@@ -96,10 +100,7 @@ public struct HeaderPacket
 
 public struct EmptyPacket
 {
-    public EmptyPacket()
-    {
 
-    }
 }
 
 public struct SyncPacket
