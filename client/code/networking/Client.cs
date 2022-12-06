@@ -18,7 +18,7 @@ public class Client
     private bool disconnected;
 
     private int clientID;
-    private Dictionary<int,string> npcClients;
+    private Dictionary<int,string> clientIPs;
     public State state;
 
     private long started;
@@ -35,7 +35,7 @@ public class Client
 
         // Initialise for New Game 
         clientID = -1;
-        state = new State();
+        state = new State(0); // Seed doesn't matter on client side (?)
 
         started = DateTime.UtcNow.Ticks;
         Console.WriteLine("Client started at " + started+".");
@@ -132,7 +132,7 @@ public class Client
     }
 
     // Server 'Calls'
-    private void ReceivePacket(SendablePacket packet, int index)
+    private void ReceivePacket(SendablePacket packet)
     {
         // Catch-all for all requests a client could send to the server
         // All deserialisation is handled in this function
@@ -147,7 +147,7 @@ public class Client
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
                 Receive1001(idPacket.clientID);
                 break;
-            case 2000:
+            case 1002:
                 break;
             case 2300:
                 // FIXME: Cues initialisation...
@@ -169,19 +169,21 @@ public class Client
                 // FIXME: How do we handle actually starting a lobby?
                 break;
             case 4000:
-                // FIXME: Introducing Diplomat
+                RolePacket rolePacket = Packet.Deserialise<RolePacket>(packet.serialisedBody);
+                Receive4000(rolePacket.clientID,rolePacket.superpowerID);
                 break;
             case 4100:
-                // FIXME: Introducing Captain
+                rolePacket = Packet.Deserialise<RolePacket>(packet.serialisedBody);
+                Receive4100(rolePacket.clientID,rolePacket.superpowerID);
                 break;
-            case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection?
+            case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection? // Or - using 'forward-only' prediction, hence no UDP!
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                //Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
+                Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
                 break;
         }
     }
 
-    public void Receive1000(long serverTimestamp, long syncTimestamp)
+    private void Receive1000(long serverTimestamp, long syncTimestamp)
     {
         // Client receives a packet 'bounced off' the server
         // Client uses syncTimestamp to estimate when the bounce occurred, then compares to serverTimestamp to estimate the delay between device clocks
@@ -203,7 +205,7 @@ public class Client
         serverConnection.SendPacket(packet);
     }
 
-    public void Receive1001(int init_clientID)
+    private void Receive1001(int init_clientID)
     {
         // Client receives ID confirmation/rejection
         clientID = init_clientID;
@@ -211,9 +213,62 @@ public class Client
         // FIXME: Ask for server details? - No, just wait for server to say we're... initialising whichever mode!
     }
 
-    public void Receive1002(/* FIXME: ??? */)
+    private void Receive1002(/* FIXME: ??? */)
     {
 
+    }
+
+    private void Receive2310()
+    {
+        state = new State((int)(DateTime.UtcNow.Ticks+delay));
+    }
+
+    private void Receive2311()
+    {
+        // START! - With UDP, this involves establishing connections...
+    }
+
+    private void Receive4000(int diplomatID, int superpowerID)
+    {
+        State.Superpower superpower;
+        switch (superpowerID)
+        {
+            case 0:
+                superpower = State.Superpower.East;
+                break;
+            case 1:
+                superpower = State.Superpower.West;
+                break;
+            default:
+                superpower = State.Superpower.Null;
+                break;
+        }
+
+        state.AddDiplomat(superpower,diplomatID,clientIPs[diplomatID]);
+    }
+
+    private void Receive4100(int captainID, int superpowerID)
+    {
+        State.Superpower superpower;
+        switch (superpowerID)
+        {
+            case 0:
+                superpower = State.Superpower.East;
+                break;
+            case 1:
+                superpower = State.Superpower.West;
+                break;
+            default:
+                superpower = State.Superpower.Null;
+                break;
+        }
+
+        state.AddSubmarine(superpower,captainID,clientIPs[captainID]);
+    }
+
+    private void Receive4101(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)
+    {
+        // FIXME: Fill in the blank!
     }
 
     // Client 'Calls'
