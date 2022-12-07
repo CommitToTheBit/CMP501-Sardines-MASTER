@@ -122,10 +122,7 @@ public class Server
 
             if (dead)
             {
-                // FIXME: Receive1003(clientIDs[i]);
-                tcpConnections[i].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
-                tcpConnections.RemoveAt(i);
-                clientIDs.RemoveAt(i);
+                Disconnect(i, clientIDs[i]);
             }
             else
             {
@@ -181,9 +178,7 @@ public class Server
 
             if (dead)
             {
-                tcpConnections[i].GetSocket().Dispose();
-                tcpConnections.RemoveAt(i);
-                clientIDs.RemoveAt(i);
+                Disconnect(i, clientIDs[i]);
             }
             else
             {
@@ -191,6 +186,36 @@ public class Server
 
             }
         }
+    }
+
+    private void Disconnect(int index, int clientID) // FIXME: Check this works with 2+ clients...
+    {
+        // Has this client's connection already been severed?
+        if (clientIDs.Count <= index || clientIDs[index] != clientID)
+            return;
+
+        Console.WriteLine("Hi");
+
+        // DEBUG:
+        Console.WriteLine(index);
+        Console.WriteLine("Client " + clientIDs[index] + " is being disconnected");
+        Console.WriteLine();
+
+        tcpConnections[index].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
+
+        for (int i = 0; i < tcpConnections.Count; i++)
+        {
+            HeaderPacket header = new HeaderPacket(1003);
+            IDPacket id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
+            SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
+            tcpConnections[i].SendPacket(packet);
+        }
+
+        // clientIDs are removed; they will remain in the game state, however
+        clientIDs.RemoveAt(index);
+        clientIPs.RemoveAt(index);
+
+        return;
     }
 
     // Client 'Calls'

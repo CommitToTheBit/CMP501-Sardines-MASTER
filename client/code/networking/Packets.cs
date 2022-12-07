@@ -48,7 +48,9 @@ public static class Packet
                 return Marshal.SizeOf(new SyncPacket());
             case 1001: // Client Self-ID
                 return Marshal.SizeOf(new IDPacket());
-            case 1002: // (NPC) Client ID
+            case 1002: // (NPC) Client Connected
+                return Marshal.SizeOf(new IDPacket());
+            case 1003: // (NPC) Client Disconnected
                 return Marshal.SizeOf(new IDPacket());
             case 2300: // Host starts game: match
                 return Marshal.SizeOf(new EmptyPacket());
