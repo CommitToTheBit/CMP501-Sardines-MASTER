@@ -15,10 +15,10 @@ public class Server
     // Variables
     private Socket serverSocket;
     private List<TCPConnection> tcpConnections;
+    private List<int> clientIDConnections;
 
     private int maxClientID;
-    private List<int> clientIDs;
-    private List<string> clientIPs;
+    private Dictionary<int,string> clientIPs;
 
     private State serverState;
 
@@ -48,9 +48,11 @@ public class Server
         serverSocket.Listen();
 
         tcpConnections = new List<TCPConnection>(MAX_PENDING_CONNECTIONS);
-        clientIDs = new List<int>();
-        clientIPs = new List<string>();
+        clientIDConnections = new List<int>();
+        clientIPs = new Dictionary<int, string>();
         maxClientID = -1;
+
+
 
         serverState = new State(0);
 
@@ -96,8 +98,7 @@ public class Server
                 if (tcpConnections.Count() <= MAX_CONNECTIONS) // FIXME: Need stricter condition to stop new joiners mid-game (i.e. clientIDs.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
                 {
                     tcpConnections.Add(new TCPConnection(clientSocket));
-                    clientIDs.Add(-1);
-                    clientIPs.Add("");
+                    clientIDConnections.Add(-1);
                 }
                 else
                 {
@@ -191,7 +192,7 @@ public class Server
     private void Disconnect(int index) // FIXME: Check this works with 2+ clients...
     {
         // DEBUG:
-        Console.WriteLine("Client " + clientIDs[index] + " is being disconnected");
+        Console.WriteLine("Client " + clientIDConnections[index] + " is being disconnected");
 
         tcpConnections[index].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
         tcpConnections.RemoveAt(index);
@@ -199,25 +200,39 @@ public class Server
         for (int i = 0; i < tcpConnections.Count; i++)
         {
             HeaderPacket header = new HeaderPacket(1003);
-            IDPacket id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
+            IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[clientIDConnections[index]].ToCharArray());
             SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[i].SendPacket(packet);
         }
 
-        // DEBUG: Comment out these lines to maintain log of all clients joined
-        // - This is useful for starting lobbies without havign all instances open... 
-        //clientIDs.RemoveAt(index);
-        //clientIPs.RemoveAt(index);
+        // DEBUG: Comment this out for more 'memory'
+        //clientIPs.Remove(clientIDConnections[index]);
 
-        // If no active connections exist, return to lobby:
-        Receive3200();
+        clientIDConnections.RemoveAt(index);
+
+
 
         // DEBUG:
+        if (clientIDConnections.Count > 0)
+        {
+            Console.Write("\tWe are connected to clients [");
+            for (int i = 0; i < clientIDConnections.Count - 1; i++)
+                Console.Write(clientIDConnections[i] + ", ");
+            Console.WriteLine(clientIDConnections[clientIDConnections.Count - 1] + "]...");
+        }
+        else
+        {
+            Console.WriteLine("\tWe are connected to no clients...");
+        }
         Console.Write("\tWe remember clients [");
-        for (int i = 0; i < clientIDs.Count - 1; i++)
-            Console.Write(clientIDs[i] + ", ");
-        Console.WriteLine(clientIDs[clientIDs.Count-1]+"]...");
+        for (int i = 0; i < clientIPs.Count - 1; i++)
+            Console.Write(clientIPs.Keys.ElementAt(i) + ", ");
+        Console.WriteLine(clientIPs.Keys.ElementAt(clientIPs.Count-1)+"]...");
         Console.WriteLine();
+
+        // If we are connected to no clients, we return to the lobby...
+        if (clientIDConnections.Count == 0)
+            Receive3200();
 
         return;
     }
@@ -277,17 +292,17 @@ public class Server
         // Server accepts, reassigns or rejects its ID, and sends this back
         // FIXME: How will we handle case where client is trying to replace a leaver?
         bool newClient = clientID < 0;
-        bool newConnection = clientIDs[index] == -1;
+        bool newConnection = clientIDConnections[index] == -1;
 
         // If our client is new, assign a unique clientID
-        clientIDs[index] = (clientID >= 0) ? clientID : ++maxClientID;
-        clientIPs[index] = clientIP;
+        clientIDConnections[index] = (clientID >= 0) ? clientID : ++maxClientID;
+        clientIPs.Add(clientIDConnections[index], clientIP);
         //FIXME: if condition to remove client ID/IP if over MAX_CONNECTIONS?
 
         // Confirm/reject client entry
         // FIXME: Rejection - should this just be handled by breaking connection?
         HeaderPacket header = new HeaderPacket(1001);
-        IDPacket id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
+        IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[index].ToCharArray());
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
         tcpConnections[index].SendPacket(packet);
 
@@ -300,19 +315,21 @@ public class Server
 
             // Sending to other clients...
             header = new HeaderPacket(1002);
-            id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
+            id = new IDPacket(clientIDConnections[index], clientIPs[index].ToCharArray());
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[i].SendPacket(packet);
         }
 
-        for (int i = 0; i < clientIDs.Count; i++)
+        Console.WriteLine("diagnose...");
+
+        foreach (int key in clientIPs.Keys)
         {
-            if (clientIDs[i] == clientIDs[index])
+            if (key == clientIDConnections[index])
                 continue;
 
             // ...And vice versa
             header = new HeaderPacket(1002);
-            id = new IDPacket(clientIDs[i], clientIPs[i].ToCharArray());
+            id = new IDPacket(key, clientIPs[key].ToCharArray());
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[index].SendPacket(packet);
         }
@@ -325,7 +342,7 @@ public class Server
         if (tcpConnections.Count < MIN_CONNECTIONS)
             return;
 
-        serverState.StartMatch(clientIDs, clientIPs);
+        serverState.StartMatch(clientIPs.Keys.ToList(), clientIPs.Values.ToList());
 
         // STEP 1: Send client IP details to one another, as necessary
 
@@ -337,7 +354,7 @@ public class Server
     private void Receive2310()
     {
         // STEP 0: Initialise match conditions
-        serverState.StartSandbox(clientIDs, clientIPs);
+        serverState.StartSandbox(clientIPs.Keys.ToList(), clientIPs.Values.ToList());
         // FIXME: Presumably - sandbox settings allow each player to choose their (preferred?) role?
 
         // STEP 1: Send client role, IP details to one another, as necessary
