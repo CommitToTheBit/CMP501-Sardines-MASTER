@@ -162,6 +162,9 @@ public class Client : Node
                 break;
             case 1002:
                 break;
+            case 1003:
+                //FIXME: Receive1003();
+                break;
             case 2300:
                 // FIXME: Cues initialisation...
                 break;

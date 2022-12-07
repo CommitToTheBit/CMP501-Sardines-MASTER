@@ -122,6 +122,7 @@ public class Server
 
             if (dead)
             {
+                // FIXME: Receive1003(clientIDs[i]);
                 tcpConnections[i].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
                 tcpConnections.RemoveAt(i);
                 clientIDs.RemoveAt(i);
