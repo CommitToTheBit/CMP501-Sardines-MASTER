@@ -192,7 +192,6 @@ public class Server
     {
         // DEBUG:
         Console.WriteLine("Client " + clientIDs[index] + " is being disconnected");
-        Console.WriteLine();
 
         tcpConnections[index].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
         tcpConnections.RemoveAt(index);
@@ -212,6 +211,13 @@ public class Server
 
         // If no active connections exist, return to lobby:
         Receive3200();
+
+        // DEBUG:
+        Console.Write("\tWe remember clients [");
+        for (int i = 0; i < clientIDs.Count - 1; i++)
+            Console.Write(clientIDs[i] + ", ");
+        Console.WriteLine(clientIDs[clientIDs.Count-1]+"]...");
+        Console.WriteLine();
 
         return;
     }
@@ -286,6 +292,7 @@ public class Server
         tcpConnections[index].SendPacket(packet);
 
         // Send client details of all other clients, and vice versa
+        // We use two different sizes of for loop to account for any 'missing' clients
         for (int i = 0; i < tcpConnections.Count; i++)
         {
             if (i == index)
@@ -296,6 +303,12 @@ public class Server
             id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[i].SendPacket(packet);
+        }
+
+        for (int i = 0; i < clientIDs.Count; i++)
+        {
+            if (clientIDs[i] == clientIDs[index])
+                continue;
 
             // ...And vice versa
             header = new HeaderPacket(1002);
@@ -303,6 +316,7 @@ public class Server
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[index].SendPacket(packet);
         }
+
     }
 
     private void Receive2300()
