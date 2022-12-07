@@ -161,6 +161,8 @@ public class Client : Node
                 Receive1001(idPacket.clientID, string.Join("",idPacket.clientIP));
                 break;
             case 1002:
+                idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
+                Receive1002(idPacket.clientID, string.Join("",idPacket.clientIP));
                 break;
             case 1003:
                 //FIXME: Receive1003();
@@ -237,9 +239,12 @@ public class Client : Node
         // FIXME: Ask for server details? - No, just wait for server to say we're... initialising whichever mode!
     }
 
-    private void Receive1002(/* FIXME: ??? */)
+    private void Receive1002(int init_clientID, string init_clientIP)
     {
-        // FIXME: Needs to work for multiple clients!
+        if (init_clientID < 0)
+            return;
+
+        clientIPs.Add(init_clientID,init_clientIP);
     }
 
     private void Receive2310()

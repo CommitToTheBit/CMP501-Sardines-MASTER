@@ -122,7 +122,7 @@ public class Server
 
             if (dead)
             {
-                Disconnect(i, clientIDs[i]);
+                Disconnect(i);
             }
             else
             {
@@ -178,7 +178,7 @@ public class Server
 
             if (dead)
             {
-                Disconnect(i, clientIDs[i]);
+                Disconnect(i);
             }
             else
             {
@@ -188,20 +188,14 @@ public class Server
         }
     }
 
-    private void Disconnect(int index, int clientID) // FIXME: Check this works with 2+ clients...
+    private void Disconnect(int index) // FIXME: Check this works with 2+ clients...
     {
-        // Has this client's connection already been severed?
-        if (clientIDs.Count <= index || clientIDs[index] != clientID)
-            return;
-
-        Console.WriteLine("Hi");
-
         // DEBUG:
-        Console.WriteLine(index);
         Console.WriteLine("Client " + clientIDs[index] + " is being disconnected");
         Console.WriteLine();
 
         tcpConnections[index].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
+        tcpConnections.RemoveAt(index);
 
         for (int i = 0; i < tcpConnections.Count; i++)
         {
@@ -211,9 +205,13 @@ public class Server
             tcpConnections[i].SendPacket(packet);
         }
 
-        // clientIDs are removed; they will remain in the game state, however
-        clientIDs.RemoveAt(index);
-        clientIPs.RemoveAt(index);
+        // DEBUG: Comment out these lines to maintain log of all clients joined
+        // - This is useful for starting lobbies without havign all instances open... 
+        //clientIDs.RemoveAt(index);
+        //clientIPs.RemoveAt(index);
+
+        // If no active connections exist, return to lobby:
+        Receive3200();
 
         return;
     }
