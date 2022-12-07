@@ -84,10 +84,11 @@ public class State
         List<int> clientIDs = new List<int>(init_clientIDs);
         List<string> clientIPs = new List<string>(init_clientIPs);
 
-        fleets.Add(Superpower.East, new Fleet(clientIDs[0], clientIPs[0]));
+        // Initialise a single, null team to contain all players...
+        fleets.Add(Superpower.Null, new Fleet(-1, ""));
 
-        for (int i = 1; i < clientIDs.Count; i++)
-            fleets[Superpower.East].AddSubmarine(i, clientIDs[i], clientIPs[i], false);
+        for (int i = 0; i < clientIDs.Count; i++)
+            fleets[Superpower.Null].AddSubmarine(i, clientIDs[i], clientIPs[i], false);
 
         // STEP 2: Set game state
         // i.e. Submarine positions... superpower codes? (Code as covert signals to one another?)

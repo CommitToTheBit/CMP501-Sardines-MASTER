@@ -263,7 +263,14 @@ public class Client
                 break;
         }
 
-        state.AddFleet(superpower,diplomatID,clientIPs[diplomatID]);
+        try
+        {
+            state.AddFleet(superpower,diplomatID,clientIPs[diplomatID]);
+        }
+        catch
+        {
+            state.AddFleet(superpower,diplomatID,"");
+        }
     }
 
     private void Receive4100(int superpowerID, int submarineID, int captainID, bool nuclearCapability)

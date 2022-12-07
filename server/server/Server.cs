@@ -56,6 +56,7 @@ public class Server
 
         // DEBUG:
         Console.WriteLine("Server ready at " + DateTime.UtcNow.Ticks + "...");
+        Console.WriteLine();
     }
 
     // Destructor
@@ -225,6 +226,9 @@ public class Server
                 Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
                 break;
         }
+
+        // DEBUG:
+        Console.WriteLine();
     }
 
     private void Receive1000(long syncTimestamp, int index)
