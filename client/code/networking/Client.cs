@@ -231,7 +231,8 @@ public class Client : Node
     {
         // Client receives ID confirmation/rejection
         clientID = init_clientID;
-        if (clientID < 0)
+
+        if (clientID < 0 || clientIPs.ContainsKey(clientID))
             return;
 
         clientIPs.Add(init_clientID,init_clientIP);
@@ -241,7 +242,7 @@ public class Client : Node
 
     private void Receive1002(int init_clientID, string init_clientIP)
     {
-        if (init_clientID < 0)
+        if (init_clientID < 0 || clientIPs.ContainsKey(init_clientID))
             return;
 
         clientIPs.Add(init_clientID,init_clientIP);
@@ -291,12 +292,12 @@ public class Client : Node
                 GD.Print("\t\tSubmarine "+submarineID+" starts at... [FIXME: Receive4101()]");
 
                 string captainAddress = "";
-                if (state.fleets[superpower].diplomat.clientIP.Length > 0)
-                    diplomatAddress = ""+state.fleets[superpower].diplomat.clientIP;
+                if (state.fleets[superpower].submarines[submarineID].captain.clientIP.Length > 0)
+                    captainAddress = ""+state.fleets[superpower].submarines[submarineID].captain.clientIP;
                 else
-                    diplomatAddress = "unknown"; 
+                    captainAddress = "unknown"; 
 
-                GD.Print("\t\t\tCaptain "+clientID+", IP Address"+captainAddress+"...");
+                GD.Print("\t\t\tCaptain "+state.fleets[superpower].submarines[submarineID].captain.clientID+", IP Address "+captainAddress+"...");
             }
         }
     }

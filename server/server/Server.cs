@@ -296,7 +296,8 @@ public class Server
 
         // If our client is new, assign a unique clientID
         clientIDConnections[index] = (clientID >= 0) ? clientID : ++maxClientID;
-        clientIPs.Add(clientIDConnections[index], clientIP);
+        if (!clientIPs.ContainsKey(clientIDConnections[index]))
+            clientIPs.Add(clientIDConnections[index], clientIP);
         //FIXME: if condition to remove client ID/IP if over MAX_CONNECTIONS?
 
         // Confirm/reject client entry
@@ -319,8 +320,6 @@ public class Server
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[i].SendPacket(packet);
         }
-
-        Console.WriteLine("diagnose...");
 
         foreach (int key in clientIPs.Keys)
         {
