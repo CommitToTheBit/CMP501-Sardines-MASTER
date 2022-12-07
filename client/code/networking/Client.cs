@@ -25,6 +25,8 @@ public class Client
 
     public long delay;
 
+    public bool sandboxBlocking;
+
     // Constructor
     public Client()
     {
@@ -39,6 +41,8 @@ public class Client
 
         started = DateTime.UtcNow.Ticks;
         Console.WriteLine("Client started at " + started+".");
+
+        sandboxBlocking = false;
     }
 
     // Destructor
@@ -220,12 +224,14 @@ public class Client
 
     private void Receive2310()
     {
+        // Client receives cues that
         state = new State((int)(DateTime.UtcNow.Ticks+delay));
     }
 
     private void Receive2311()
     {
         // START! - With UDP, this involves establishing connections...
+        sandboxBlocking = false;
     }
 
     private void Receive4000(int diplomatID, int superpowerID)
@@ -272,6 +278,18 @@ public class Client
     }
 
     // Client 'Calls'
+    public void Send2310()
+    {
+        // Client sends message to server to start sandbox mode
+        sandboxBlocking = true;
+
+        HeaderPacket header = new HeaderPacket(2310);
+        EmptyPacket empty = new EmptyPacket();
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<EmptyPacket>(empty));
+        serverConnection.SendPacket(packet);
+    }
+
+    //public void Send4101()
 
 // FIXME: DEPRECATED
     // Send functions

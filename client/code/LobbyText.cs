@@ -4,14 +4,27 @@ using System.Collections.Generic;
 
 public class LobbyText : Text
 {
+    Handler handler;
+
     public override void _Ready()
     {
+        handler = GetNode<Handler>("/root/Handler");
+
         InitialiseText();
         GetNode<TextureButton>("StartGameButton").GrabFocus();
     }
 
     public void StartGamePressed()
     {
+        handler.c.Send2310();
+
+        while (handler.c.sandboxBlocking)
+        {
+            // FIXME: Rudimentary blocking, will freeze game (temporarily)
+        }
+
+
+
         List<string> newHistory = new List<string>(history);
         newHistory.Add(id);
 
