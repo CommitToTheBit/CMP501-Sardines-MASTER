@@ -86,7 +86,7 @@ public class State
 
         fleets.Add(Superpower.East, new Fleet(clientIDs[0], clientIPs[0]));
 
-        for (int i = 4; i < clientIDs.Count; i++)
+        for (int i = 1; i < clientIDs.Count; i++)
             fleets[Superpower.East].AddSubmarine(i, clientIDs[i], clientIPs[i], false);
 
         // STEP 2: Set game state
@@ -96,10 +96,14 @@ public class State
                 fleets[superpower].submarines[submarineID].InitialisePosition(0.0f, 0.0f, 0.0f, globalStart);
     }
 
-
-    public Dictionary<int, Submarine> GetSubmarines()
+    public void AddFleet(Superpower superpower, int clientID, string clientIP)
     {
-        return submarines;
+        fleets.Add(superpower, new Fleet(clientID, clientIP));
+    }
+
+    public void AddSubmarine(Superpower superpower, int submarineID, int clientID, string clientIP, bool nuclearCapability)
+    {
+        fleets[superpower].AddSubmarine(submarineID,clientID,clientIP,nuclearCapability);
     }
 
     public void UpdateSubmarine(int submarineID, float x, float y, float theta, long timestamp)
@@ -111,6 +115,11 @@ public class State
             if (fleets[superpower].submarines[submarineID].UpdatePosition(x, y, theta, timestamp))
                 submarines[submarineID].UpdatePredictionModel(); // Only updates prediction model if position has changed...
         }
+    }
+
+    public Dictionary<int, Submarine> GetSubmarines()
+    {
+        return submarines;
     }
 
     private Superpower GetSubmarineSuperpower(int submarineID)

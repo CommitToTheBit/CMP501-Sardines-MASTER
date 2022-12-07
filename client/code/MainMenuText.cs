@@ -18,6 +18,8 @@ public class MainMenuText : Text
     {
         List<string> newHistory = new List<string>() {"MainMenu"};
 
+        // FIXME: Needs a 'call and response'
+
         handler.c.Connect();
         if (true || handler.c.IsConnected()) // FIXME: This should redirect to an "Enter Lobby IP" anyway...
             EmitSignal("ChangeUI","Lobby","Lobby",newHistory);

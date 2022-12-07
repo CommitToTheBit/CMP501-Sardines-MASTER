@@ -24,7 +24,7 @@ public class Fleet
     // Functions
     public void AddSubmarine(int init_submarineID, int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
-        submarines.Add(init_clientID, new Submarine(init_clientID, init_clientIP, init_nuclearCapability));
+        submarines.Add(init_submarineID, new Submarine(init_clientID, init_clientIP, init_nuclearCapability));
     }
 }
 

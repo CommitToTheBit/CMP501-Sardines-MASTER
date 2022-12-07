@@ -174,11 +174,11 @@ public class Client
                 break;
             case 4000:
                 RolePacket rolePacket = Packet.Deserialise<RolePacket>(packet.serialisedBody);
-                Receive4000(rolePacket.clientID,rolePacket.superpowerID);
+                Receive4000(rolePacket.superpowerID,rolePacket.clientID);
                 break;
             case 4100:
-                rolePacket = Packet.Deserialise<RolePacket>(packet.serialisedBody);
-                Receive4100(rolePacket.clientID,rolePacket.superpowerID);
+                SubmarinePacket submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
+                Receive4100(submarinePacket.superpowerID,submarinePacket.clientID,submarinePacket.submarineID,submarinePacket.nuclearCapability);
                 break;
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection? // Or - using 'forward-only' prediction, hence no UDP!
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
@@ -250,10 +250,10 @@ public class Client
                 break;
         }
 
-        state.AddDiplomat(superpower,diplomatID,clientIPs[diplomatID]);
+        state.AddFleet(superpower,diplomatID,clientIPs[diplomatID]);
     }
 
-    private void Receive4100(int captainID, int superpowerID)
+    private void Receive4100(int superpowerID, int submarineID, int captainID, bool nuclearCapability)
     {
         State.Superpower superpower;
         switch (superpowerID)
@@ -269,7 +269,7 @@ public class Client
                 break;
         }
 
-        state.AddSubmarine(superpower,captainID,clientIPs[captainID]);
+        state.AddSubmarine(superpower,submarineID,captainID,clientIPs[captainID],nuclearCapability);
     }
 
     private void Receive4101(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)

@@ -49,9 +49,13 @@ public class Server
 
         tcpConnections = new List<TCPConnection>(MAX_PENDING_CONNECTIONS);
         clientIDs = new List<int>();
+        clientIPs = new List<string>();
         maxClientID = -1;
 
         serverState = new State(0);
+
+        // DEBUG:
+        Console.WriteLine("Server ready at " + DateTime.UtcNow.Ticks + "...");
     }
 
     // Destructor
@@ -92,6 +96,7 @@ public class Server
                 {
                     tcpConnections.Add(new TCPConnection(clientSocket));
                     clientIDs.Add(-1);
+                    clientIPs.Add("");
                 }
                 else
                 {
@@ -192,6 +197,10 @@ public class Server
         // Catch-all for all requests a client could send to the server
         // All deserialisation is handled in this function
         // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
+
+        // DEBUG:
+        Console.WriteLine("Received packet " + packet.header.bodyID + "...");
+
         switch (packet.header.bodyID)
         {
             case 1000:

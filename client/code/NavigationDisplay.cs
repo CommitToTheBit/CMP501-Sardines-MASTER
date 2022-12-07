@@ -47,11 +47,13 @@ public class NavigationDisplay : Control
 
     public override void _Process(float delta)
     {
+        // FIXME: Deactivated to check other network changes in isolation
+
         // Take in player controls
-        UpdatePosition(delta);
+        //UpdatePosition(delta);
 
         // Move all objects on screen to h.c.state positions
-        Render();
+        //Render();
     }
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?

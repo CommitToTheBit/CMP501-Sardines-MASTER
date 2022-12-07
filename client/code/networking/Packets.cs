@@ -65,7 +65,7 @@ public static class Packet
             case 4000: // Diplomat ID
                 return Marshal.SizeOf(new RolePacket());
             case 4100: // Captain ID
-                return Marshal.SizeOf(new RolePacket());
+                return Marshal.SizeOf(new SubmarinePacket());
             case 4101: // Submarine Position
                 return Marshal.SizeOf(new PositionPacket());
             default:
@@ -133,13 +133,29 @@ public struct IDPacket
 
 public struct RolePacket
 {
+    public int superpowerID;
+    public int clientID;
+
+    public RolePacket(int init_superpowerID, int init_clientID)
+    {
+        superpowerID = init_superpowerID;
+        clientID = init_clientID;
+    }
+}
+
+public struct SubmarinePacket
+{
     public int clientID;
     public int superpowerID;
+    public int submarineID;
+    public bool nuclearCapability;
 
-    public RolePacket(int init_clientID, int init_superpowerID)
+    public SubmarinePacket(int init_superpowerID, int init_submarineID, int init_clientID, bool init_nuclearCapability)
     {
-        clientID = init_clientID;
         superpowerID = init_superpowerID;
+        submarineID = init_submarineID;
+        clientID = init_clientID;
+        nuclearCapability = init_nuclearCapability;
     }
 }
 
