@@ -37,6 +37,8 @@ public class Client
 
         // Initialise for New Game 
         clientID = -1;
+        clientIPs = new Dictionary<int, string>();
+
         state = new State(0); // Seed doesn't matter on client side (?)
 
         started = DateTime.UtcNow.Ticks;
@@ -141,6 +143,10 @@ public class Client
         // Catch-all for all requests a client could send to the server
         // All deserialisation is handled in this function
         // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
+
+        // DEBUG:
+        GD.Print("Received packet " + packet.header.bodyID + "...");
+
         switch (packet.header.bodyID)
         {
             case 1000:
@@ -149,7 +155,7 @@ public class Client
                 break;
             case 1001:
                 IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
-                Receive1001(idPacket.clientID);
+                Receive1001(idPacket.clientID, string.Join("",idPacket.clientIP));
                 break;
             case 1002:
                 break;
@@ -161,6 +167,7 @@ public class Client
                 break;
             case 2310:
                 // FIXME: Cues initialisation...
+                Receive2310();
                 break;
             case 2311:
                 //Receive2311();
@@ -209,23 +216,29 @@ public class Client
         serverConnection.SendPacket(packet);
     }
 
-    private void Receive1001(int init_clientID)
+    private void Receive1001(int init_clientID, string init_clientIP)
     {
         // Client receives ID confirmation/rejection
         clientID = init_clientID;
+        if (clientID < 0)
+            return;
+
+        clientIPs.Add(init_clientID,init_clientIP);
 
         // FIXME: Ask for server details? - No, just wait for server to say we're... initialising whichever mode!
     }
 
     private void Receive1002(/* FIXME: ??? */)
     {
-
+        // FIXME: Needs to work for multiple clients!
     }
 
     private void Receive2310()
     {
         // Client receives cues that
-        state = new State((int)(DateTime.UtcNow.Ticks+delay));
+        state.mode = State.Mode.sandbox;
+
+
     }
 
     private void Receive2311()
@@ -234,7 +247,7 @@ public class Client
         sandboxBlocking = false;
     }
 
-    private void Receive4000(int diplomatID, int superpowerID)
+    private void Receive4000(int superpowerID, int diplomatID)
     {
         State.Superpower superpower;
         switch (superpowerID)

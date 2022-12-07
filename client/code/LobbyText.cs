@@ -18,10 +18,10 @@ public class LobbyText : Text
     {
         handler.c.Send2310();
 
-        while (handler.c.sandboxBlocking)
-        {
+        //while (handler.c.sandboxBlocking)
+        //{
             // FIXME: Rudimentary blocking, will freeze game (temporarily)
-        }
+        //}
 
 
 

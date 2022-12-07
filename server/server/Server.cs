@@ -253,7 +253,7 @@ public class Server
         // Confirm/reject client entry
         // FIXME: Rejection - should this just be handled by breaking connection?
         HeaderPacket header = new HeaderPacket(1001);
-        IDPacket id = new IDPacket(clientID, clientIP.ToCharArray());
+        IDPacket id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
         tcpConnections[index].SendPacket(packet);
 
@@ -265,7 +265,7 @@ public class Server
 
             // Sending to other clients...
             header = new HeaderPacket(1002);
-            id = new IDPacket(clientID, clientIP.ToCharArray());
+            id = new IDPacket(clientIDs[index], clientIPs[index].ToCharArray());
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[i].SendPacket(packet);
 
