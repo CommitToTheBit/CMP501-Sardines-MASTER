@@ -309,6 +309,9 @@ public class Server
         for (int i = 0; i < tcpConnections.Count; i++)
             tcpConnections[i].SendPacket(packet);
 
+        // DEBUG:
+        Console.WriteLine("\tSent packet 2310 to all clients...");
+
         foreach (State.Superpower superpower in serverState.fleets.Keys)
         {
             int superpowerID;
@@ -326,25 +329,25 @@ public class Server
             }
 
             header = new HeaderPacket(4000);
-            RolePacket role = new RolePacket(serverState.fleets[superpower].diplomat.clientID,superpowerID);
+            RolePacket role = new RolePacket(superpowerID,serverState.fleets[superpower].diplomat.clientID);
             packet = new SendablePacket(header, Packet.Serialise<RolePacket>(role));
             for (int i = 0; i < tcpConnections.Count; i++)
                 tcpConnections[i].SendPacket(packet);
 
-            foreach (int clientID in serverState.fleets[superpower].submarines.Keys)
+            foreach (int submarineID in serverState.fleets[superpower].submarines.Keys)
             {
                 header = new HeaderPacket(4100); // FIXME: No accounting for crew here
-                role = new RolePacket(clientID, superpowerID);
-                packet = new SendablePacket(header, Packet.Serialise<RolePacket>(role));
+                SubmarinePacket submarine = new SubmarinePacket(superpowerID, submarineID, serverState.fleets[superpower].submarines[submarineID].captain.clientID, serverState.fleets[superpower].submarines[submarineID].nuclearCapability);
+                packet = new SendablePacket(header, Packet.Serialise<SubmarinePacket>(submarine));
                 for (int i = 0; i < tcpConnections.Count; i++)
                     tcpConnections[i].SendPacket(packet);
 
                 header = new HeaderPacket(4101); // FIXME: No accounting for crew here
-                PositionPacket positionPacket = new PositionPacket(clientID, serverState.fleets[superpower].submarines[clientID].x[2], serverState.fleets[superpower].submarines[clientID].y[2], serverState.fleets[superpower].submarines[clientID].theta[2], serverState.fleets[superpower].submarines[clientID].timestamp[2]);
-                packet = new SendablePacket(header, Packet.Serialise<RolePacket>(role));
+                PositionPacket position = new PositionPacket(submarineID, serverState.fleets[superpower].submarines[submarineID].x[2], serverState.fleets[superpower].submarines[submarineID].y[2], serverState.fleets[superpower].submarines[submarineID].theta[2], serverState.fleets[superpower].submarines[submarineID].timestamp[2]);
+                packet = new SendablePacket(header, Packet.Serialise<PositionPacket>(position));
                 for (int i = 0; i < tcpConnections.Count; i++)
-                    if (i != clientID) // FIXME: Add extra, proximity condition!
-                        tcpConnections[i].SendPacket(packet);
+                    if (true) // FIXME: Add extra, proximity condition!
+                        tcpConnections[i].SendPacket(packet); // Note: Submarine receives its own position here, as it needs initialised!
             }
         }
 
@@ -353,6 +356,9 @@ public class Server
         packet = new SendablePacket(header, Packet.Serialise<EmptyPacket>(empty));
         for (int i = 0; i < tcpConnections.Count; i++)
             tcpConnections[i].SendPacket(packet);
+
+        // DEBUG:
+        Console.WriteLine("\tSent packet 2311 to all clients...");
     }
 
     private void Receive3200()

@@ -170,8 +170,7 @@ public class Client
                 Receive2310();
                 break;
             case 2311:
-                //Receive2311();
-                // FIXME: This is where we incorporate everything from the lobby!
+                Receive2311();
                 break;
             case 3200:
                 // FIXME: Cues initialisation...
@@ -192,6 +191,9 @@ public class Client
                 Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
                 break;
         }
+
+        // DEBUG:
+        GD.Print();
     }
 
     private void Receive1000(long serverTimestamp, long syncTimestamp)
@@ -245,6 +247,46 @@ public class Client
     {
         // START! - With UDP, this involves establishing connections...
         sandboxBlocking = false;
+
+        // DEBUG:
+        GD.Print("\tClient "+clientID+" has started in the following state:");
+        foreach (State.Superpower superpower in state.fleets.Keys)
+        {
+            string superpowerText = "";
+            switch (superpower)
+            {
+                case State.Superpower.East:
+                    superpowerText = "The Eastern Bloc";
+                    break;
+                case State.Superpower.West:
+                    superpowerText = "The Western Bloc";
+                    break;
+                case State.Superpower.Null:
+                    superpowerText = "The Null Bloc";
+                    break;
+            }
+
+            string diplomatAddress = "";
+            if (state.fleets[superpower].diplomat.clientIP.Length > 0)
+                diplomatAddress = "with IP Address "+state.fleets[superpower].diplomat.clientIP;
+            else
+                diplomatAddress = "with no known IP Address";   
+
+            GD.Print("\t\t"+superpowerText+" has Client "+state.fleets[superpower].diplomat.clientID+" as its diplomat, "+diplomatAddress+"...");
+
+            foreach (int submarineID in state.fleets[superpower].submarines.Keys)
+            {
+                GD.Print("\t\tSubmarine "+submarineID+" starts at... [FIXME: Receive4101()]");
+
+                string captainAddress = "";
+                if (state.fleets[superpower].diplomat.clientIP.Length > 0)
+                    diplomatAddress = ""+state.fleets[superpower].diplomat.clientIP;
+                else
+                    diplomatAddress = "unknown"; 
+
+                GD.Print("\t\t\tCaptain "+clientID+", IP Address"+captainAddress+"...");
+            }
+        }
     }
 
     private void Receive4000(int superpowerID, int diplomatID)
@@ -269,7 +311,7 @@ public class Client
         }
         catch
         {
-            state.AddFleet(superpower,diplomatID,"");
+            state.AddFleet(superpower,diplomatID,""); // FIXME: Add 'query' call to get another player's ID?
         }
     }
 
