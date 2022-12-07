@@ -9,6 +9,7 @@ public class LobbyText : Text
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
+        handler.c.Connect("ReceivedPacket",this,"Receive");
 
         InitialiseText();
         GetNode<TextureButton>("StartGameButton").GrabFocus();
@@ -17,18 +18,6 @@ public class LobbyText : Text
     public void StartGamePressed()
     {
         handler.c.Send2310();
-
-        //while (handler.c.sandboxBlocking)
-        //{
-            // FIXME: Rudimentary blocking, will freeze game (temporarily)
-        //}
-
-
-
-        List<string> newHistory = new List<string>(history);
-        newHistory.Add(id);
-
-        EmitSignal("ChangeUI","Navigation","Navigation",newHistory); // FIXME: Cut to a game loading screen, then decide on Navigation/else once role received
     }
 
     public void BackPressed()
@@ -38,5 +27,19 @@ public class LobbyText : Text
         newHistory.RemoveAt(history.Count-1);
 
         EmitSignal("ChangeUI",backID,backID,newHistory);
+    }
+
+    public void Receive(int packetID)
+    {
+        switch (packetID)
+        {
+            case 2311:
+                List<string> newHistory = new List<string>(history);
+                newHistory.Add(id);
+
+                // FIXME: Run for loop/function to find client role (from handler.client.state)
+                EmitSignal("ChangeUI","Navigation","Navigation",newHistory);
+                return;
+        }
     }
 }

@@ -6,8 +6,11 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-public class Client
+public class Client : Node
 {
+    [Signal]
+    delegate void ReceivedPacket(int packetID);
+
     private const string CLIENTIP = "127.0.0.1";// FIXME: How to get own IP?
     private const string SERVERIP = "127.0.0.1";//"192.168.1.200";//"80.44.238.161";
     private const int SERVERPORT = 5555;
@@ -191,6 +194,7 @@ public class Client
                 Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
                 break;
         }
+        EmitSignal("ReceivedPacket",packet.header.bodyID);
 
         // DEBUG:
         GD.Print();
