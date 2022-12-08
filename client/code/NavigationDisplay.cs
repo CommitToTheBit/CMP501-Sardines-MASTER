@@ -50,19 +50,20 @@ public class NavigationDisplay : Control
         // FIXME: Deactivated to check other network changes in isolation
 
         // Take in player controls
-        //UpdatePosition(delta);
+        UpdatePosition(delta);
 
         // Move all objects on screen to h.c.state positions
-        //Render();
+        Render();
     }
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?
     {
         Dictionary<int, Submarine> submarines = h.c.state.GetSubmarines();
-        if (!submarines.ContainsKey(h.c.GetClientID()))
+
+        if (!submarines.ContainsKey(h.c.submarineID))
             return;
 
-        Submarine submarine = submarines[h.c.GetClientID()];
+        Submarine submarine = submarines[h.c.submarineID];
         float x = submarine.x[2];
         float y = submarine.y[2];
         float theta = submarine.theta[2];
@@ -92,15 +93,15 @@ public class NavigationDisplay : Control
         const float SWEEP_PERIOD = 6.0f;
         const float VISIBLE_PERIOD = 5.4f;
 
-        int clientID = h.c.GetClientID();
+        int submarineID = h.c.submarineID;
         Dictionary<int,Submarine> submarines = h.c.state.GetSubmarines();
 
-        if (!submarines.ContainsKey(clientID) || clientID < 0)
+        if (!submarines.ContainsKey(submarineID) || submarineID < 0)
             return;
 
-        float x = submarines[clientID].x[2];
-        float y = submarines[clientID].y[2];
-        float theta = submarines[clientID].theta[2];
+        float x = submarines[submarineID].x[2];
+        float y = submarines[submarineID].y[2];
+        float theta = submarines[submarineID].theta[2];
 
         long timestamp = DateTime.UtcNow.Ticks+h.c.delay;
         long ftimestamp = (timestamp-h.c.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
@@ -110,7 +111,7 @@ public class NavigationDisplay : Control
         
         foreach (int id in submarines.Keys)
         {
-            if (id == clientID)
+            if (id == submarineID)
                 continue;
 
             (float x, float y, float theta) prediction = submarines[id].QuadraticPredictPosition(timestamp);
