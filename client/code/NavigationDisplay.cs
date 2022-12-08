@@ -137,6 +137,8 @@ public class NavigationDisplay : Control
 
             vessels[id].Modulate = new Color(1.0f,1.0f,1.0f,t);
         }
+
+        GD.Print(submarines[submarineID].theta[2]);
     }
 
     // Sending values from our client state to our server state

@@ -139,13 +139,13 @@ public class Submarine
         float xFront = x[2] + 0.5f * length * Mathf.Sin(theta[2]); // x-coordinate of front of submarine
         xFront += delta * u * Mathf.Sin(theta[2]); // Horizontal movement
 
-        float yFront = y[2] + 0.5f * length * Mathf.Cos(theta[2]); // y-coordinate of front of submarine
+        float yFront = y[2] - 0.5f * length * Mathf.Cos(theta[2]); // y-coordinate of front of submarine
         yFront += delta * u * (-Mathf.Cos(theta[2])); // Vertical movement
 
         float xBack = x[2] - 0.5f * length * Mathf.Sin(theta[2]); // x-coordinate of back of submarine
         xBack += delta * u * Mathf.Sin(theta[2] + steer); // Horizontal movement
 
-        float yBack = y[2] - 0.5f * length * Mathf.Cos(theta[2]); // y-coordinate of back of submarine
+        float yBack = y[2] + 0.5f * length * Mathf.Cos(theta[2]); // y-coordinate of back of submarine
         yBack += delta * u * (-Mathf.Cos(theta[2] + steer)); // Vertical movement
 
         // Set this as the player's new position (this derivation will always be true in resolving disputes)
