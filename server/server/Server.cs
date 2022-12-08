@@ -42,13 +42,18 @@ public class Server
 
         /* -------------------------------------------------------------------- */
         /* CC: https://stackoverflow.com/questions/6803073/get-local-ip-address */
-        var host = Dns.GetHostEntry(Dns.GetHostName()); // CHECME: Is System.
-        string localIP = "undefined";
+        var host = Dns.GetHostEntry(Dns.GetHostName()); // CHECKME: Is System.Net.Dns too advanced?
+        string internetworkIP = "not found";
+        string unixIP = "not found";
         foreach (var ip in host.AddressList)
         {
-            if (ip.AddressFamily == AddressFamily.Unix) // FIXME: So, could we use *another* address family? // FIXME: Use local network; absolutely what is expected for purposes of this coursework...
+            if (ip.AddressFamily == AddressFamily.InterNetwork) // DEBUG: AddressFamily.Internetwork gives 'global' address...
             {
-                localIP = ip.ToString();
+                internetworkIP = ip.ToString();
+            }
+            else if (ip.AddressFamily == AddressFamily.Unix)
+            {
+                unixIP = ip.ToString();
             }
         }
         /* -------------------------------------------------------------------- */
@@ -70,8 +75,12 @@ public class Server
         serverState = new State(0);
 
         // DEBUG:
-        Console.WriteLine("Server ready at " + DateTime.UtcNow.Ticks + "...");
-        Console.WriteLine("Server's Unix IP is " + localIP + "...");
+        //Console.WriteLine("Server ready at " + DateTime.UtcNow.Ticks + "...");
+
+        Console.WriteLine("Server's Internetwork IP is " + internetworkIP + "..."); // Client uses this to check... they're on the same network? // FIXME: Justify/build lobby entry using knowledge of how IP works...
+        Console.WriteLine("Server's Unix IP is " + unixIP + "..."); // Client uses this to actually create a socket...
+        if (internetworkIP.Equals("not found") || unixIP.Equals("not found"))
+            Console.WriteLine("\t...Please run on a different network");// Include note in README on secret, client-side, "127.0.0.1" override...
         Console.WriteLine();
     }
 
