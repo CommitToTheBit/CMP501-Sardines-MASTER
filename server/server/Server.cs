@@ -268,7 +268,7 @@ public class Server
                 break;
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection?
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
+                Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
                 break;
         }
 
@@ -420,14 +420,14 @@ public class Server
         // FIXME: Need to 'wipe' remaining clients of their knowledge, connections, etc...
     }
 
-    private void Receive4101(int clientID, float x, float y, float theta, long timestamp, int index)
+    private void Receive4101(int submarineID, float x, float y, float theta, long timestamp, int index)
     {
         // Captain sends the server their new position
         // Server updates its current state, then forwards on to all other clients
-        serverState.UpdateSubmarine(clientID, x, y, theta, timestamp);
+        serverState.UpdateSubmarine(submarineID, x, y, theta, timestamp);
 
         HeaderPacket header = new HeaderPacket(4101);
-        PositionPacket submarine = new PositionPacket(clientID, x, y, theta, timestamp);
+        PositionPacket submarine = new PositionPacket(submarineID, x, y, theta, timestamp);
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<PositionPacket>(submarine));
         for (int i = 0; i < tcpConnections.Count; i++)
             if (i != index) // FIXME: No discretion about who we send to could mean spam?

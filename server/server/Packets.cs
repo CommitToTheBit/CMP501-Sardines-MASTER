@@ -163,14 +163,14 @@ public struct SubmarinePacket
 
 public struct PositionPacket
 {
-    public int clientID; // clientID of submarine
+    public int submarineID;
     public float x, y;
     public float theta;
     public long timestamp; // Timestamp for when this position was true
 
-    public PositionPacket(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)
+    public PositionPacket(int init_submarineID, float init_x, float init_y, float init_theta, long init_timestamp)
     {
-        clientID = init_clientID;
+        submarineID = init_submarineID;
 
         x = init_x;
         y = init_y;

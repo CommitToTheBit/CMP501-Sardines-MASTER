@@ -15,7 +15,7 @@ public class Submarine
     public bool contactCapability;
 
     // Private status variables
-    private bool positionInitialised;
+    private bool positionInitialised; // FIXME: Make a private version workable!
 
     // Public variables: sent to/from server in submarine packet
     public float[] x, y;
@@ -83,14 +83,11 @@ public class Submarine
     }
 
     // Initialising position
-    public void InitialisePosition(float init_x, float init_y, float init_theta, long init_timestamp)
+    public bool InitialisePosition(float init_x, float init_y, float init_theta, long init_timestamp)
     {
         // Has position already been initialised? 
         if (positionInitialised)
-        {
-            UpdatePosition(init_x, init_y, init_theta, init_timestamp);
-            return;
-        }
+            return UpdatePosition(init_x, init_y, init_theta, init_timestamp);
 
         positionInitialised = true;
 
@@ -106,11 +103,17 @@ public class Submarine
 
         // Initialise prediction variables via UpdateQuadraticModel
         UpdatePredictionModel();
+
+        return true;
     }
 
     // 'Logging' updates to position
     public bool UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp)
     {
+        // If position is uninitialised, do that!
+        if (!positionInitialised)
+            return InitialisePosition(init_x, init_y, init_theta, init_timestamp);
+
         // Disregard any position updates sent out of order (makes no sense to factor something the player hasn't seen into any model!)
         if (init_timestamp <= timestamp[2])
             return false;

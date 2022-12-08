@@ -17,8 +17,6 @@ public class State
     public enum Superpower { East, West, Null };
     public Dictionary<Superpower, Fleet> fleets;
 
-    private Dictionary<int, Submarine> submarines;
-
     private Random rng;
 
     public State(int init_seed)
@@ -62,11 +60,11 @@ public class State
         fleets.Add(Superpower.East, new Fleet(clientIDs[0], clientIPs[0]));
         fleets.Add(Superpower.West, new Fleet(clientIDs[1], clientIPs[1]));
 
-        fleets[Superpower.East].AddSubmarine(2, clientIDs[2], clientIPs[2], true); // FIXME: Fleet.AddSubmarine is *obviously* a big one...
-        fleets[Superpower.West].AddSubmarine(3, clientIDs[3], clientIPs[3], true);
+        fleets[Superpower.East].AddSubmarine(clientIDs[2], clientIDs[2], clientIPs[2], true); // FIXME: Fleet.AddSubmarine is *obviously* a big one...
+        fleets[Superpower.West].AddSubmarine(clientIDs[3], clientIDs[3], clientIPs[3], true);
 
         for (int i = 4; i < clientIDs.Count; i++)
-            fleets[(rng.Next() % 2 == 0) ? Superpower.East : Superpower.West].AddSubmarine(i, clientIDs[i], clientIPs[i], false);
+            fleets[(rng.Next() % 2 == 0) ? Superpower.East : Superpower.West].AddSubmarine(clientIDs[i], clientIDs[i], clientIPs[i], false);
 
         // STEP 2: Set game state
         // i.e. Submarine positions... superpower codes? (Code as covert signals to one another?)
@@ -94,7 +92,7 @@ public class State
         // i.e. Submarine positions... superpower codes? (Code as covert signals to one another?)
         foreach (Superpower superpower in fleets.Keys)
             foreach (int submarineID in fleets[superpower].submarines.Keys)
-                fleets[superpower].submarines[submarineID].InitialisePosition(0.0f, 0.0f, 0.0f, globalStart);
+                fleets[superpower].submarines[submarineID].InitialisePosition(100.0f*submarineID, 0.0f, 0.0f, globalStart);
     }
 
     public void AddFleet(Superpower superpower, int clientID, string clientIP)
@@ -111,15 +109,24 @@ public class State
     {
         // FIXME: Maybe needs to be more 'in range'?
         Superpower superpower = GetSubmarineSuperpower(submarineID);
-        if (superpower != Superpower.Null)
+        try 
         {
             if (fleets[superpower].submarines[submarineID].UpdatePosition(x, y, theta, timestamp))
-                submarines[submarineID].UpdatePredictionModel(); // Only updates prediction model if position has changed...
+                fleets[superpower].submarines[submarineID].UpdatePredictionModel(); // Only updates prediction model if position has changed...
+        }
+        catch
+        {
+            // CATCH: key not present...
         }
     }
 
     public Dictionary<int, Submarine> GetSubmarines()
     {
+        Dictionary<int, Submarine> submarines = new Dictionary<int, Submarine>();
+        foreach (Superpower superpower in fleets.Keys)
+            foreach (int submarineID in fleets[superpower].submarines.Keys)
+                submarines.Add(submarineID,fleets[superpower].submarines[submarineID]);
+        
         return submarines;
     }
 

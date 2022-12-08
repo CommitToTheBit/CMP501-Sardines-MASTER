@@ -30,6 +30,8 @@ public class Client : Node
 
     public bool sandboxBlocking;
 
+    public int submarineID;
+
     // Constructor
     public Client()
     {
@@ -48,6 +50,8 @@ public class Client : Node
         Console.WriteLine("Client started at " + started+".");
 
         sandboxBlocking = false;
+
+        submarineID = -1;
     }
 
     // Destructor
@@ -196,7 +200,7 @@ public class Client : Node
                 break;
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection? // Or - using 'forward-only' prediction, hence no UDP!
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                Receive4101(positionPacket.clientID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
+                Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
                 break;
         }
         EmitSignal("ReceivedPacket",packet.header.bodyID);
@@ -289,7 +293,7 @@ public class Client : Node
 
             foreach (int submarineID in state.fleets[superpower].submarines.Keys)
             {
-                GD.Print("\t\tSubmarine "+submarineID+" starts at... [FIXME: Receive4101()]");
+                GD.Print("\t\tSubmarine "+submarineID+" starts at ("+state.fleets[superpower].submarines[submarineID].x[2]+", "+state.fleets[superpower].submarines[submarineID].y[2]+")");
 
                 string captainAddress = "";
                 if (state.fleets[superpower].submarines[submarineID].captain.clientIP.Length > 0)
@@ -328,10 +332,10 @@ public class Client : Node
         }
     }
 
-    private void Receive4100(int superpowerID, int submarineID, int captainID, bool nuclearCapability)
+    private void Receive4100(int init_superpowerID, int init_submarineID, int init_captainID, bool init_nuclearCapability)
     {
         State.Superpower superpower;
-        switch (superpowerID)
+        switch (init_superpowerID)
         {
             case 0:
                 superpower = State.Superpower.East;
@@ -344,12 +348,17 @@ public class Client : Node
                 break;
         }
 
-        state.AddSubmarine(superpower,submarineID,captainID,clientIPs[captainID],nuclearCapability);
+        state.AddSubmarine(superpower,init_submarineID,init_captainID,clientIPs[init_captainID],init_nuclearCapability);
+        if (init_captainID == clientID)
+            submarineID = init_submarineID;
+
     }
 
-    private void Receive4101(int init_clientID, float init_x, float init_y, float init_theta, long init_timestamp)
+    private void Receive4101(int init_submarineID, float init_x, float init_y, float init_theta, long init_timestamp)
     {
-        // FIXME: Fill in the blank!
+        // FIXME: Add range checks on server and client sides...
+        // FIXME: Who should get priority if client and server update the submarine *at the same time*? This is built in to Submarine.cs, to some extent...
+        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp);
     }
 
     // Client 'Calls'
@@ -364,57 +373,14 @@ public class Client : Node
         serverConnection.SendPacket(packet);
     }
 
-    //public void Send4101()
-
-// FIXME: DEPRECATED
-    // Send functions
-
-
-    public void SendPositionPacket(float x, float y, float theta, long timestamp)
+    public void Send4101(float x, float y, float theta, long timestamp)
     {
-        /*
-        *   Send details of own submarine to server
-        */
+        // CLient sends details of their own submarine to server
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
-        HeaderPacket header = new HeaderPacket(2);
-        PositionPacket submarine = new PositionPacket(clientID,x,y,theta,timestamp);
+        HeaderPacket header = new HeaderPacket(4101);
+        PositionPacket submarine = new PositionPacket(submarineID,x,y,theta,timestamp);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<PositionPacket>(submarine));
         serverConnection.SendPacket(packet);
-    }
-
-    // Receive functions
-    /*private void ReceivePacket(SendablePacket packet) // Redirects each type of packet
-    {
-        switch (packet.header.bodyID)
-        {
-            case 0:
-                SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
-                ReceiveSyncPacket(syncPacket,packet.header.timestamp);
-                break;
-            case 1:
-                IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
-                ReceiveIDPacket(idPacket);
-                break;
-            case 2:
-                PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
-                ReceivePositionPacket(positionPacket);
-                break;    
-        }
-    }*/
-
-    private void ReceivePositionPacket(PositionPacket packet)
-    {
-        /*
-        *   Update nearby submarines, and forget about submarines out of range. 
-        */
-        Console.WriteLine("Client "+clientID+": Received position packet about Client "+packet.clientID+"...");
-
-        if (packet.clientID < 0)
-            return;
-
-        // FIXME: Add range checks on server and client sides...
-        // FIXME: Who should get priority if client and server update the submarine *at the same time*?
-        state.UpdateSubmarine(packet.clientID,packet.x,packet.y,packet.theta,packet.timestamp);
     }
 
     // Accessors
