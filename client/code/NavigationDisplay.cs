@@ -114,7 +114,7 @@ public class NavigationDisplay : Control
             if (id == submarineID)
                 continue;
 
-            (float x, float y, float theta) prediction = submarines[id].QuadraticPredictPosition(timestamp);
+            (float x, float y, float theta) prediction = submarines[id].InterpolatePosition(timestamp);
 
             if (!vessels.ContainsKey(id))
             {

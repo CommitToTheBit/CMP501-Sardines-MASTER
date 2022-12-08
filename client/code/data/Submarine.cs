@@ -27,9 +27,9 @@ public class Submarine
     private float u;
 
     // Private prediction variables: parameters for our quadratic models
-    private float[] X, Y;
-    private float[] THETA;
-    private long TIMESTAMP;
+    private float[][] X, Y;
+    private float[][] THETA;
+    private long[] TIMESTAMP;
 
     // Constructor
     public Submarine(int init_clientID, string init_clientIP, bool init_nuclearCapability)
@@ -89,8 +89,6 @@ public class Submarine
         if (positionInitialised)
             return UpdatePosition(init_x, init_y, init_theta, init_timestamp);
 
-        positionInitialised = true;
-
         // Initialise position of submarine
         x = new float[3] { init_x, init_x, init_x };
         y = new float[3] { init_y, init_y, init_y };
@@ -104,6 +102,7 @@ public class Submarine
         // Initialise prediction variables via UpdateQuadraticModel
         UpdatePredictionModel();
 
+        positionInitialised = true;
         return true;
     }
 
@@ -193,34 +192,72 @@ public class Submarine
         float[] utheta = new float[2] { (theta[1] - theta[0]) / deltas[0], (theta[2] - theta[1]) / deltas[1] };
         float[] atheta = new float[1] { (utheta[1] - utheta[0]) / deltas[0] };
 
-        // Update parameters of quadratic model
-        X = new float[3] { x[2], ux[1], ax[0] };
-        Y = new float[3] { y[2], uy[1], ay[0] };
-        THETA = new float[3] { theta[2], utheta[1], atheta[0] };
-        TIMESTAMP = timestamp[2];
+        // 'Catch up' back-end 
+        GD.Print(positionInitialised);
+        if (positionInitialised)
+        {
+            X[0] = X[1];
+            Y[0] = Y[1];
+            THETA[0] = THETA[1];
+            TIMESTAMP[0] = TIMESTAMP[1];
+
+            // Update parameters of quadratic model
+            X[1] = new float[3] { x[2], ux[1], ax[0] };
+            Y[1] = new float[3] { y[2], uy[1], ay[0] };
+            THETA[1] = new float[3] { theta[2], utheta[1], atheta[0] };
+            TIMESTAMP[1] = timestamp[2];
+        }
+        else
+        {
+            // Update parameters of quadratic model
+            X = new float[2][];
+            Y = new float[2][];
+            THETA = new float[2][];
+            TIMESTAMP = new long[2];
+
+            X[1] = new float[3] { x[2], ux[1], ax[0] };
+            Y[1] = new float[3] { y[2], uy[1], ay[0] };
+            THETA[1] = new float[3] { theta[2], utheta[1], atheta[0] };
+            TIMESTAMP[1] = timestamp[2];
+
+            X[0] = X[1];
+            Y[0] = Y[1];
+            THETA[0] = THETA[1];
+            TIMESTAMP[0] = TIMESTAMP[1];
+        }
     }
 
-    public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction)
+    public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction, int index)
     {
         // Derive delta from timestamps
-        float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP);
+        float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[index]);
 
         // Quadratically predict positions at time t
-        float xPrediction = X[0] + X[1] * t + 0.5f * X[2] * t * t;
-        float yPrediction = Y[0] + Y[1] * t + 0.5f * Y[2] * t * t;
-        float thetaPrediction = THETA[0] + THETA[1] * t + 0.5f * THETA[2] * t * t;
+        float xPrediction = X[index][0] + X[index][1] * t + 0.5f * X[index][2] * t * t;
+        float yPrediction = Y[index][0] + Y[index][1] * t + 0.5f * Y[index][2] * t * t;
+        float thetaPrediction = THETA[index][0] + THETA[index][1] * t + 0.5f * THETA[index][2] * t * t;
 
         return (xPrediction: xPrediction, yPrediction: yPrediction, thetaPrediction: thetaPrediction);
     }
 
-    public void InterpolatePosition()
+    public (float xInterpolation, float yInterpolation, float thetaInterpolation) InterpolatePosition(long timestampPrediction)
     {
-        //  if (time-last timestamp >= 0.05s) // Half our interval for sending tcp position updates...
-        //      set back-end prediction params to front-end prediction params
-        //      return front-end prediction
-        //
-        //  return lerp of back-end and front-end predictions
-        //
+        float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[0]);
+        t = Mathf.Clamp(0.0f,0.05f,t);
+
+        (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
+        if (t >= 0.05f)
+        {
+            return frontPrediction;
+        }
+        else
+        {
+            (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
+
+            t *= 20.0f;
+            return (xInterpolation: (1.0f-t)*frontPrediction.x+t*backPrediction.x, yInterpolation: (1.0f-t)*frontPrediction.y+t*backPrediction.y, thetaInterpolation: (1.0f-t)*frontPrediction.theta+t*backPrediction.theta);
+        }
+
         //  BUG/FEATURE: Because packets are sent with timestamps 0.1s apart, if we ever receive two packets at once, we'll automatically 'skip to' the penultimate?
         //  -> Interpolate/some simpler function needs called on every packet received, to update back-end prediction... // FIXME: Appropriate terminology?
     }
