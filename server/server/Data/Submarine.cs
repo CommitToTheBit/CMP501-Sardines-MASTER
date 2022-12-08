@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 public class Submarine
 {
@@ -10,7 +14,7 @@ public class Submarine
     public bool contactCapability;
 
     // Private status variables
-    private bool positionInitialised;
+    private bool positionInitialised; // FIXME: Make a private version workable!
 
     // Public variables: sent to/from server in submarine packet
     public float[] x, y;
@@ -124,28 +128,50 @@ public class Submarine
     // Physics
     public void DerivePosition(float thrust, float steer, float delta)
     {
-        const float conversion = 10.0f;
-        const float length = 20.0f;
+        //const float conversion = 10.0f;
+        const float length = 40.0f;
+
+        //UpdatePosition(x[2]-50.0f*delta*steer,y[2]-50.0f*delta*thrust,0.0f,timestamp[2]+(long)(Mathf.Pow(10,7)*delta));
+        //return;
 
         // FIXME: Calculate x/y accelaterations, velocities *analytically*
-        a += conversion * delta * thrust;
-        u += delta * a;
+        //a += conversion*delta*thrust;
+        a = thrust - MathF.Pow(u / 40.0f, 2);
+        u += 10.0f * delta * a;
+        u = Math.Clamp(u, 0, 40.0f);
+        if (thrust <= 0.0f && u < 4.0f) // 'STOPPING THRESHOLD': Less than half an 8x8 pixel
+            u = 0.0f;
+        //u = 20.0f;
 
         float xFront = x[2] + 0.5f * length * MathF.Sin(theta[2]); // x-coordinate of front of submarine
         xFront += delta * u * MathF.Sin(theta[2]); // Horizontal movement
 
-        float yFront = y[2] - 0.5f * length * MathF.Cos(theta[2]); // y-coordinate of front of submarine
+        float yFront = y[2] + 0.5f * (-length * MathF.Cos(theta[2])); // y-coordinate of front of submarine
         yFront += delta * u * (-MathF.Cos(theta[2])); // Vertical movement
 
         float xBack = x[2] - 0.5f * length * MathF.Sin(theta[2]); // x-coordinate of back of submarine
         xBack += delta * u * MathF.Sin(theta[2] + steer); // Horizontal movement
 
-        float yBack = y[2] + 0.5f * length * MathF.Cos(theta[2]); // y-coordinate of back of submarine
+        float yBack = y[2] - 0.5f * (-length * MathF.Cos(theta[2])); // y-coordinate of back of submarine
         yBack += delta * u * (-MathF.Cos(theta[2] + steer)); // Vertical movement
 
-        // Set this as the player's new position (this derivation will always be true in resolving disputes)
-        // FIXME: Use of timestamp[0]+delta here could be shaky if sending/receiving own position?
-        UpdatePosition(0.5f * (xFront + xBack), 0.5f * (yFront + yBack), MathF.Atan2(xFront - xBack, -yFront + yBack), timestamp[2] + (long)(MathF.Pow(10, 7) * delta));
+        float xNew = 0.5f * (xFront + xBack);
+        float yNew = 0.5f * (yFront + yBack);
+
+        // Accounting for discontinuities in theta...
+        float ithetaNew = MathF.Floor((theta[2] + MathF.PI) / (2 * MathF.PI));
+        float fthetaNew = MathF.Atan2(xFront - xBack, -yFront + yBack);
+        if (theta[2] - 2 * MathF.PI * ithetaNew < -MathF.PI / 2 && fthetaNew >= MathF.PI / 2)
+            ithetaNew--;
+        else if (theta[2] - 2 * MathF.PI * ithetaNew >= MathF.PI / 2 && fthetaNew < -MathF.PI / 2)
+            ithetaNew++;
+        float thetaNew = 2 * MathF.PI * ithetaNew + fthetaNew;
+
+        // FIXME: Use of timestamp[2]+delta here could be shaky if sending/receiving own position?
+        long timestampNew = timestamp[2] + (long)(MathF.Pow(10, 7) * delta);
+
+        // Set the player's new position (this derivation will always be true in resolving disputes)
+        UpdatePosition(xNew, yNew, thetaNew, timestampNew);
 
         // No need to update quadratic model, as we will never have to predict our own position!
     }

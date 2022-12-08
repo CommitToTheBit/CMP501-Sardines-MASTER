@@ -139,7 +139,9 @@ public class Submarine
         //a += conversion*delta*thrust;
         a = thrust-Mathf.Pow(u/40.0f,2);
         u += 10.0f*delta*a;
-        u = Mathf.Clamp(u,0,40.0f);
+        u = Mathf.Clamp(u,0.0f,40.0f);
+        if (thrust <= 0.0f && u < 4.0f) // 'STOPPING THRESHOLD': Less than half an 8x8 pixel
+            u = 0.0f;
         //u = 20.0f;
 
         float xFront = x[2]+0.5f*length*Mathf.Sin(theta[2]); // x-coordinate of front of submarine
