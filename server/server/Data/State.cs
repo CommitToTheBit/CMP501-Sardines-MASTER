@@ -92,7 +92,7 @@ public class State
         // i.e. Submarine positions... superpower codes? (Code as covert signals to one another?)
         foreach (Superpower superpower in fleets.Keys)
             foreach (int submarineID in fleets[superpower].submarines.Keys)
-                fleets[superpower].submarines[submarineID].InitialisePosition(100.0f*submarineID, 0.0f, 0.0f, globalStart);
+                fleets[superpower].submarines[submarineID].InitialisePosition(100.0f*submarineID, 0.0f, 1.57f*submarineID, globalStart);
     }
 
     public void AddFleet(Superpower superpower, int clientID, string clientIP)

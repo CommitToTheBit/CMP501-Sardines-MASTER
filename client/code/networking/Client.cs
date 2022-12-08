@@ -293,7 +293,7 @@ public class Client : Node
 
             foreach (int submarineID in state.fleets[superpower].submarines.Keys)
             {
-                GD.Print("\t\tSubmarine "+submarineID+" starts at ("+state.fleets[superpower].submarines[submarineID].x[2]+", "+state.fleets[superpower].submarines[submarineID].y[2]+")");
+                GD.Print("\t\tSubmarine "+submarineID+" starts at ("+state.fleets[superpower].submarines[submarineID].x[2]+", "+state.fleets[superpower].submarines[submarineID].y[2]+"), angle "+state.fleets[superpower].submarines[submarineID].theta[2]);
 
                 string captainAddress = "";
                 if (state.fleets[superpower].submarines[submarineID].captain.clientIP.Length > 0)

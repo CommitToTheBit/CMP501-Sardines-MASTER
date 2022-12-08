@@ -142,7 +142,7 @@ public class NavigationDisplay : Control
     // Sending values from our client state to our server state
     public void SendPosition()
     {
-        //Submarine submarine = h.c.state.GetSubmarines()[h.c.GetClientID()];
-        //h.c.SendPositionPacket(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+h.c.delay);
+        Submarine submarine = h.c.state.GetSubmarines()[h.c.submarineID];
+        h.c.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+h.c.delay);
     }
 }
