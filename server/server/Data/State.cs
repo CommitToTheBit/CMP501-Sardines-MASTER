@@ -37,12 +37,17 @@ public class State
     // Switching Server Mode
     public void StartLobby()
     {
+        // STEP 0: Set 'restarted lobby'
+        mode = Mode.lobby;
+        globalStart = 0;
 
+        // Take in clientIDConnections, all IPs, but only *use* releveant IPs... then access from server?
     }
 
     public void StartMatch(List<int> init_clientIDs, List<string> init_clientIPs)
     {
         // STEP 0: Set 'start of game'
+        mode = Mode.match;
         globalStart = DateTime.UtcNow.Ticks;
 
         // STEP 1: Set player roles
@@ -76,6 +81,7 @@ public class State
     public void StartSandbox(List<int> init_clientIDs, List<string> init_clientIPs)
     {
         // STEP 0: Set 'start of game'
+        mode = Mode.sandbox;
         globalStart = DateTime.UtcNow.Ticks;
 
         // STEP 1: Set player roles
