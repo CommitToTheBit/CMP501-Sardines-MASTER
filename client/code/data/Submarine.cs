@@ -246,7 +246,7 @@ public class Submarine
         t = Mathf.Clamp(0.0f,0.05f,t);
 
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
-        if (t >= 0.05f)
+        if (t >= 0.0f) // DEBUG: Interpolation interval will be half of position packet interval, but we can set this to 0.0f to 'turn off' interpolation // FIXME: Add slider/checbox for prediction/interpolation, respectively, in settings?
         {
             return frontPrediction;
         }
