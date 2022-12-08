@@ -40,6 +40,19 @@ public class Server
         int last = address.LastIndexOf("</body>");
         address = address.Substring(first, last - first);*/
 
+        /* -------------------------------------------------------------------- */
+        /* CC: https://stackoverflow.com/questions/6803073/get-local-ip-address */
+        var host = Dns.GetHostEntry(Dns.GetHostName()); // CHECME: Is System.
+        string localIP = "undefined";
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.Unix) // FIXME: So, could we use *another* address family? // FIXME: Use local network; absolutely what is expected for purposes of this coursework...
+            {
+                localIP = ip.ToString();
+            }
+        }
+        /* -------------------------------------------------------------------- */
+
         IPAddress ipAddress = IPAddress.Parse("127.0.0.1");// IPAddress.Parse("192.168.1.200");
         IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 5555);
 
@@ -58,6 +71,7 @@ public class Server
 
         // DEBUG:
         Console.WriteLine("Server ready at " + DateTime.UtcNow.Ticks + "...");
+        Console.WriteLine("Server's Unix IP is " + localIP + "...");
         Console.WriteLine();
     }
 
