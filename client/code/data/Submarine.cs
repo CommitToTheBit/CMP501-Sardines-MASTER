@@ -212,6 +212,18 @@ public class Submarine
 
         return (xPrediction: xPrediction, yPrediction: yPrediction, thetaPrediction: thetaPrediction);
     }
+
+    public void InterpolatePosition()
+    {
+        //  if (time-last timestamp >= 0.05s) // Half our interval for sending tcp position updates...
+        //      set back-end prediction params to front-end prediction params
+        //      return front-end prediction
+        //
+        //  return lerp of back-end and front-end predictions
+        //
+        //  BUG/FEATURE: Because packets are sent with timestamps 0.1s apart, if we ever receive two packets at once, we'll automatically 'skip to' the penultimate?
+        //  -> Interpolate/some simpler function needs called on every packet received, to update back-end prediction... // FIXME: Appropriate terminology?
+    }
 }
 
 public class Crew
