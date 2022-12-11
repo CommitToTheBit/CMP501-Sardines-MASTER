@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 public class Text : VBoxContainer
 {
-    [Signal]
-    delegate void ChangeUI(string textID, string displayID, List<string> textHistory);
+    [Signal] delegate void ChangeUI(string textID, string displayID, List<string> textHistory);
 
     Tween tween;
 
@@ -57,9 +56,10 @@ public class Text : VBoxContainer
                 child.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {child});
                 child.Connect("pressed",this,buttonID+"Pressed");
             }
-            else if (child is RichTextLabel && child.Name.Substring(child.Name.Length-12,12).Equals("PseudoButton"))
+            else if (child is PseudoButton)
             {
                 GD.Print("PseudoButton found!");
+                child.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {child});
             }
 
             Hide();
