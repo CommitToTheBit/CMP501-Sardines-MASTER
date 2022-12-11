@@ -15,14 +15,17 @@ public class JoinGameText : Text
         ipPseudoButton = GetNode<PseudoButton>("IPPseudoButton");
 
         timer = new Timer();
-        timer.WaitTime = 0.8f;
+        timer.WaitTime = 0.3f;
         timer.Autostart = false;
         timer.OneShot = false;
         AddChild(timer);
-        ipPseudoButton.Connect("focus_entered",timer,"Start");
+
+        underscore = "_";
+        ipPseudoButton.Connect("focus_entered",timer,"start");
+        ipPseudoButton.Connect("focus_exited",timer,"stop");
         ipPseudoButton.Connect("focus_entered",this,"SetUnderscore",new Godot.Collections.Array() {"_"});
         ipPseudoButton.Connect("focus_exited",this,"SetUnderscore",new Godot.Collections.Array() {""});
-        //timer.Connect("timeout",this,"SetUnderscore",new Godot.Collections.Array() {(underscore.Equals("_")) ? "" : "_"});
+        timer.Connect("timeout",this,"SetUnderscore",new Godot.Collections.Array() {((underscore.Equals("_")) ? "" : "_")/**/});
         
         ipPseudoButton.GrabFocus();//GetNode<RichTextLabel>("InternetworkPseudoButton").GrabFocus();
     }
@@ -35,6 +38,7 @@ public class JoinGameText : Text
 
     public void SetUnderscore(string init_underscore)
     {
+        GD.Print(underscore+" to "+init_underscore+" "+DateTime.UtcNow.Ticks);
         underscore = init_underscore;
         SetIP();
     }
