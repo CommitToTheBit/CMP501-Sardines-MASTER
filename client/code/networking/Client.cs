@@ -12,7 +12,7 @@ public class Client : Node
     delegate void ReceivedPacket(int packetID);
 
     private const string CLIENTIP = "127.0.0.1";// FIXME: How to get own IP?
-    private const string SERVERIP = "127.0.0.1";//"192.168.1.200";//"80.44.238.161";
+    private const string SERVERIP = "192.168.1.200";//"80.44.238.161";
     private const int SERVERPORT = 5555;
 
     // Variables
