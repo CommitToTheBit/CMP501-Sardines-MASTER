@@ -10,10 +10,10 @@ public class PseudoButton : Button
     public override void _Ready()
     {
         pseudoText = GetNode<RichTextLabel>("PseudoText");
-        SetBbcode(false);
+        FormatBbcode(false);
     }
 
-    public void SetBbcode(bool focus)
+    public void FormatBbcode(bool focus)
     {
         string indent = ">  ";
         string bold = "[b]";

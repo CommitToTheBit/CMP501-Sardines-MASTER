@@ -74,7 +74,7 @@ focus_neighbour_top = NodePath("../IPPseudoButton")
 focus_neighbour_bottom = NodePath("../IPPseudoButton")
 texture_normal = ExtResource( 2 )
 
-[node name="Spacing #8" type="Control" parent="."]
+[node name="Spacing #4" type="Control" parent="."]
 margin_top = 728.0
 margin_right = 540.0
 margin_bottom = 1080.0

@@ -58,9 +58,11 @@ public class Text : VBoxContainer
             }
             else if (child is PseudoButton)
             {
+                string pseudoButtonID = child.Name.Substring(0,child.Name.Length-12);
                 child.Connect("focus_entered",this,"PseudoButtonFocused",new Godot.Collections.Array() {child,true});
                 child.Connect("focus_exited",this,"PseudoButtonFocused",new Godot.Collections.Array() {child,false});
                 child.Connect("mouse_entered",this,"PseudoButtonHovered",new Godot.Collections.Array() {child});
+                child.Connect("pressed",this,pseudoButtonID+"Pressed");
             }
 
             Hide();
@@ -95,7 +97,7 @@ public class Text : VBoxContainer
 
     public void PseudoButtonFocused(PseudoButton pseudoButton, bool focus)
     {
-        pseudoButton.SetBbcode(focus);
+        pseudoButton.FormatBbcode(focus);
     }
 
     public void PseudoButtonHovered(PseudoButton pseudoButton)

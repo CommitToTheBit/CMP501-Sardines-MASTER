@@ -4,10 +4,44 @@ using System.Collections.Generic;
 
 public class JoinGameText : Text
 {
+    private PseudoButton ipPseudoButton;
+    private string ip;
+    private string underscore;
+    private Timer timer;
+
     public override void _Ready()
     {
         InitialiseText();
-        GetNode<TextureButton>("BackButton").GrabFocus();//GetNode<RichTextLabel>("InternetworkPseudoButton").GrabFocus();
+        ipPseudoButton = GetNode<PseudoButton>("IPPseudoButton");
+
+        timer = new Timer();
+        timer.WaitTime = 0.8f;
+        timer.Autostart = false;
+        timer.OneShot = false;
+        AddChild(timer);
+        ipPseudoButton.Connect("focus_entered",timer,"Start");
+        ipPseudoButton.Connect("focus_entered",this,"SetUnderscore",new Godot.Collections.Array() {"_"});
+        ipPseudoButton.Connect("focus_exited",this,"SetUnderscore",new Godot.Collections.Array() {""});
+        //timer.Connect("timeout",this,"SetUnderscore",new Godot.Collections.Array() {(underscore.Equals("_")) ? "" : "_"});
+        
+        ipPseudoButton.GrabFocus();//GetNode<RichTextLabel>("InternetworkPseudoButton").GrabFocus();
+    }
+
+    public void SetIP()
+    {
+        ipPseudoButton.unencodedText = "IP "+ip+underscore;
+        ipPseudoButton.FormatBbcode(ipPseudoButton.HasFocus());
+    }
+
+    public void SetUnderscore(string init_underscore)
+    {
+        underscore = init_underscore;
+        SetIP();
+    }
+
+    public void IPPressed()
+    {
+        GD.Print("IP Pressed...");
     }
 
     public void BackPressed()
