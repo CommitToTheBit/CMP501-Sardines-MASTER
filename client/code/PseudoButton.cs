@@ -13,7 +13,7 @@ public class PseudoButton : Button
         SetBbcode(false);
     }
 
-    public void SetBbcode(bool isFocused)
+    public void SetBbcode(bool focus)
     {
         string indent = ">  ";
         string bold = "[b]";
@@ -21,7 +21,7 @@ public class PseudoButton : Button
         string visible = "[color=#e8f0f0]";
         string invisible = "[/color]";
 
-        if (isFocused)
+        if (focus)
             pseudoText.BbcodeText = visible+bold+indent+unencodedText+unbold+invisible;
         else
             pseudoText.BbcodeText = bold+indent+unbold+visible+unencodedText+invisible;

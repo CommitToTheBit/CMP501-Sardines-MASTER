@@ -27,7 +27,7 @@ public class Text : VBoxContainer
 
                 EmitSignal("ChangeUI",history[resumeIndex],history[resumeIndex],newHistory);
             }
-            else if (!(id == "MainMenu") && !(id == "Settings")) // FIXME: For LobbyText, need to edit Desert to something less... severe... not "&& !(id == "Lobby")"!
+            else if (!(id == "MainMenu") && !(id == "Settings") && !(id == "JoinGame")) // FIXME: For LobbyText, need to edit Desert to something less... severe... not "&& !(id == "Lobby")"!
             {
                 EmitSignal("ChangeUI","Pause","Pause",newHistory);
             }
@@ -58,8 +58,9 @@ public class Text : VBoxContainer
             }
             else if (child is PseudoButton)
             {
-                GD.Print("PseudoButton found!");
-                child.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {child});
+                child.Connect("focus_entered",this,"PseudoButtonFocused",new Godot.Collections.Array() {child,true});
+                child.Connect("focus_exited",this,"PseudoButtonFocused",new Godot.Collections.Array() {child,false});
+                child.Connect("mouse_entered",this,"PseudoButtonHovered",new Godot.Collections.Array() {child});
             }
 
             Hide();
@@ -90,5 +91,15 @@ public class Text : VBoxContainer
     public void ButtonHovered(TextureButton button)
     {
         button.GrabFocus();
+    }
+
+    public void PseudoButtonFocused(PseudoButton pseudoButton, bool focus)
+    {
+        pseudoButton.SetBbcode(focus);
+    }
+
+    public void PseudoButtonHovered(PseudoButton pseudoButton)
+    {
+        pseudoButton.GrabFocus();
     }
 }
