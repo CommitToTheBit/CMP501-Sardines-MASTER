@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class JoinGameText : Text
 {
+    private Handler handler;
+
     private PseudoButton ipPseudoButton;
     private string ip;
     private string underscore;
@@ -11,6 +13,8 @@ public class JoinGameText : Text
 
     public override void _Ready()
     {
+        handler = GetNode<Handler>("/root/Handler");
+
         InitialiseText();
         ipPseudoButton = GetNode<PseudoButton>("IPPseudoButton");
 
@@ -80,6 +84,20 @@ public class JoinGameText : Text
     public void IPPressed()
     {
         GD.Print("IP Pressed... "+ip+"...");
+
+        handler.c.Connect(ip);
+        if (handler.c.IsConnected())
+        {
+            List<string> newHistory = new List<string>(history);
+            newHistory.Add(id);
+
+            EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
+        }
+        else
+        {
+            // DEBUG:
+            GD.Print("Cannot connect!");
+        }
     }
 
     public void BackPressed()

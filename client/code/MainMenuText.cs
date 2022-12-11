@@ -31,14 +31,14 @@ public class MainMenuText : Text
 
     public void HostGamePressed()
     {
-        List<string> newHistory = new List<string>() {"MainMenu"};
+        /*List<string> newHistory = new List<string>() {"MainMenu"};
 
         handler.c.Connect();
         if (handler.c.IsConnected())
             EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         else
             // DEBUG:
-            GD.Print("Cannot connect!");
+            GD.Print("Cannot connect!");*/
     }
 
     public void SettingsPressed()

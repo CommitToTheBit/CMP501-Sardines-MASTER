@@ -67,11 +67,11 @@ public class Client : Node
     }
 
     // Public functions
-    public void Connect()
+    public void Connect(string serverIP)
     {
         try
         {
-            clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(SERVERIP),SERVERPORT));
+            clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(serverIP),SERVERPORT));
             disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
 
             if (!disconnected) // Immediately sync on connection...
