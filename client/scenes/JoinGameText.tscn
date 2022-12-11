@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/fonts/AlteHaasGroteskBold.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/art/text buttons/JoinGameBackNormal.png" type="Texture" id=2]
 [ext_resource path="res://code/JoinGameText.cs" type="Script" id=3]
 [ext_resource path="res://assets/fonts/dynamics/instruction_normal.tres" type="DynamicFont" id=4]
 [ext_resource path="res://assets/fonts/dynamics/instruction_bold.tres" type="DynamicFont" id=5]
+[ext_resource path="res://scenes/PseudoButton.tscn" type="PackedScene" id=6]
 
 [sub_resource type="DynamicFont" id=3]
 size = 80
@@ -41,14 +42,15 @@ margin_bottom = 478.0
 rect_min_size = Vector2( 0, 10 )
 size_flags_horizontal = 3
 
-[node name="InternetworkInstruction" type="RichTextLabel" parent="."]
+[node name="IPInstruction" type="RichTextLabel" parent="."]
 margin_top = 488.0
 margin_right = 540.0
 margin_bottom = 588.0
+custom_colors/default_color = Color( 0.909804, 0.941176, 0.941176, 1 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 4 )
 bbcode_enabled = true
-bbcode_text = "Please enter the server's [b]Internetwork IP[/b]..."
+bbcode_text = "Please enter the server's [color=#ffffff][b]Internetwork IP[/b][/color]..."
 text = "Please enter the server's Internetwork IP..."
 fit_content_height = true
 
@@ -58,10 +60,19 @@ margin_right = 540.0
 margin_bottom = 598.0
 size_flags_horizontal = 3
 
-[node name="InternetworkPseudoButton" type="RichTextLabel" parent="."]
+[node name="IPPseudoButton" parent="." instance=ExtResource( 6 )]
 margin_top = 608.0
 margin_right = 540.0
 margin_bottom = 658.0
+focus_neighbour_top = NodePath("../BackButton")
+focus_neighbour_bottom = NodePath("../BackButton")
+unencodedText = "IP _"
+
+[node name="InternetworkPseudoButton" type="RichTextLabel" parent="."]
+visible = false
+margin_top = 638.0
+margin_right = 540.0
+margin_bottom = 688.0
 rect_min_size = Vector2( 540, 50 )
 focus_neighbour_top = NodePath("../BackButton")
 focus_neighbour_bottom = NodePath("../BackButton")
@@ -81,8 +92,8 @@ scroll_active = false
 margin_top = 668.0
 margin_right = 540.0
 margin_bottom = 718.0
-focus_neighbour_top = NodePath("../InternetworkPseudoButton")
-focus_neighbour_bottom = NodePath("../InternetworkPseudoButton")
+focus_neighbour_top = NodePath("../IPPseudoButton")
+focus_neighbour_bottom = NodePath("../IPPseudoButton")
 texture_normal = ExtResource( 2 )
 
 [node name="Spacing #8" type="Control" parent="."]

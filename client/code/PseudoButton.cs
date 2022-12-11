@@ -18,7 +18,7 @@ public class PseudoButton : Button
         string indent = ">  ";
         string bold = "[b]";
         string unbold = "[/b]";
-        string visible = "[color=#ffffff]";
+        string visible = "[color=#e8f0f0]";
         string invisible = "[/color]";
 
         if (isFocused)
