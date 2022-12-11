@@ -18,14 +18,15 @@ public class MainMenuText : Text
     {
         List<string> newHistory = new List<string>() {"MainMenu"};
 
-        // FIXME: Needs a 'call and response'
+        EmitSignal("ChangeUI","JoinGame","JoinGame",newHistory);
 
-        handler.c.Connect();
+        // FIXME: Needs a 'call and response'
+        /*handler.c.Connect();
         if (handler.c.IsConnected()) // FIXME: This should redirect to an "Enter Lobby IP" anyway...
             EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         else
             // DEBUG:
-            GD.Print("Cannot connect!");
+            GD.Print("Cannot connect!");*/
     }
 
     public void HostGamePressed()

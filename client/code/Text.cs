@@ -57,6 +57,10 @@ public class Text : VBoxContainer
                 child.Connect("mouse_entered",this,"ButtonHovered",new Godot.Collections.Array() {child});
                 child.Connect("pressed",this,buttonID+"Pressed");
             }
+            else if (child is RichTextLabel && child.Name.Substring(child.Name.Length-12,12).Equals("PseudoButton"))
+            {
+                GD.Print("PseudoButton found!");
+            }
 
             Hide();
         }

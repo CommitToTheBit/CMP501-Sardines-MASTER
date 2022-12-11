@@ -3,7 +3,7 @@
 [ext_resource path="res://assets/fonts/AlteHaasGroteskRegular.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 42
+size = 41
 outline_color = Color( 0.909804, 0.941176, 0.941176, 1 )
 use_mipmaps = true
 use_filter = true
