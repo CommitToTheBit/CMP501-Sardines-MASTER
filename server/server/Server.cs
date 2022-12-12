@@ -9,7 +9,7 @@ public class Server
 {
     // Constants
     const int MIN_CONNECTIONS = 5;
-    const int MAX_CONNECTIONS = 8;
+    const int MAX_CONNECTIONS = 0;
     const int MAX_PENDING_CONNECTIONS = 1;
 
     // Variables
@@ -111,14 +111,14 @@ public class Server
             {
                 Socket clientSocket = serverSocket.Accept();
 
-
-                if (tcpConnections.Count() <= MAX_CONNECTIONS) // FIXME: Need stricter condition to stop new joiners mid-game (i.e. clientIDs.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
+                if (tcpConnections.Count() < MAX_CONNECTIONS) // FIXME: Need stricter condition to stop new joiners mid-game (i.e. clientIDs.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
                 {
                     tcpConnections.Add(new TCPConnection(clientSocket));
                     clientIDConnections.Add(-1);
                 }
                 else
                 {
+                    Console.WriteLine("Disposing?");
                     TCPConnection tcpConnection = new TCPConnection(clientSocket);
                     tcpConnection.GetSocket().Dispose();
                     return; // FIXME: Is there any need to return here?
