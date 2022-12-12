@@ -50,7 +50,7 @@ public class NavigationDisplay : Control
         sweep = GetNode<Sprite>("Foreground/Sweep");
 
         // AudioStreamGenerator testing...
-        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        /*AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
         AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
 
         _effect = (AudioEffectCapture)AudioServer.GetBusEffect(1, 1);
@@ -61,12 +61,12 @@ public class NavigationDisplay : Control
             //playback.PushFrame(Vector2.Zero);
         }
 
-        audioStreamPlayer.Play();
+        audioStreamPlayer.Play();*/
     }
 
     private void ReceivedFrame(Vector2 init_frame)
     {
-        frames.Add(init_frame);
+        GD.Print("Received frame!");//frames.Add(init_frame);
     }
 
     public override void _Process(float delta)
@@ -80,7 +80,7 @@ public class NavigationDisplay : Control
         Render();
 
         // AudioStreamGenerator testing...
-        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        /*AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
         AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
 
         List<Vector2> sendFrames = new List<Vector2>(_effect.GetBuffer(_effect.GetFramesAvailable()));
@@ -108,7 +108,7 @@ public class NavigationDisplay : Control
         }
         frames = new List<Vector2>();
 
-        audioStreamPlayer.Play();
+        audioStreamPlayer.Play();*/
     }
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?
