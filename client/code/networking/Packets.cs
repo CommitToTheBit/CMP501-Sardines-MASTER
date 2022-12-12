@@ -52,17 +52,19 @@ public static class Packet
                 return Marshal.SizeOf(new IDPacket());
             case 1003: // (NPC) Client Disconnected
                 return Marshal.SizeOf(new IDPacket());
+            case 1201: // Server has match ready for joining client
+                return Marshal.SizeOf(new EmptyPacket());
             case 2300: // Host starts game: match
                 return Marshal.SizeOf(new EmptyPacket());
-            case 2301: // Server has intiialised match
+            case 2301: // Server has match ready for client in lobby
                 return Marshal.SizeOf(new EmptyPacket());
             case 2310: // Host starts game: sandbox
                 return Marshal.SizeOf(new EmptyPacket());
-            case 2311: // Server has initialised sandbox
+            case 2311: // Server has sandbox ready for client in lobby
                 return Marshal.SizeOf(new EmptyPacket());
             case 3200: // Finished game switches back to lobby
                 return Marshal.SizeOf(new EmptyPacket());
-            case 3201: // Server has initialised lobby
+            case 3201: // Server has lobby ready for client in match/sandbox
                 return Marshal.SizeOf(new EmptyPacket());
             case 4000: // Diplomat ID
                 return Marshal.SizeOf(new RolePacket());

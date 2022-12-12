@@ -241,10 +241,17 @@ public class Server
         {
             Console.WriteLine("\tWe are connected to no clients...");
         }
-        Console.Write("\tWe remember clients [");
-        for (int i = 0; i < clientIPs.Count - 1; i++)
-            Console.Write(clientIPs.Keys.ElementAt(i) + ", ");
-        Console.WriteLine(clientIPs.Keys.ElementAt(clientIPs.Count-1)+"]...");
+        if (clientIPs.Count > 0)
+        {
+            Console.Write("\tWe remember clients [");
+            for (int i = 0; i < clientIPs.Count - 1; i++)
+                Console.Write(clientIPs.Keys.ElementAt(i) + ", ");
+            Console.WriteLine(clientIPs.Keys.ElementAt(clientIPs.Count-1)+"]...");
+        }
+        else
+        {
+            Console.WriteLine("\tWe remember no clients...");
+        }
         Console.WriteLine();
 
         // If we are connected to no clients, we return to the lobby...
@@ -354,9 +361,13 @@ public class Server
 
 
         if (serverState.mode == State.Mode.lobby)
-            // Need to be able to cue player in to the entire game...
-            header = new HeaderPacket(1200);
-        //else if (serverState.mode == State.Mode.match)
+        {
+            header = new HeaderPacket(1201);
+            packet = new SendablePacket(header, Packet.Serialise<EmptyPacket>(new EmptyPacket()));
+            tcpConnections[index].SendPacket(packet);
+
+            // FIXME: Also send... hostID... settings...
+        }
     }
 
     private void Receive2300()

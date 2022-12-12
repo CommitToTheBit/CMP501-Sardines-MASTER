@@ -72,9 +72,9 @@ public class Client : Node
         try
         {
             clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(serverIP),SERVERPORT));
-            //disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
+            disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
 
-            if (clientSocket.Poll(500000, SelectMode.SelectWrite)) // Immediately sync on connection...
+            if (!disconnected)//clientSocket.Poll(100000, SelectMode.SelectWrite)) // Immediately sync on connection...
             {
                 HeaderPacket header = new HeaderPacket(1000);
                 SyncPacket sync = new SyncPacket(0);
@@ -177,6 +177,9 @@ public class Client : Node
             case 1003:
                 //FIXME: Receive1003();
                 break;
+            case 1201:
+                Receive1201();
+                break;
             case 2300:
                 // FIXME: Cues initialisation...
                 break;
@@ -256,6 +259,11 @@ public class Client : Node
             return;
 
         clientIPs.Add(init_clientID,init_clientIP);
+    }
+
+    private void Receive1201()
+    {
+        // FIXME: Initialise state/lobby settings!
     }
 
     private void Receive2310()
