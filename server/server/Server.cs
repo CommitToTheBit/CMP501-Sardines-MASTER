@@ -9,7 +9,7 @@ public class Server
 {
     // Constants
     const int MIN_CONNECTIONS = 5;
-    const int MAX_CONNECTIONS = 0;
+    const int MAX_CONNECTIONS = 8;
     const int MAX_PENDING_CONNECTIONS = 1;
 
     // Variables

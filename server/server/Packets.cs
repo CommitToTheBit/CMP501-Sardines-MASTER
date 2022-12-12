@@ -72,6 +72,8 @@ public static class Packet
                 return Marshal.SizeOf(new SubmarinePacket());
             case 4101: // Submarine Position
                 return Marshal.SizeOf(new PositionPacket());
+            case 4190: // Captain sends audio...
+                return Marshal.SizeOf(new AudioPacket());
             default:
                 return Marshal.SizeOf(new EmptyPacket());
         }
@@ -178,5 +180,19 @@ public struct PositionPacket
         y = init_y;
         theta = init_theta;
         timestamp = init_timestamp;
+    }
+}
+
+public struct AudioPacket
+{
+    public int clientID;
+    public float x, y;
+
+    public AudioPacket(int init_clientID, float init_x, float init_y)
+    {
+        submarineID = init_submarineID;
+
+        x = init_x;
+        y = init_y;
     }
 }
