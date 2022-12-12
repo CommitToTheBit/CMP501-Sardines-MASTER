@@ -311,6 +311,8 @@ public class Server
         bool newClient = clientID < 0;
         bool newConnection = clientIDConnections[index] == -1;
 
+        // FIXME: Need a robust way of rejecting clients...
+
         // If our client is new, assign a unique clientID
         clientIDConnections[index] = (clientID >= 0) ? clientID : ++maxClientID;
         if (!clientIPs.ContainsKey(clientIDConnections[index]))
@@ -350,6 +352,11 @@ public class Server
             tcpConnections[index].SendPacket(packet);
         }
 
+
+        if (serverState.mode == State.Mode.lobby)
+            // Need to be able to cue player in to the entire game...
+            header = new HeaderPacket(1200);
+        //else if (serverState.mode == State.Mode.match)
     }
 
     private void Receive2300()

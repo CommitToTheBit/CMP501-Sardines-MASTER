@@ -115,12 +115,6 @@ public class JoinGameText : Text
 
         // If we have successfully connected to the server, then our first 1000 packet has been sent...
         // We now wait to receive a packet that will tell us what scene to switch to...
-
-        /* FOR RECEIVE()
-        List<string> newHistory = new List<string>(history);
-        newHistory.Add(id);
-
-        EmitSignal("ChangeUI","Lobby","Lobby",newHistory);*/
     }
 
     public void BackPressed()
@@ -130,5 +124,19 @@ public class JoinGameText : Text
         newHistory.RemoveAt(history.Count-1);
 
         EmitSignal("ChangeUI",backID,backID,newHistory);
+    }
+
+    public void Receive(int packetID)
+    {
+        switch (packetID)
+        {
+            case 1201:
+                List<string> newHistory = new List<string>(history);
+                newHistory.Add(id);
+
+                EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
+                return;
+        }
+        // NOTE: There will be other cases here!
     }
 }
