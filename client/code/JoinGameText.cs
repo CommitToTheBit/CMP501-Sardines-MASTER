@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 public class JoinGameText : Text
@@ -84,6 +85,26 @@ public class JoinGameText : Text
     public void IPPressed()
     {
         GD.Print("IP Pressed... "+ip+"...");
+
+        // Handling invalid IP addresses...
+        // Since IPv4 is a 32-bit number, represented in a "dotted-decimal format", we can immediately rule out any typos...
+        // (While shorthands that do not follow this format exist - i.e. "1" represents "127.0.0.1", our server will always give its full IP)
+        try
+        {
+            List<int> ipDecimals = new List<string>(ip.Split(".")).Select(int.Parse).ToList();
+            
+            if (ipDecimals.Count != 4)
+                throw new Exception("Incorrect number of decimals...");
+
+            foreach (int ipDecimal in ipDecimals)
+                if (ipDecimal >= 256)
+                    throw new Exception("Maximum 8 bits per decimal...");
+        }
+        catch
+        {
+            GD.Print("Invalid IP...");
+            return;
+        }
 
         handler.c.Connect(ip);
         if (handler.c.IsConnected())

@@ -81,10 +81,15 @@ public class Client : Node
                 SendablePacket packet = new SendablePacket(header,Packet.Serialise<SyncPacket>(sync));
                 serverConnection.SendPacket(packet);
             }
+            else
+            {
+                GD.Print("Failed to connect to server...");
+                disconnected = true;  
+            }
         }
         catch
         {
-            GD.Print("Failure!");
+            GD.Print("Error in connecting to server...");
             disconnected = true;
         }
     }
