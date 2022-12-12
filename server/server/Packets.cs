@@ -190,7 +190,7 @@ public struct AudioPacket
 
     public AudioPacket(int init_clientID, float init_x, float init_y)
     {
-        submarineID = init_submarineID;
+        clientID = init_clientID;
 
         x = init_x;
         y = init_y;
