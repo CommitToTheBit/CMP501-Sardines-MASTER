@@ -15,6 +15,7 @@ public class JoinGameText : Text
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
+        handler.c.Connect("ReceivedPacket",this,"Receive");
 
         InitialiseText();
         ipPseudoButton = GetNode<PseudoButton>("IPPseudoButton");
@@ -92,7 +93,7 @@ public class JoinGameText : Text
         try
         {
             List<int> ipDecimals = new List<string>(ip.Split(".")).Select(int.Parse).ToList();
-            
+
             if (ipDecimals.Count != 4)
                 throw new Exception("Incorrect number of decimals...");
 
@@ -106,19 +107,20 @@ public class JoinGameText : Text
             return;
         }
 
-        handler.c.Connect(ip);
-        if (handler.c.IsConnected())
+        // FIXME: Set up a timeout on connection? Play a spinning wheel while doing so?
+        if (!handler.c.Connect(ip))
         {
-            List<string> newHistory = new List<string>(history);
-            newHistory.Add(id);
 
-            EmitSignal("ChangeUI","Lobby","Lobby",newHistory);
         }
-        else
-        {
-            // DEBUG:
-            GD.Print("Cannot connect!");
-        }
+
+        // If we have successfully connected to the server, then our first 1000 packet has been sent...
+        // We now wait to receive a packet that will tell us what scene to switch to...
+
+        /* FOR RECEIVE()
+        List<string> newHistory = new List<string>(history);
+        newHistory.Add(id);
+
+        EmitSignal("ChangeUI","Lobby","Lobby",newHistory);*/
     }
 
     public void BackPressed()

@@ -67,30 +67,31 @@ public class Client : Node
     }
 
     // Public functions
-    public void Connect(string serverIP)
+    public bool Connect(string serverIP)
     {
         try
         {
             clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(serverIP),SERVERPORT));
-            disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
+            //disconnected = !clientSocket.Poll(100000, SelectMode.SelectWrite); // CHECKME: Async - separate thread/simultaneously?
 
-            if (!disconnected) // Immediately sync on connection...
+            if (clientSocket.Poll(500000, SelectMode.SelectWrite)) // Immediately sync on connection...
             {
                 HeaderPacket header = new HeaderPacket(1000);
                 SyncPacket sync = new SyncPacket(0);
                 SendablePacket packet = new SendablePacket(header,Packet.Serialise<SyncPacket>(sync));
                 serverConnection.SendPacket(packet);
+                return true;
             }
             else
             {
                 GD.Print("Failed to connect to server...");
-                disconnected = true;  
+                return false;
             }
         }
         catch
         {
             GD.Print("Error in connecting to server...");
-            disconnected = true;
+            return false;
         }
     }
 
