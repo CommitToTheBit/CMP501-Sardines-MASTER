@@ -294,6 +294,10 @@ public class Server
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
                 Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
                 break;
+            case 4190:
+                AudioPacket audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody); // CHECKME: Do we actually need to deserialise this if we aren't modifying the sound?
+                Receive4190(audioPacket.clientID, audioPacket.x, audioPacket.y, index);
+                break;
         }
 
         // DEBUG:
@@ -467,5 +471,14 @@ public class Server
         for (int i = 0; i < tcpConnections.Count; i++)
             if (i != index) // FIXME: No discretion about who we send to could mean spam?
                 tcpConnections[i].SendPacket(packet);
+    }
+
+    private void Receive4190(int clientID, float x, float y, int index)
+    {
+        // MVP IMPLEMENTATION: Can we send audio to and from the same client?
+        HeaderPacket header = new HeaderPacket(4190);
+        AudioPacket audio = new AudioPacket(clientID, x, y);
+        SendablePacket packet = new SendablePacket(header, Packet.Serialise<AudioPacket>(audio));
+        tcpConnections[index].SendPacket(packet);
     }
 }

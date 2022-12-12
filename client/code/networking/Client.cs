@@ -211,6 +211,10 @@ public class Client : Node
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
                 Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
                 break;
+            case 4190:
+                AudioPacket audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody);
+                Receive4190(audioPacket.clientID, audioPacket.x, audioPacket.y);
+                break; 
         }
         EmitSignal("ReceivedPacket",packet.header.bodyID);
 
@@ -373,6 +377,11 @@ public class Client : Node
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*? This is built in to Submarine.cs, to some extent...
         state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp);
+    }
+
+    private void Receive4190(int init_clientID, float init_x, float init_y)
+    {
+        GD.Print("Audio received!");
     }
 
     // Client 'Calls'
