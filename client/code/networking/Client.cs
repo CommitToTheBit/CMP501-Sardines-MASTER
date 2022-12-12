@@ -8,8 +8,8 @@ using System.Collections.Generic;
 
 public class Client : Node
 {
-    [Signal]
-    delegate void ReceivedPacket(int packetID);
+    [Signal] delegate void ReceivedPacket(int packetID);
+    [Signal] delegate void ReceivedFrame(Vector2 frame);
 
     private const string CLIENTIP = "127.0.0.1";// FIXME: How to get own IP?
     private const string SERVERIP = "192.168.1.200";//"80.44.238.161";
@@ -398,11 +398,20 @@ public class Client : Node
 
     public void Send4101(float x, float y, float theta, long timestamp)
     {
-        // CLient sends details of their own submarine to server
+        // Client sends details of their own submarine to server
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(4101);
         PositionPacket submarine = new PositionPacket(submarineID,x,y,theta,timestamp);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<PositionPacket>(submarine));
+        serverConnection.SendPacket(packet);
+    }
+
+    public void Send4190(float x, float y)
+    {
+        // Client sends details of a single audio frame to the server
+        HeaderPacket header = new HeaderPacket(4190);
+        AudioPacket audio = new AudioPacket(clientID,x,y);
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<AudioPacket>(audio));
         serverConnection.SendPacket(packet);
     }
 

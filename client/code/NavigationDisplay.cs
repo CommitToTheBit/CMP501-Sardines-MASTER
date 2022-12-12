@@ -21,9 +21,14 @@ public class NavigationDisplay : Control
 
     Sprite sweep;
 
+    // FIXME: AudioFrames handling
+    private List<Vector2> frames;
+    private AudioEffectCapture _effect;
+
     public override void _Ready()
     {
         h = GetNode<Handler>("/root/Handler");
+        h.c.Connect("ReceivedFrame",this,"ReceiveFrame");
 
         // Set up timer for sending position packets
         positionTimer = new Timer();
@@ -43,6 +48,25 @@ public class NavigationDisplay : Control
         vessel = GetNode<Vessel>("Foreground/Vessel");
 
         sweep = GetNode<Sprite>("Foreground/Sweep");
+
+        // AudioStreamGenerator testing...
+        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
+
+        _effect = (AudioEffectCapture)AudioServer.GetBusEffect(1, 1);
+        _effect.BufferLength = 1.0f;
+
+        for (int i = 0; i < playback.GetFramesAvailable(); i++)
+        {
+            //playback.PushFrame(Vector2.Zero);
+        }
+
+        audioStreamPlayer.Play();
+    }
+
+    private void ReceivedFrame(Vector2 init_frame)
+    {
+        frames.Add(init_frame);
     }
 
     public override void _Process(float delta)
@@ -54,6 +78,37 @@ public class NavigationDisplay : Control
 
         // Move all objects on screen to h.c.state positions
         Render();
+
+        // AudioStreamGenerator testing...
+        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
+
+        List<Vector2> sendFrames = new List<Vector2>(_effect.GetBuffer(_effect.GetFramesAvailable()));
+        //_effect.ClearBuffer();
+
+        for (int i = 0; i < sendFrames.Count; i++)
+        {
+            if (Input.IsActionPressed("ui_talk"))
+            {
+                h.c.Send4190(sendFrames[i].x,sendFrames[i].y);
+            }
+        }
+
+        //var to_fill = playback.GetFramesAvailable();
+        for (int i = 0; i < playback.GetFramesAvailable(); i++)
+        {
+            try
+            {
+                playback.PushFrame(frames[i]);
+            }
+            catch 
+            {
+                //playback.PushFrame(Vector2.Zero);
+            }
+        }
+        frames = new List<Vector2>();
+
+        audioStreamPlayer.Play();
     }
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?

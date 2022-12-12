@@ -8,7 +8,7 @@ public class Main : Control
     public Text text;
 
     // Recordings vars
-    private AudioEffectCapture _effect;
+    //private AudioEffectCapture _effect;
 
     public override void _Ready()
     {
@@ -18,7 +18,7 @@ public class Main : Control
         text.Fade(true);
 
         // AudioStreamGenerator testing...
-        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        /*AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
         AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
 
         _effect = (AudioEffectCapture)AudioServer.GetBusEffect(1, 1);
@@ -29,13 +29,13 @@ public class Main : Control
             //playback.PushFrame(Vector2.Zero);
         }
 
-        audioStreamPlayer.Play();
+        audioStreamPlayer.Play();*/
     }
 
     public override void _Process(float delta)
     {
         // AudioStreamGenerator testing...
-        AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
+        /*AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
         AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
 
         Vector2[] frames = _effect.GetBuffer(_effect.GetFramesAvailable());
@@ -55,9 +55,9 @@ public class Main : Control
                     //playback.PushFrame(Vector2.Zero);
                 }
             }
-        }
+        }*/
 
-        audioStreamPlayer.Play();
+        //audioStreamPlayer.Play();
     }
 
     public async void ChangeUI(string textID, string displayID, List<string> init_history)
