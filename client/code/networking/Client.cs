@@ -21,6 +21,7 @@ public class Client : Node
     private bool disconnected;
 
     private int clientID;
+    private List<int> clientIDs;
     private Dictionary<int,string> clientIPs;
     public State state;
 
@@ -262,6 +263,7 @@ public class Client : Node
         if (init_clientID < 0 || clientIPs.ContainsKey(init_clientID))
             return;
 
+        clientIDs.Add(init_clientID);
         clientIPs.Add(init_clientID,init_clientIP);
     }
 

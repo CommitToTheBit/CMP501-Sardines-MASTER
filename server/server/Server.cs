@@ -223,7 +223,7 @@ public class Server
         }
 
         // DEBUG: Comment this out for more 'memory'
-        //clientIPs.Remove(clientIDConnections[index]);
+        clientIPs.Remove(clientIDConnections[index]);
 
         clientIDConnections.RemoveAt(index);
 
@@ -349,8 +349,8 @@ public class Server
         // We use two different sizes of for loop to account for any 'missing' clients
         for (int i = 0; i < tcpConnections.Count; i++)
         {
-            if (i == index)
-                continue;
+            //if (i == index)
+            //    continue;
 
             // Sending to other clients...
             header = new HeaderPacket(1002);
