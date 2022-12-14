@@ -12,7 +12,10 @@ public class LobbyText : Text
         handler.client.Connect("ReceivedPacket",this,"Receive");
 
         InitialiseText();
-        GetNode<TextureButton>("StartGameButton").GrabFocus();
+        //GetNode<TextureButton>("StartGameButton").GrabFocus();
+        GetNode<TextureButton>("StartGameButton").Disabled = true;
+        GetNode<TextureButton>("BackButton").GrabFocus();
+
     }
 
     public void StartGamePressed()
