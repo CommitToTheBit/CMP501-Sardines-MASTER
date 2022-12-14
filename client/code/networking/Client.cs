@@ -265,6 +265,11 @@ public class Client : Node
         clientIPs.Add(init_clientID,init_clientIP);
     }
 
+    private void Receive1200()
+    {
+        state = new State(State.Mode.lobby, 0); // NB: This should be fine, as client does not use RNG...
+    }
+
     private void Receive1201()
     {
         // FIXME: Initialise state/lobby settings!

@@ -331,11 +331,19 @@ public class Server
         //FIXME: if condition to remove client ID/IP if over MAX_CONNECTIONS?
 
         // Confirm/reject client entry
-        // FIXME: Rejection - should this just be handled by breaking connection?
+        // FIXME: Currently, we are only accepting new players when in the lobby... not that sophisticated...
+        if (serverState.mode != State.Mode.lobby)
+            clientIDConnections[index] = -1;
+
+        bool rejection = clientIDConnections[index] == -1;
+
         HeaderPacket header = new HeaderPacket(1001);
         IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[index].ToCharArray());
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
         tcpConnections[index].SendPacket(packet);
+
+        if (rejection)
+            return;
 
         // Send client details of all other clients, and vice versa
         // We use two different sizes of for loop to account for any 'missing' clients

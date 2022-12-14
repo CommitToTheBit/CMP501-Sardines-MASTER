@@ -52,6 +52,8 @@ public static class Packet
                 return Marshal.SizeOf(new IDPacket());
             case 1003: // (NPC) Client Disconnected
                 return Marshal.SizeOf(new IDPacket());
+            case 1200: // Server tells client to prepare for lobby...
+                return Marshal.SizeOf(new EmptyPacket());
             case 1201: // Server has match ready for joining client
                 return Marshal.SizeOf(new EmptyPacket());
             case 2300: // Host starts game: match

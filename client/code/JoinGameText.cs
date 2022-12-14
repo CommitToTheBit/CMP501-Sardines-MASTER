@@ -130,10 +130,6 @@ public class JoinGameText : Text
     {
         switch (packetID)
         {
-            case 1200:
-                handler.client.state = new State(State.Mode.lobby, 0); // NB: This should be fine, as client does not use RNG...
-                return;
-
             case 1201:
                 List<string> newHistory = new List<string>(history);
                 newHistory.Add(id);
