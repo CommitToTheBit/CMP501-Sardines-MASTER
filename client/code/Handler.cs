@@ -3,22 +3,22 @@ using System;
 
 public class Handler : Node
 {
-    public Client c; // Allows for disconnects?
+    public Client client; // Allows for disconnects?
 
     public override void _Ready()
     {
-        c = new Client();
+        client = new Client();
     }
 
     //public void 
 
     public override void _Process(float delta)
     {
-        if (c.IsConnected())
+        if (client.IsConnected())
         {
-            c.Write();
-            c.Read();
-            c.Update();
+            client.Write();
+            client.Read();
+            client.Update();
         }
         else
         {

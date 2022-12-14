@@ -44,7 +44,7 @@ public class Client : Node
         clientID = -1;
         clientIPs = new Dictionary<int, string>();
 
-        state = new State(0); // Seed doesn't matter on client side (?)
+        state = new State(State.Mode.lobby, 0); // Seed doesn't matter on client side (?)
 
         started = DateTime.UtcNow.Ticks;
         Console.WriteLine("Client started at " + started+".");

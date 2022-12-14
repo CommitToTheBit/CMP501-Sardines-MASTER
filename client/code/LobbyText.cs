@@ -9,7 +9,7 @@ public class LobbyText : Text
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
-        handler.c.Connect("ReceivedPacket",this,"Receive");
+        handler.client.Connect("ReceivedPacket",this,"Receive");
 
         InitialiseText();
         GetNode<TextureButton>("StartGameButton").GrabFocus();
@@ -17,7 +17,7 @@ public class LobbyText : Text
 
     public void StartGamePressed()
     {
-        handler.c.Send2310();
+        handler.client.Send2310();
     }
 
     public void BackPressed()

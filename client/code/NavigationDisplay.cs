@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class NavigationDisplay : Control
 {
-    private Handler h;
+    private Handler handler;
     private Timer positionTimer;
 
     // Submarine class control:
@@ -27,8 +27,8 @@ public class NavigationDisplay : Control
 
     public override void _Ready()
     {
-        h = GetNode<Handler>("/root/Handler");
-        h.c.Connect("ReceivedFrame",this,"ReceiveFrame");
+        handler = GetNode<Handler>("/root/Handler");
+        handler.client.Connect("ReceivedFrame",this,"ReceiveFrame");
 
         // Set up timer for sending position packets
         positionTimer = new Timer();
@@ -113,12 +113,12 @@ public class NavigationDisplay : Control
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?
     {
-        Dictionary<int, Submarine> submarines = h.c.state.GetSubmarines();
+        Dictionary<int, Submarine> submarines = handler.client.state.GetSubmarines();
 
-        if (!submarines.ContainsKey(h.c.submarineID))
+        if (!submarines.ContainsKey(handler.client.submarineID))
             return;
 
-        Submarine submarine = submarines[h.c.submarineID];
+        Submarine submarine = submarines[handler.client.submarineID];
         float x = submarine.x[2];
         float y = submarine.y[2];
         float theta = submarine.theta[2];
@@ -148,8 +148,8 @@ public class NavigationDisplay : Control
         const float SWEEP_PERIOD = 6.0f;
         const float VISIBLE_PERIOD = 5.4f;
 
-        int submarineID = h.c.submarineID;
-        Dictionary<int,Submarine> submarines = h.c.state.GetSubmarines();
+        int submarineID = handler.client.submarineID;
+        Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
 
         if (!submarines.ContainsKey(submarineID) || submarineID < 0)
             return;
@@ -158,8 +158,8 @@ public class NavigationDisplay : Control
         float y = submarines[submarineID].y[2];
         float theta = submarines[submarineID].theta[2];
 
-        long timestamp = DateTime.UtcNow.Ticks+h.c.delay;
-        long ftimestamp = (timestamp-h.c.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
+        long timestamp = DateTime.UtcNow.Ticks+handler.client.delay;
+        long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
         float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
         sweep.Rotation = sweepTheta+3*Mathf.Pi/2;
@@ -197,7 +197,7 @@ public class NavigationDisplay : Control
     // Sending values from our client state to our server state
     public void SendPosition()
     {
-        Submarine submarine = h.c.state.GetSubmarines()[h.c.submarineID];
-        h.c.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+h.c.delay);
+        Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
+        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
     }
 }

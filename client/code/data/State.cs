@@ -19,12 +19,13 @@ public class State
 
     private Random rng;
 
-    public State(int init_seed)
+    public State(Mode init_mode, int init_seed)
     {
         // Server Mode
-        mode = Mode.lobby;
+        mode = init_mode;
 
         // Lobby Variables
+
 
         // Game Variables
         globalStart = DateTime.UtcNow.Ticks; // Need to work with... time offsets on different devices...

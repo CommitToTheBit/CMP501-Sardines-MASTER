@@ -15,7 +15,7 @@ public class JoinGameText : Text
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
-        handler.c.Connect("ReceivedPacket",this,"Receive");
+        handler.client.Connect("ReceivedPacket",this,"Receive");
 
         InitialiseText();
         ipPseudoButton = GetNode<PseudoButton>("IPPseudoButton");
@@ -108,7 +108,7 @@ public class JoinGameText : Text
         }
 
         // FIXME: Set up a timeout on connection? Play a spinning wheel while doing so?
-        if (!handler.c.Connect(ip))
+        if (!handler.client.Connect(ip))
         {
 
         }
@@ -130,6 +130,10 @@ public class JoinGameText : Text
     {
         switch (packetID)
         {
+            case 1200:
+                handler.client.state = new State(State.Mode.lobby, 0); // NB: This should be fine, as client does not use RNG...
+                return;
+
             case 1201:
                 List<string> newHistory = new List<string>(history);
                 newHistory.Add(id);
