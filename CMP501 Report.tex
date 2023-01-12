@@ -1,0 +1,112 @@
+% LaTeX Template for short student reports.
+% Citations should be in bibtex format and go in references.bib
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=3cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}  
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black} % black links, for printed output
+\usepackage{memhfixc} 
+\usepackage{pdfsync}  
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{natbib}
+\usepackage{url}
+%\pagestyle{fancy}
+\usepackage{tabto}
+\usepackage[shortlabels]{enumitem}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage{nameref}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\begin{document}
+\graphicspath{{./Images/}}
+\begin{flushleft}
+
+\section*{Sardines: A Networked Game}
+
+[Introduction: explain concept of game]
+
+\subsection*{Architecture}
+
+\textit{Sardines} is built on a straightforward client-server architecture...
+Reasons for choice...
+Citation about networking [peer-reviewed]...
+
+\vspace{5pt}\noindent
+[Discuss more elaborate architecture?]
+
+
+\subsection*{Protocols}
+
+\paragraph{Transport Layer}
+
+TCP: Reliable, etc...
+As much is set out in RFC 798 %\cite
+, where John Postel introduces the protocol:.... %`` ''
+Provide reliability paragraph?...
+
+\vspace{5pt}\noindent
+Why not consider UDP?...
+Position updates every 0.1s...\footnote{Could simplify even further with event-based - have server calculate all positions from key presses...}
+
+\paragraph{Application Layer}
+
+Data sent with \texttt{Packet} struct...
+Break down serialisation...
+
+\vspace{5pt}\noindent
+While there isn't the space to break down every protocol in precise detail... [List packets used and what each 
+\begin{itemize}
+\item
+\end{itemize}
+
+\vspace{5pt}\noindent
+As an example, consider how a player might join the lobby...
+
+\subsection*{API}
+
+% CHECKME: What is an API?
+\textit{Sardines} is built with C\# in the Godot engine. It uses System.Net.Sockets to handle networking, and System.Runtime.InteropServices to serialize/deserialize packet structs. This report notes that...
+
+
+
+\subsection*{Integration}
+
+Asynchronous I/O...
+Connection class...
+
+\vspace{5pt}\noindent
+Discuss: offline vs. online updates to position!
+
+\subsection*{Prediction}
+
+Discussion of linear/quadratic prediction...
+
+
+\vspace{5pt}\noindent
+Technical breakdown of quadratic...
+* End on note of limitations!
+
+\vspace{5pt}\noindent
+Discussion of interpolation - period is half of
+
+
+\vspace{5pt}\noindent
+[GRAPHICSX: Handdrawn diagram of interpolation and prediction interaction?]
+
+\subsection*{Testing}
+
+[SORT THIS LAST THING - BUT PLAN THE TESTING OUT BY 15th?]
+
+%\bibliographystyle{agsm}
+%\bibliography{References}
+\end{flushleft}
+\end{document}
+
