@@ -20,6 +20,7 @@ public class Client : Node
     private TCPConnection serverConnection;
     private bool disconnected;
 
+    private string clientIP;
     private int clientID;
     private List<int> clientIDs;
     private Dictionary<int,string> clientIPs;
@@ -40,6 +41,19 @@ public class Client : Node
 
         serverConnection = new TCPConnection(clientSocket);
         disconnected = true;
+
+        /* -------------------------------------------------------------------- */
+        /* CC: https://stackoverflow.com/questions/6803073/get-local-ip-address */
+        clientIP = "";
+        var host = Dns.GetHostEntry(Dns.GetHostName()); // CHECKME: Is System.Net.Dns too advanced?
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork) // DEBUG: AddressFamily.Internetwork gives 'global' address...
+            {
+                clientIP = ip.ToString();
+            }
+        }
+        /* -------------------------------------------------------------------- */
 
         // Initialise for New Game 
         clientID = -1;
@@ -247,7 +261,7 @@ public class Client : Node
 
         // Now that we've (re-)synced, we send our initial ID Packet...
         HeaderPacket header = new HeaderPacket(1001);
-        IDPacket id = new IDPacket(clientID,CLIENTIP.ToCharArray());
+        IDPacket id = new IDPacket(clientID,clientIP.ToCharArray());
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<IDPacket>(id));
         serverConnection.SendPacket(packet);
     }

@@ -42,15 +42,28 @@ public class LobbyText : Text
 
     public void UpdatePlayers()
     {
+        List<string> alphabet = new List<string> {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+        List<string> digits = new List<string> {"0","1","2","3","4","5","6","7","8","9"};
+
         // STEP 1: Show self in lobby...
-        players[0].BbcodeText = "[b]001: [/b][color=#d1e0e4][i]127.0.0.1[/i][/color]";
+        players[0].BbcodeText = "[b]001: [/b]"+alphabet[handler.client.GetClientID()%alphabet.Count]+"-001";
 
         // STEP 2: Show other players in lobby...
         List<int> keys = handler.client.GetClientIDs();
         for (int i = 1; i < Mathf.Min(keys.Count+1, players.Count); i++)
         {
-            // Update RichTextLabel to contain player's IP
-            players[i].BbcodeText = "[b]00"+(i+1)+": [/b]"+handler.client.GetClientIP(keys[i-1]);
+            // Constructing names for other players, based on ip...
+            char[] ip = handler.client.GetClientIP(keys[i-1]).Split(".")[3].ToCharArray();
+            string name = "";
+            foreach (char digit in ip)
+                if (digits.Contains(digit.ToString()))
+                    name += digit;
+            while (name.Length() < 3)
+                name = "0"+name;
+            name = alphabet[keys[i-1]%alphabet.Count]+"-"+name;
+
+            // Update RichTextLabel to contain player's name...
+            players[i].BbcodeText = "[b]00"+(i+1)+": [/b]"+name;
         }
 
         // STEP 3: Show vacancies in lobby...
