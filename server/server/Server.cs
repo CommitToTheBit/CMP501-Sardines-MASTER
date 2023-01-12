@@ -224,10 +224,7 @@ public class Server
 
         // DEBUG: Comment this out for more 'memory'
         clientIPs.Remove(clientIDConnections[index]);
-
         clientIDConnections.RemoveAt(index);
-
-
 
         // DEBUG:
         if (clientIDConnections.Count > 0)
@@ -338,7 +335,7 @@ public class Server
         //bool rejection = clientIDConnections[index] == -1;
 
         HeaderPacket header = new HeaderPacket(1001);
-        IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[index].ToCharArray());
+        IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[clientIDConnections[index]].ToCharArray());
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
         tcpConnections[index].SendPacket(packet);
 
@@ -349,12 +346,12 @@ public class Server
         // We use two different sizes of for loop to account for any 'missing' clients
         for (int i = 0; i < tcpConnections.Count; i++)
         {
-            //if (i == index)
-            //    continue;
+            if (i == index)
+                continue;
 
             // Sending to other clients...
             header = new HeaderPacket(1002);
-            id = new IDPacket(clientIDConnections[index], clientIPs[index].ToCharArray());
+            id = new IDPacket(clientIDConnections[index], clientIPs[clientIDConnections[index]].ToCharArray());
             packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
             tcpConnections[i].SendPacket(packet);
         }
@@ -437,6 +434,9 @@ public class Server
 
             foreach (int submarineID in serverState.fleets[superpower].submarines.Keys)
             {
+                Console.WriteLine("\t"+submarineID);
+                Console.WriteLine("\t"+serverState.fleets[superpower].submarines[submarineID].captain.clientID);
+
                 header = new HeaderPacket(4100); // FIXME: No accounting for crew here
                 SubmarinePacket submarine = new SubmarinePacket(superpowerID, submarineID, serverState.fleets[superpower].submarines[submarineID].captain.clientID, serverState.fleets[superpower].submarines[submarineID].nuclearCapability);
                 packet = new SendablePacket(header, Packet.Serialise<SubmarinePacket>(submarine));
@@ -465,6 +465,8 @@ public class Server
     private void Receive3200()
     {
         // FIXME: Need to 'wipe' remaining clients of their knowledge, connections, etc...
+
+        serverState.StartLobby();
     }
 
     private void Receive4101(int submarineID, float x, float y, float theta, long timestamp, int index)

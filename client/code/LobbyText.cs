@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class LobbyText : Text
 {
     Handler handler;
+    List<RichTextLabel> players;
 
     public override void _Ready()
     {
@@ -13,9 +14,16 @@ public class LobbyText : Text
 
         InitialiseText();
         //GetNode<TextureButton>("StartGameButton").GrabFocus();
-        GetNode<TextureButton>("StartGameButton").Disabled = true;
+        GetNode<TextureButton>("StartGameButton").Disabled = false; // FIXME ME: SET TO true; IF IMPLEMENTING A 'HOST'
         GetNode<TextureButton>("BackButton").GrabFocus();
 
+        players = new List<RichTextLabel>();
+        for (int i = 0; i < 8; i++)
+        {
+            string column = (i%2 == 0) ? "West" : "East";
+            players.Add(GetNode<RichTextLabel>("Players/Players"+column+"/Player #"+(i+1)));
+        }
+        UpdatePlayers();
     }
 
     public void StartGamePressed()
@@ -32,10 +40,37 @@ public class LobbyText : Text
         EmitSignal("ChangeUI",backID,backID,newHistory);
     }
 
+    public void UpdatePlayers()
+    {
+        // STEP 1: Show self in lobby...
+        players[0].BbcodeText = "[b]001: [/b][color=#d1e0e4][i]127.0.0.1[/i][/color]";
+
+        // STEP 2: Show other players in lobby...
+        List<int> keys = handler.client.GetClientIDs();
+        for (int i = 1; i < Mathf.Min(keys.Count+1, players.Count); i++)
+        {
+            // Update RichTextLabel to contain player's IP
+            players[i].BbcodeText = "[b]00"+(i+1)+": [/b]"+handler.client.GetClientIP(keys[i-1]);
+        }
+
+        // STEP 3: Show vacancies in lobby...
+        for (int i = keys.Count+1; i < players.Count; i++)
+        {
+            if (i == keys.Count+1)
+                players[i].BbcodeText = "[b]00"+(i+1)+": [/b][color=#646e76][i]M.I.A.?[/i][/color]";
+            else
+                players[i].BbcodeText = "[b]00"+(i+1)+":";
+        }
+    }
+
     public void Receive(int packetID)
     {
         switch (packetID)
         {
+            case 1002:
+                UpdatePlayers();
+                return;
+
             case 2311:
                 List<string> newHistory = new List<string>(history);
                 newHistory.Add(id);

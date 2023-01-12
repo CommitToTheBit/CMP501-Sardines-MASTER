@@ -40,6 +40,7 @@ public class State
         // STEP 0: Set 'restarted lobby'
         mode = Mode.lobby;
         globalStart = 0;
+        fleets = new Dictionary<Superpower, Fleet>();
 
         // Take in clientIDConnections, all IPs, but only *use* releveant IPs... then access from server?
     }
@@ -49,6 +50,7 @@ public class State
         // STEP 0: Set 'start of game'
         mode = Mode.match;
         globalStart = DateTime.UtcNow.Ticks;
+        fleets = new Dictionary<Superpower, Fleet>();
 
         // STEP 1: Set player roles
         List<int> order = Enumerable.Range(0, init_clientIDs.Count).OrderBy(x => rng.Next()).ToList();
@@ -83,6 +85,7 @@ public class State
         // STEP 0: Set 'start of game'
         mode = Mode.sandbox;
         globalStart = DateTime.UtcNow.Ticks;
+        fleets = new Dictionary<Superpower, Fleet>();
 
         // STEP 1: Set player roles
         List<int> clientIDs = new List<int>(init_clientIDs);

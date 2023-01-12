@@ -43,6 +43,7 @@ public class Client : Node
 
         // Initialise for New Game 
         clientID = -1;
+        clientIDs = new List<int>();
         clientIPs = new Dictionary<int, string>();
 
         state = new State(State.Mode.lobby, 0); // Seed doesn't matter on client side (?)
@@ -161,14 +162,20 @@ public class Client : Node
         // DEBUG:
         GD.Print("Received packet " + packet.header.bodyID + "...");
 
+        SyncPacket syncPacket;
+        IDPacket idPacket;
+        RolePacket rolePacket;
+        SubmarinePacket submarinePacket;
+        PositionPacket positionPacket;
+        AudioPacket audioPacket;
         switch (packet.header.bodyID)
         {
             case 1000:
-                SyncPacket syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
+                syncPacket = Packet.Deserialise<SyncPacket>(packet.serialisedBody);
                 Receive1000(packet.header.timestamp, syncPacket.syncTimestamp);
                 break;
             case 1001:
-                IDPacket idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
+                idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
                 Receive1001(idPacket.clientID, string.Join("",idPacket.clientIP));
                 break;
             case 1002:
@@ -201,19 +208,19 @@ public class Client : Node
                 // FIXME: How do we handle actually starting a lobby?
                 break;
             case 4000:
-                RolePacket rolePacket = Packet.Deserialise<RolePacket>(packet.serialisedBody);
+                rolePacket = Packet.Deserialise<RolePacket>(packet.serialisedBody);
                 Receive4000(rolePacket.superpowerID,rolePacket.clientID);
                 break;
             case 4100:
-                SubmarinePacket submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
-                Receive4100(submarinePacket.superpowerID,submarinePacket.clientID,submarinePacket.submarineID,submarinePacket.nuclearCapability);
+                submarinePacket = Packet.Deserialise<SubmarinePacket>(packet.serialisedBody);
+                Receive4100(submarinePacket.superpowerID,submarinePacket.submarineID,submarinePacket.clientID,submarinePacket.nuclearCapability);
                 break;
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection? // Or - using 'forward-only' prediction, hence no UDP!
-                PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
+                positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
                 Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
                 break;
             case 4190:
-                AudioPacket audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody);
+                audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody);
                 Receive4190(audioPacket.clientID, audioPacket.x, audioPacket.y);
                 break; 
         }
@@ -265,6 +272,8 @@ public class Client : Node
 
         clientIDs.Add(init_clientID);
         clientIPs.Add(init_clientID,init_clientIP);
+
+        Console.WriteLine(clientIPs+" "+clientIPs[init_clientID]);
     }
 
     private void Receive1200()
@@ -426,6 +435,16 @@ public class Client : Node
     public int GetClientID()
     {
         return clientID;
+    }
+
+    public List<int> GetClientIDs()
+    {
+        return new List<int>(clientIDs);
+    }
+
+    public string GetClientIP(int init_clientID)
+    {
+        return clientIPs[init_clientID];
     }
 
     public long GetStarted()
