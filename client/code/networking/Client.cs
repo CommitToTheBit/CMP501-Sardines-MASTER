@@ -197,7 +197,8 @@ public class Client : Node
                 Receive1002(idPacket.clientID, string.Join("",idPacket.clientIP));
                 break;
             case 1003:
-                //FIXME: Receive1003();
+                idPacket = Packet.Deserialise<IDPacket>(packet.serialisedBody);
+                Receive1003(idPacket.clientID);
                 break;
             case 1201:
                 Receive1201();
@@ -288,6 +289,17 @@ public class Client : Node
         clientIPs.Add(init_clientID,init_clientIP);
 
         Console.WriteLine(clientIPs+" "+clientIPs[init_clientID]);
+    }
+
+    private void Receive1003(int init_clientID)
+    {
+        if (clientIDs.Contains(init_clientID))
+            clientIDs.Remove(init_clientID);
+
+        if (clientIPs.ContainsKey(init_clientID))
+            clientIPs.Remove(init_clientID);
+
+        // NEED TO HANDLE REMOVING SUBMARINES!
     }
 
     private void Receive1200()

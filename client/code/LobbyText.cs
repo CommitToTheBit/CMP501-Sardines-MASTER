@@ -84,6 +84,10 @@ public class LobbyText : Text
                 UpdatePlayers();
                 return;
 
+            case 1003:
+                UpdatePlayers();
+                return;
+
             case 2311:
                 List<string> newHistory = new List<string>(history);
                 newHistory.Add(id);
