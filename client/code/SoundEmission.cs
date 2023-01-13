@@ -3,16 +3,23 @@ using System;
 
 public class SoundEmission : Node2D
 {
-    Timer emissionTimer;
+    ColorRect cone;
     PackedScene soundwavePackedScene;
+
+    Timer emissionTimer;
+
+    float emissionPeriod;
 
     public override void _Ready()
     {
+        cone = GetNode<ColorRect>("Cone");
         soundwavePackedScene = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn");
 
         // Set up delay between soundwaves emitted...
+        emissionPeriod = 4.0f;
+
         emissionTimer = new Timer();
-        emissionTimer.WaitTime = 0.5f;
+        emissionTimer.WaitTime = 0.05f*emissionPeriod;
         emissionTimer.Autostart = false;
         emissionTimer.OneShot = true;
         AddChild(emissionTimer);
@@ -22,7 +29,7 @@ public class SoundEmission : Node2D
     {
         //Vector2 mousePosition = GetLocalMousePosition();
         //RotationDegrees = (180.0f/Mathf.Pi)*mousePosition.Angle();
-        RotationDegrees = (180.0f/Mathf.Pi)*((GetGlobalMousePosition()-Position).Angle()+Mathf.Pi/2);
+        cone.RectRotation = (GetGlobalMousePosition()-GlobalPosition).Angle()+Mathf.Pi/2;
     }
 
     public override void _Input(InputEvent @event)
@@ -31,15 +38,23 @@ public class SoundEmission : Node2D
 
         if (emissionTimer.IsStopped())
         {
-            if (Input.IsActionPressed("ui_dot"))
+            bool dot = Input.IsActionJustPressed("ui_dot");
+            bool dash = Input.IsActionJustPressed("ui_dash");
+            if (dot || dash)
             {
-                //Soundwave soundwave = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>();
-                AddChild(ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>());
-                ((Soundwave)GetChild(GetChildCount()-1)).PropagateWave(0.0f,1440.0f,8.0f,45.0f+5.0f,20.0f,false);
+                Soundwave soundwave = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>();
+                AddChild(soundwave);
 
-                AddChild(ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>());
-                ((Soundwave)GetChild(GetChildCount()-1)).PropagateWave(0.0f,1440.0f,8.0f,45.0f+5.0f,2.0f,false);
+                soundwave.Rotation = cone.RectRotation;
+                soundwave.PropagateWave(0.0f,1440.0f,(dot) ? 12.0f : 24.0f,45.0f,4.0f,false);
+
+                emissionTimer.Start();
             }
         }
+    }
+
+    public void EmitSoundwave()
+    {
+        
     }
 }

@@ -28,8 +28,8 @@ script = ExtResource( 4 )
 [node name="Monitor" parent="." instance=ExtResource( 1 )]
 margin_left = 180.0
 margin_top = 180.0
-margin_right = 340.0
-margin_bottom = 300.0
+margin_right = 1140.0
+margin_bottom = 900.0
 
 [node name="PixellationBuffer" type="BackBufferCopy" parent="."]
 rect = Rect2( 0, 0, 1920, 1080 )
