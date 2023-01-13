@@ -35,13 +35,18 @@
 
 \subsection*{Architecture}
 
-\textit{Sardines} is built on a straightforward client-server architecture...
+\textit{Sardines} is built on a straightforward client-server architecture... 
 Reasons for choice...
+Though the current system does not have many variables to keep track of, the server also provides a `master state' for clients to work from.
 Citation about networking [peer-reviewed]...
 
 \vspace{5pt}\noindent
-[Discuss more elaborate architecture?]
+This may not remain true at a larger scale, however. While it ultimately proved too ambitious for this assignment, the original idea for . Since only navigators would be able to see the surrounding world, they could in some ways act as middle men in the hybrid architecture set out in Figure [FIGURE]. By treating each navigator as a `local' server for their crew of $4$, ...
+This would, of course, be subject to further testing, as [carries issues of P2P?]...
+[In paragraph/figure, introduce idea of navigator 'standardising' actions of the crew...]
 
+\vspace{5pt}\noindent
+[GRAPHICSX: Handdrawn diagram of interpolation and prediction interaction?]
 
 \subsection*{Protocols}
 
@@ -95,11 +100,22 @@ Technical breakdown of quadratic...
 * End on note of limitations!
 
 \vspace{5pt}\noindent
-Discussion of interpolation - period is half of
-
+Discussion of interpolation - period is half of...
 
 \vspace{5pt}\noindent
 [GRAPHICSX: Handdrawn diagram of interpolation and prediction interaction?]
+
+\vspace{5pt}\noindent
+To fully understand how \textit{Sardines} uses it prediction techniques, this report must first introduce a core challenge of any networked game: conflict resolution.
+
+\vspace{5pt}\noindent
+In \textit{Sardines}, the projectiles concerned are soundwaves. The visual language of the game, where soundwaves from external sources only become visible on collision with the player, provides a clear approach: the sender unequivocally takes precedence. Only when a player sees their soundwave hit another is a \texttt{MorsePacket} sent from their client (which will arrive with the usual delay). The sender knows with certainty who receives their message; the receiver, who cannot see the trajectory of the soundwave until it arrives, will have no sense of whether it ``should'' have hit them.
+
+\vspace{5pt}\noindent
+To further `smooth over' the application's conflict resolution, the receiving client makes use of backward prediction. Since neither server nor client stores more than three of any submarine's past positions at a time, it is fortunate the above formulae can approximate the past as well as the future.
+
+\vspace{5pt}\noindent
+Suppose a sender $i$ emits a soundwave from position $\mathbf{r}_i$ at time $t_0$, which they see reach a receiver $j$ at $t_0+\Delta t$. On the arrival of a packet at $t_1$, then, the receiving client have to decide where the wave was emitted from \textit{in its local view of the game}. The obvious choice would be the `true origin' $\mathbf{r}_i$, but \textit{Sardines} uses the backwards prediction $\mathbf{\tilde{r}}_i(t_1-\Delta t)$. As [FIGURE] puts it in [REFERENCE], [QUOTE]; conflict resolution is the art of deciding which quantities are preserved across clients, and \textit{Sardines} - a system designed around slow, real-time communications - is far less concerned with a shared view of geography than it is a shared view of delay.
 
 \subsection*{Testing}
 
