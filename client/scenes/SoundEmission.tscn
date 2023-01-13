@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/shaders/cone.gdshader" type="Shader" id=1]
+[ext_resource path="res://code/SoundEmission.cs" type="Script" id=2]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 1 )
+shader_param/theta_range = 45.0
+shader_param/alpha = 1.0
+
+[node name="SoundEmission" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="."]
+
+[node name="Cone" type="ColorRect" parent="."]
+material = SubResource( 1 )
+margin_left = -360.0
+margin_top = -360.0
+margin_right = 360.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 720, 720 )
+color = Color( 1, 1, 1, 0 )

@@ -45,7 +45,7 @@ public class Soundwave : Node2D
 
         // Set shader tween...
         tween.InterpolateMethod(this,"ShadeWave",r_initial,r_range,period);
-        tween.InterpolateMethod(this,"FadeWave",1.0f,0.0f,period);
+        tween.InterpolateMethod(this,"FadeWave",0.625f,0.0f,period);
 
         // Propagate wave...
         tween.Start();
