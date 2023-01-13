@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/shaders/arc.gdshader" type="Shader" id=1]
+[ext_resource path="res://code/Soundwave.cs" type="Script" id=2]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 1432.0
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 1 )
+shader_param/r_max = 1440.0
+shader_param/r_outer = 720.0
+shader_param/r_width = 16.0
+shader_param/theta_range = 45.0
+
+[node name="Soundwave" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="OuterArea" type="Area2D" parent="."]
+visible = false
+
+[node name="OuterHitbox" type="CollisionShape2D" parent="OuterArea"]
+shape = SubResource( 1 )
+
+[node name="InnerArea" type="Area2D" parent="."]
+visible = false
+
+[node name="InnerHitbox" type="CollisionShape2D" parent="InnerArea"]
+shape = SubResource( 1 )
+
+[node name="Buffer" type="BackBufferCopy" parent="."]
+
+[node name="Arc" type="ColorRect" parent="."]
+material = SubResource( 2 )
+margin_left = -1440.0
+margin_top = -1440.0
+margin_right = 1440.0
+margin_bottom = 1440.0
+rect_min_size = Vector2( 2880, 2880 )
+mouse_filter = 2
+color = Color( 1, 1, 1, 0 )

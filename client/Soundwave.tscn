@@ -1,5 +1,0 @@
-[gd_scene format=2]
-
-[node name="Soundwave" type="Node2D"]
-
-[node name="Buffer" type="BackBufferCopy" parent="."]
