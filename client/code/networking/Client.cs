@@ -9,6 +9,8 @@ using System.Collections.Generic;
 public class Client : Node
 {
     [Signal] delegate void ReceivedPacket(int packetID);
+    [Signal] delegate void ReceivedSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks);
+
     [Signal] delegate void ReceivedFrame(Vector2 frame);
 
     private const string CLIENTIP = "127.0.0.1";// FIXME: How to get own IP?
@@ -448,11 +450,11 @@ public class Client : Node
         serverConnection.SendPacket(packet);
     }
 
-    public void Send4102(int receiverID, bool dot, float range, float angle, long interval)
+    public void Send4102(int senderID, int receiverID, bool dot, float range, float angle, long interval)
     {
         // Client sends details of a soundwave collision to server
         HeaderPacket header = new HeaderPacket(4102);
-        MorsePacket morse = new MorsePacket(receiverID,dot,range,angle,interval);
+        MorsePacket morse = new MorsePacket(senderID,receiverID,dot,range,angle,interval);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<MorsePacket>(morse));
         serverConnection.SendPacket(packet);
     }

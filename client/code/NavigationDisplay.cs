@@ -29,6 +29,7 @@ public class NavigationDisplay : Control
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
+        handler.client.Connect("ReceivedSoundwaveCollision",this,"ReceiveSoundwaveCollision");
         //handler.client.Connect("ReceivedFrame",this,"ReceiveFrame");
 
         // Set up timer for sending position packets
@@ -228,21 +229,16 @@ public class NavigationDisplay : Control
 
     public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
     {
-        // DEBUG:
-        GD.Print(receiverID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
-        handler.client.Send4102(receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
-
-
         if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
             return;
 
-        handler.client.Send4102(receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
+        handler.client.Send4102(handler.client.submarineID,receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
     }
 
     public void ReceiveSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
     {
         // DEBUG:
-        GD.Print(handler.client.submarineID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
+        GD.Print(senderID+" sent a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
 
         if (!handler.client.state.GetSubmarines().ContainsKey(senderID))
             return;
