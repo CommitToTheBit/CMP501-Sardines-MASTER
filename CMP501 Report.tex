@@ -35,13 +35,16 @@
 
 \subsection*{Architecture}\label{Architecture}
 
-\textit{Sardines}' network uses a straightforward client-server architecture - 
+\textit{Sardines}' network uses a straightforward client-server architecture with local input processing - that is to say, each client makes [ 
 %Reasons for choice...
 %Though the current system does not have many variables to keep track of, the server also provides a `master state' for clients to work from.
 %Citation about networking [peer-reviewed]...
 
 \vspace{5pt}\noindent
-This may not remain true at a larger scale, however. While it ultimately proved too ambitious for this assignment, the original idea for . Since only navigators would be able to see the surrounding world, they could in some ways act as middle men in the hybrid architecture set out in Figure [FIGURE]. By treating each navigator as a `local' server for their crew of $4$, ...
+\citeauthor{bauer04} \citeyearpar{bauer04} evaluate the scalability of this architecture, finding that with $n$ entity states (for the purposes of \textit{Sardines}, players), client-server costs grow at order $O(n^2)$, compared to peer-to-peer's $O(n^3)$. They ultimately conclude that ``The client-server architecture exhibits the lowest growth in overall system cost, however, with the disadvantage that the entire growth must be handled by the central server.''  
+
+\vspace{5pt}\noindent
+In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for . Since only navigators would be able to see the surrounding world, they could in some ways act as middle men in the hybrid architecture set out in Figure [FIGURE]. By treating each navigator as a `local' server for their crew of $4$, ...
 This would, of course, be subject to further testing, as [carries issues of P2P?]...
 [In paragraph/figure, introduce idea of navigator 'standardising' actions of the crew...]
 

@@ -1,5 +1,11 @@
 \begin{thebibliography}{xx}
 
+\harvarditem[Bauer et~al.]{Bauer, Iliadis, Rooney \harvardand\
+  Scotton}{2004}{bauer04}
+Bauer, D., Iliadis, I., Rooney, S. \harvardand\ Scotton, P.  \harvardyearleft
+  2004\harvardyearright , `Communication architectures for massive multi-player
+  games', {\em Multimedia Tools and Applications} {\bf 23}(1),~47--66.
+
 \harvarditem{{Microsoft}}{n.d.{\em a}}{msftUTC}
 {Microsoft}  \harvardyearleft n.d.{\em a}\harvardyearright , `{Learn / .NET /
   .NET API browser / System / DateTime / Properties / DateTime.UtcNow
