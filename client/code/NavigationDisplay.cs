@@ -252,21 +252,23 @@ public class NavigationDisplay : Control
         sending = xSent[0] == xSent[1] && xSent[1] == xSent[2] && ySent[0] == ySent[1] && ySent[1] == ySent[2] && thetaSent[0] == thetaSent[1] && thetaSent[1] == thetaSent[2];
     }
 
-    public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
+    public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionInterval)
     {
-        // FIXME: Why isn't this allowing sends? Fix tonight, at home!
-        //if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
-        //    return;
+        // Filters out any 'null' submarines
+        if (handler.client.state.GetSubmarine(receiverID).captain.clientID < 0)
+            return;
 
-        handler.client.Send4102(handler.client.submarineID,receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
+        handler.client.Send4102(handler.client.submarineID,receiverID,collisionDot,collisionRange,collisionAngle,collisionInterval);
+        GD.Print(receiverID);
     }
 
-    public void ReceiveSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
+    public void ReceiveSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionInterval)
     {
         // DEBUG:
-        GD.Print(senderID+" sent a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
+        GD.Print(senderID+" sent a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionInterval+" ticks...");
 
-        if (!handler.client.state.GetSubmarines().ContainsKey(senderID))
+        // Filters out any 'null' submarines
+        if (handler.client.state.GetSubmarine(senderID).captain.clientID < 0)
             return;
     }
 }

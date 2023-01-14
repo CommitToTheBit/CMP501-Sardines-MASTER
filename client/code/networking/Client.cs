@@ -184,6 +184,7 @@ public class Client : Node
         SubmarinePacket submarinePacket;
         PositionPacket positionPacket;
         AudioPacket audioPacket;
+        MorsePacket morsePacket;
         switch (packet.header.bodyID)
         {
             case 1000:
@@ -235,6 +236,10 @@ public class Client : Node
             case 4101: // CHECKME: This will (evenutally) be UDP - but still a server/client connection? // Or - using 'forward-only' prediction, hence no UDP!
                 positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
                 Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp);
+                break;
+            case 4102:
+                morsePacket = Packet.Deserialise<MorsePacket>(packet.serialisedBody);
+                Receive4102(morsePacket.senderID,morsePacket.dot,morsePacket.range,morsePacket.angle,morsePacket.interval);
                 break;
             case 4190:
                 audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody);
@@ -423,9 +428,14 @@ public class Client : Node
         state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp);
     }
 
+    private void Receive4102(int senderID, bool dot, float range, float angle, long interval)
+    {
+        EmitSignal("ReceivedSoundwaveCollision",senderID,dot,range,angle,interval);
+    }
+
     private void Receive4190(int init_clientID, float init_x, float init_y)
     {
-        GD.Print("Audio received!");
+        //GD.Print("Audio received!");
     }
 
     // Client 'Calls'
