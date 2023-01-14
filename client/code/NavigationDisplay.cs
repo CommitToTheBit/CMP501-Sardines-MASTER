@@ -121,8 +121,8 @@ public class NavigationDisplay : Control
         int submarineID = handler.client.submarineID;
         Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
 
-        if (!submarines.ContainsKey(submarineID) || submarineID < 0)
-            return;
+        //if (!submarines.ContainsKey(submarineID) || submarineID < 0)
+        //    return;
 
         bool dot = Input.IsActionJustPressed("ui_dot");
         bool dash = Input.IsActionJustPressed("ui_dash");
