@@ -19,4 +19,11 @@ Bauer, D., Iliadis, I., Rooney, S. \harvardand\ Scotton, P.  \harvardyearleft
   \url{https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets?view=net-7.0}.
 \newblock (Accessed: 14 January 2023).
 
+\harvarditem{Postel}{1981}{rfc793}
+Postel, J.  \harvardyearleft 1981\harvardyearright , Transmission control
+  protocol, RFC 793, Information Sciences Institute, University of Southern
+  California, Marina del Rey.
+\newblock Available at: \url{http://www.rfc-editor.org/rfc/rfc793.txt}
+  (Accessed: 14 January 2023).
+
 \end{thebibliography}
