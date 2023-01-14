@@ -247,7 +247,7 @@ public class Submarine
 
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
-        if (t >= 0.05f) // DEBUG: Interpolation interval will be half of position packet interval, but we can set this to 0.0f to 'turn off' interpolation // FIXME: Add slider/checkbox for prediction/interpolation, respectively, in settings?
+        if (t >= 0.0f) // DEBUG: Interpolation interval will be half of position packet interval, but we can set this to 0.0f to 'turn off' interpolation // FIXME: Add slider/checkbox for prediction/interpolation, respectively, in settings?
         {
             return frontPrediction;
         }

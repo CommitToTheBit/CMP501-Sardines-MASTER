@@ -293,7 +293,7 @@ public class Server
                 break;
             case 4102:
                 MorsePacket morsePacket = Packet.Deserialise<MorsePacket>(packet.serialisedBody);
-                Receive4102(morsePacket.senderID, morsePacket.receiverID, morsePacket.dot, morsePacket.range, morsePacket.angle, morsePacket.interval);
+                //Receive4102(morsePacket.senderID, morsePacket.receiverID, morsePacket.dot, morsePacket.range, morsePacket.angle, morsePacket.interval);
                 break;
             case 4190:
                 AudioPacket audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody); // CHECKME: Do we actually need to deserialise this if we aren't modifying the sound?

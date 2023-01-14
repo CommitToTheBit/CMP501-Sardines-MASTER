@@ -10,6 +10,7 @@ public class NavigationDisplay : Control
     // Submarine class control:
     float thrust;
     float steer;
+    bool stopped;
 
 
     // FIXME: Simple sprite set-up
@@ -42,6 +43,7 @@ public class NavigationDisplay : Control
 
         thrust = 0.0f;
         steer = 0.0f;
+        stopped = true;
 
         // FIXME: Simple sprite management
         midground = GetNode<Node2D>("Midground");
@@ -160,7 +162,7 @@ public class NavigationDisplay : Control
         submarine.DerivePosition(thrust,steer,delta);
 
         // FIXME: Even with this restriction, once the submarine starts it isn't likely to stop...
-        if (positionTimer.IsStopped() && (x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]))
+        if (positionTimer.IsStopped() && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !stopped)) // stopped is used to send rest *once*, preventing 'long-term' prediction! 
             positionTimer.Start();
     }
 
@@ -225,13 +227,15 @@ public class NavigationDisplay : Control
 
         Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
         handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
+
+        stopped = submarine.x[0] == submarine.x[1] && submarine.x[1] == submarine.x[2] && submarine.y[0] == submarine.y[1] && submarine.y[1] == submarine.y[2] && submarine.theta[0] == submarine.theta[1] && submarine.theta[1] == submarine.theta[2];
     }
 
     public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
     {
         // FIXME: Why isn't this allowing sends? Fix tonight, at home!
-        if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
-            return;
+        //if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
+        //    return;
 
         handler.client.Send4102(handler.client.submarineID,receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
     }
