@@ -33,7 +33,7 @@
 
 [Introduction: explain concept of game]
 
-\subsection*{Architecture}
+\subsection*{Architecture}\label{Architecture}
 
 \textit{Sardines} is built on a straightforward client-server architecture... 
 Reasons for choice...
@@ -92,16 +92,25 @@ Discuss: offline vs. online updates to position!
 
 \subsection*{Prediction}
 
-Discussion of linear/quadratic prediction...
+As discussed under `\nameref{Architecture}',  clients only send position updates every $0.1s$. What this report has so far failed to consider is how this appears to other clients - they experience what should be a smooth, continuous movement as discontinuous jumps over $0.1s$ intervals! Clearly, ... [introduce prediction - with reading?].
+
+\vspace{5pt}\noindent
+When a player chooses to move forward, they do not jump to a constant speed but continuously accelerate from zero; naturally, \textit{Sardines} uses second-order quadratic prediction to best approximate the second-order derivative of accelaration. Given a submarine's three most recent positions $\mathbf{r}_0$, $\mathbf{r}_1$,$\mathbf{r}_2$ (corresponding to times $t_0 > t_1 > t_2$), clients can average the velocities from $\mathbf{r}_1$ to $\mathbf{r}_0$, from $\mathbf{r}_2$ to $\mathbf{r}_1$, and the acceleration from $\mathbf{r}_1$ to $\mathbf{r}_0$ as
+$$\mathbf{u}_0 = \frac{\mathbf{r}_0-\mathbf{r}_1}{t_0-t_1}, \;\; \mathbf{u}_1 = \frac{\mathbf{r}_1-\mathbf{r}_2}{t_1-t_2}, \;\; \mathbf{a}_0 = \frac{\mathbf{u}_0-\mathbf{u}_1}{t_0-t_1}, \;\; \textrm{respectively.}$$
+These estimates define the quadratic model
+$$ \mathbf{\tilde{r}}(t) = \mathbf{r}_0+\mathbf{u}_0t+\mathbf{a}_0t^2.$$
+In contrast, %? -  
 
 
 \vspace{5pt}\noindent
-Technical breakdown of quadratic...
-* End on note of limitations!
-
-\vspace{5pt}\noindent
-If prediction is the art of waiting for data, then integration is how one `catches up' on receiving it.
-Discussion of interpolation - period is half of...
+If prediction is the act of waiting for data, then integration is how one `catches up' on receiving it. On receiving a new \texttt{PositionPacket} at time $t_0$, a programmer might be inclined to start predicting under to a new quadratic model $\mathbf{\tilde{r}}_{\textrm{new}}(t)$ immediately, but if positions $\mathbf{\tilde{r}}_{\textrm{old}}(t_0)$ and $\mathbf{\tilde{r}}_{\textrm{new}}(t_0)$ are visibly far apart, then the player will see the corresponding submarine make an instantaneous jump across the screen.\footnote{This might be regarded interpolation over $T = 0.0s$!} Instead, one takes a set time $T$ to linearly interpolate from the old trajectory to the new:
+$$\mathbf{\tilde{r}} = \begin{cases} 
+\mathbf{\tilde{r}}_{\textrm{old}}(t) & \textrm{if $t < t_0$} \\
+(1-q(t))\mathbf{\tilde{r}}_{\textrm{old}}(t) + q(t)\mathbf{\tilde{r}}_{\textrm{new}}(t) & \textrm{if $t_0 \leq t < t_0+T$} \\
+\mathbf{\tilde{r}}_{\textrm{new}}(t) & \textrm{if $t \geq t_0+T$}
+\end{cases}, \;\; \textrm{where $q(t) = \frac{1}{T}\left(t-t_0\right)$.}$$
+In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are sent via TCP every $0.1s$; interpolation therefore takes place over a strictly shorter interval $T = 0.05s$. 
+%Footnote - quirk of how we deal with being two packets behind?
 
 \vspace{5pt}\noindent
 [GRAPHICSX: Handdrawn diagram of interpolation and prediction interaction?]
@@ -113,10 +122,10 @@ To fully understand how \textit{Sardines} uses it prediction techniques, this re
 In \textit{Sardines}, the projectiles concerned are soundwaves. The visual language of the game, where soundwaves from external sources only become visible on collision with the player, provides a clear approach: the sender unequivocally takes precedence. Only when a player sees their soundwave hit another is a \texttt{MorsePacket} sent from their client (which will arrive with the usual delay). The sender knows with certainty who receives their message; the receiver, who cannot see the trajectory of the soundwave until it arrives, will have no sense of whether it ``should'' have hit them.
 
 \vspace{5pt}\noindent
-To further `smooth over' the application's conflict resolution, the receiving client makes use of backward prediction. Since neither server nor client stores more than three of any submarine's past positions at a time, it is fortunate the above formulae can approximate the past as well as the future.
+To further `smooth over' the application's conflict resolution, the receiving client makes use of backward prediction. Since neither server nor client stores more than three of any submarine's past positions at a time, it is fortunate the above formulae can approximate the past as well as the future.\footnote{\textit{Sardines}' submarines are physics-based objects, and at one point in development, the drag they experience was factored into prediction. However, the differential equations for 2D motion with a quadratic drag were too complex to find an analytic solution - rather than being able to substitute a $t$-value into a given equation, the prediction would be calculated over incremental, irreversible forward time steps - so the application sacrifices this more realistic model for the ability to look backwards in time.}
 
 \vspace{5pt}\noindent
-Suppose a sender $i$ emits a soundwave from position $\mathbf{r}_i$ at time $t_0$, which they see reach a receiver $j$ at $t_0+\Delta t$. On the arrival of a packet at $t_1$, then, the receiving client have to decide where the wave was emitted from \textit{in its local view of the game}. The obvious choice would be the `true origin' $\mathbf{r}_i$, but \textit{Sardines} uses the backwards prediction $\mathbf{\tilde{r}}_i(t_1-\Delta t)$. As [FIGURE] puts it in [REFERENCE], [QUOTE]; conflict resolution is the art of deciding which quantities are preserved across clients, and \textit{Sardines} - a system designed around slow, real-time communications - is far less concerned with a shared view of geography than it is a shared view of delay.
+Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, which they see reach a receiver at $t_0+\Delta t$. On the arrival of the corresponding packet at $t_1$, then, the receiving client has to decide where the wave was emitted from \textit{in its local view of the game}. The obvious choice would be the `true origin' $\mathbf{r}$, but \textit{Sardines} uses the backwards prediction $\mathbf{\tilde{r}}(t_1-\Delta t)$. As [FIGURE] puts it in [REFERENCE], [QUOTE]; conflict resolution is the art of deciding which quantities are preserved across clients, and \textit{Sardines} - a system designed around slow, real-time communications - is far less concerned with a shared view of geography than it is a shared view of delay.
 
 \subsection*{Testing}
 
