@@ -10,8 +10,11 @@ public class NavigationDisplay : Control
     // Submarine class control:
     float thrust;
     float steer;
-    bool stopped;
 
+    // Need to ensure all other submarines come to rest, on account of quadratic prediction...
+    bool sending;
+    float[] xSent, ySent;
+    float[] thetaSent;
 
     // FIXME: Simple sprite set-up
     Node2D foreground;
@@ -43,7 +46,11 @@ public class NavigationDisplay : Control
 
         thrust = 0.0f;
         steer = 0.0f;
-        stopped = true;
+
+        sending = true;
+        xSent = new float[3] { 0.0f, 0.0f, 0.0f };
+        ySent = new float[3] { 0.0f, 0.0f, 0.0f };
+        thetaSent = new float[3] { 0.0f, 0.0f, 0.0f };
 
         // FIXME: Simple sprite management
         midground = GetNode<Node2D>("Midground");
@@ -162,7 +169,7 @@ public class NavigationDisplay : Control
         submarine.DerivePosition(thrust,steer,delta);
 
         // FIXME: Even with this restriction, once the submarine starts it isn't likely to stop...
-        if (positionTimer.IsStopped())// && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !stopped)) // stopped is used to send rest *once*, preventing 'long-term' prediction! 
+        if (positionTimer.IsStopped() && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !sending)) // sending is used to re-establish rest, preventing 'long-term' prediction! 
             positionTimer.Start();
 
         //GD.Print(stopped);
@@ -230,7 +237,19 @@ public class NavigationDisplay : Control
         Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
         handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
 
-        stopped = submarine.x[0] == submarine.x[1] && submarine.x[1] == submarine.x[2] && submarine.y[0] == submarine.y[1] && submarine.y[1] == submarine.y[2] && submarine.theta[0] == submarine.theta[1] && submarine.theta[1] == submarine.theta[2];
+        xSent[0] = xSent[1];
+        xSent[1] = xSent[2];
+        xSent[2] = submarine.x[2];
+
+        ySent[0] = ySent[1];
+        ySent[1] = ySent[2];
+        ySent[2] = submarine.y[2];
+
+        thetaSent[0] = thetaSent[1];
+        thetaSent[1] = thetaSent[2];
+        thetaSent[2] = submarine.theta[2];
+
+        sending = xSent[0] == xSent[1] && xSent[1] == xSent[2] && ySent[0] == ySent[1] && ySent[1] == ySent[2] && thetaSent[0] == thetaSent[1] && thetaSent[1] == thetaSent[2];
     }
 
     public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
