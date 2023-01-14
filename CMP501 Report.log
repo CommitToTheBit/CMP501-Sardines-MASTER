@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  14 JAN 2023 19:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  14 JAN 2023 20:35
 entering extended mode
 **"./CMP501 Report.tex"
 (CMP501 Report.tex
@@ -849,13 +849,13 @@ Configuring pdfsync
 **** pdfsync.sty: started
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 46.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 44.
 
 
 (C:\Users\samdr\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 46.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 44.
 
 
 (C:\Users\samdr\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd
@@ -864,18 +864,18 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {C:/Users/samdr/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
-(CMP501 Report.bbl) [3] (CMP501 Report.aux)
+(CMP501 Report.bbl [3]) [4] (CMP501 Report.aux)
 Package rerunfilecheck Info: File `"CMP501 Report".out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 22367 strings out of 479300
- 406819 string characters out of 2853552
- 698571 words of memory out of 3000000
- 39413 multiletter control sequences out of 15000+200000
+ 22372 strings out of 479300
+ 406882 string characters out of 2853552
+ 698598 words of memory out of 3000000
+ 39416 multiletter control sequences out of 15000+200000
  415414 words of font info for 71 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,20n,89p,951b,551s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 87i,20n,89p,951b,563s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\samdr\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
 tcrm1000.pk><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/font
@@ -894,9 +894,9 @@ samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.p
 fb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti8.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmtt10.pfb>
-Output written on "CMP501 Report.pdf" (3 pages, 189189 bytes).
+Output written on "CMP501 Report.pdf" (4 pages, 191162 bytes).
 PDF statistics:
- 127 PDF objects out of 1000 (max. 8388607)
- 27 named destinations out of 1000 (max. 500000)
+ 136 PDF objects out of 1000 (max. 8388607)
+ 29 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

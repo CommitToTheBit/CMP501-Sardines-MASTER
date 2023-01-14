@@ -35,9 +35,7 @@
 
 \subsection*{Architecture}\label{Architecture}
 
-\textit{Sardines}' network uses a straightforward client-server architecture, for the... 
-
-Furthermore, the architecture uses local input processing - each client takes responsibility for processing their own player's actions and transmitting the resulting changes, rather than leaving the central server to compute a new master state directly from raw input. While this [downside], it distributes the game's physics-based movement calculations in a far more even fashion.
+\textit{Sardines}' network uses a straightforward client-server architecture, providing a single `master' game state essential in minimising disputes (see `\nameref{Prediction}'). Furthermore, the architecture uses local input processing - each client takes responsibility for processing their own player's actions and transmitting the resulting changes, rather than leaving the central server to compute a new master state directly from raw input. This distributes the game's physics-based movement calculations in a far more even fashion; an authoritative server with less trust in the player would better prevent cheating \citep{gmbta10}, but any notion of `cheating' will be of little concern while \textit{Sardines} remains at sandbox game.
 %Reasons for choice...
 %Though the current system does not have many variables to keep track of, the server also provides a `master state' for clients to work from.
 %Citation about networking [peer-reviewed]...

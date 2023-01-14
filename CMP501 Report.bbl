@@ -6,6 +6,12 @@ Bauer, D., Iliadis, I., Rooney, S. \harvardand\ Scotton, P.  \harvardyearleft
   2004\harvardyearright , `Communication architectures for massive multi-player
   games', {\em Multimedia Tools and Applications} {\bf 23}(1),~47--66.
 
+\harvarditem{Gambetta}{2010}{gmbta10}
+Gambetta, G.  \harvardyearleft 2010\harvardyearright , `{Fast-Paced Multiplayer
+  (Part I): Client-Server Game Architecture}', Available at:
+  \url{https://www.gabrielgambetta.com/client-server-game-architecture.html}.
+\newblock (Accessed: 14 January 2023).
+
 \harvarditem{{Microsoft}}{n.d.{\em a}}{msftUTC}
 {Microsoft}  \harvardyearleft n.d.{\em a}\harvardyearright , `{Learn / .NET /
   .NET API browser / System / DateTime / Properties / DateTime.UtcNow
