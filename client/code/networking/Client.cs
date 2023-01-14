@@ -448,6 +448,15 @@ public class Client : Node
         serverConnection.SendPacket(packet);
     }
 
+    public void Send4102(int receiverID, bool dot, float range, float angle, long interval)
+    {
+        // Client sends details of a soundwave collision to server
+        HeaderPacket header = new HeaderPacket(4102);
+        MorsePacket morse = new MorsePacket(receiverID,dot,range,angle,interval);
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<MorsePacket>(morse));
+        serverConnection.SendPacket(packet);
+    }
+
     public void Send4190(float x, float y)
     {
         // Client sends details of a single audio frame to the server

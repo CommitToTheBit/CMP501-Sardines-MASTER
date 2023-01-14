@@ -191,14 +191,16 @@ public struct MorsePacket
 {
     public int submarineID; // Refers to receiver on client-to-server, sender to server-to-client!
     public bool dot;
+    public float range;
     public float angle;
     public long interval;
 
-    public MorsePacket(int init_submarineID, bool init_dot, float init_angle, long init_interval)
+    public MorsePacket(int init_submarineID, bool init_dot, float init_range, float init_angle, long init_interval)
     {
         submarineID = init_submarineID;
 
         dot = init_dot;
+        range = init_range;
         angle = init_angle;
         interval = init_interval;
     }

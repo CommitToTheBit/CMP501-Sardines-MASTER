@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Soundwave : Node2D
 {
-    [Signal] delegate void WaveReceivedBy(int submarineID, bool collisionDot, float collisionAngle, long collisionTicks);
+    [Signal] delegate void WaveReceivedBy(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks);
 
     ColorRect arc;
     
@@ -109,7 +109,7 @@ public class Soundwave : Node2D
             return;
 
         long collisionTicks = DateTime.UtcNow.Ticks-init_ticks;
-        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,dot,collisionAngle,collisionTicks); // Track submarineID, etc...
+        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,dot,thetaRange,collisionAngle,collisionTicks); // Track submarineID, etc...
 
         collisions.Add(receiver);
     }

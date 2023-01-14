@@ -226,21 +226,23 @@ public class NavigationDisplay : Control
         handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
     }
 
-    public void SendSoundwaveCollision(int submarineID, float collisionAngle, long collisionTicks)
+    public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
     {
         // DEBUG:
-        GD.Print(submarineID+" receives soundwave at "+collisionTicks+"...");
+        GD.Print(receiverID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
 
-        if (!handler.client.state.GetSubmarines().ContainsKey(submarineID))
+        if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
             return;
+
+        handler.client.Send4102(receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
     }
 
-    public void ReceiveSoundwaveCollision(int submarineID, bool collisionDot, float collisionAngle, long collisionTicks)
+    public void ReceiveSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
     {
         // DEBUG:
-        GD.Print(submarineID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
+        GD.Print(handler.client.submarineID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
 
-        if (!handler.client.state.GetSubmarines().ContainsKey(submarineID))
+        if (!handler.client.state.GetSubmarines().ContainsKey(senderID))
             return;
     }
 }
