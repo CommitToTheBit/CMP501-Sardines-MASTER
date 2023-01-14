@@ -1,24 +1,40 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Soundwave : Node2D
 {
+    [Signal] delegate void WaveReceivedBy();
+
     ColorRect arc;
+    
+    Area2D outerArea;
     CollisionShape2D outerHitbox;
+
+    Area2D innerArea;
     CollisionShape2D innerHitbox;
+
     ShaderMaterial shaderMaterial;
     Tween tween;
+
+    List<Area2D> collisions;
 
     public override void _Ready()
     {
         arc = GetNode<ColorRect>("Arc");
-        outerHitbox = GetNode<CollisionShape2D>("OuterArea/OuterHitbox");
-        innerHitbox = GetNode<CollisionShape2D>("InnerArea/InnerHitbox");
+
+        outerArea = GetNode<Area2D>("OuterArea");
+        outerHitbox = outerArea.GetNode<CollisionShape2D>("OuterHitbox");
+
+        innerArea = GetNode<Area2D>("InnerArea");
+        innerHitbox = innerArea.GetNode<CollisionShape2D>("InnerHitbox");
+
         shaderMaterial = (arc.Material as ShaderMaterial);
 
         tween = GetNode<Tween>("Tween");
 
-        PropagateWave(0.0f,1440.0f,32.0f,300.0f,2.0f,false);
+        collisions = new List<Area2D>();
+        collisions.Add(innerArea);
     }
 
     public async void PropagateWave(float r_initial, float r_range, float r_width, float theta_range, float period, bool collision)
@@ -48,6 +64,7 @@ public class Soundwave : Node2D
         tween.InterpolateMethod(this,"FadeWave",0.625f,0.0f,period);
 
         // Propagate wave...
+        outerArea.Connect("area_entered",this,"ReceiveWave");
         tween.Start();
 
         // Delete on completion...
@@ -63,5 +80,16 @@ public class Soundwave : Node2D
     public void FadeWave(float alpha)
     {
         shaderMaterial.SetShaderParam("alpha", alpha);
+    }
+
+    public void ReceiveWave(Area2D receiver)
+    {
+        if (collisions.Contains(receiver))
+            return;
+
+        GD.Print(receiver);
+        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID); // Track submarineID, etc...
+
+        collisions.Add(receiver);
     }
 }

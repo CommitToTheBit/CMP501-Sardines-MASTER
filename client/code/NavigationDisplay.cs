@@ -29,7 +29,7 @@ public class NavigationDisplay : Control
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
-        handler.client.Connect("ReceivedFrame",this,"ReceiveFrame");
+        //handler.client.Connect("ReceivedFrame",this,"ReceiveFrame");
 
         // Set up timer for sending position packets
         positionTimer = new Timer();
@@ -47,6 +47,7 @@ public class NavigationDisplay : Control
         vessels = new Dictionary<int, Vessel>();
 
         vessel = GetNode<Vessel>("Foreground/Vessel");
+        vessel.GetNode<CollisionShape2D>("Area/Hitbox").Disabled = true; // FIXME: Replace with different mask layer later!
         soundEmission = vessel.GetNode<SoundEmission>("SoundEmission");
 
         sweep = GetNode<Sprite>("Foreground/Sweep");
@@ -193,6 +194,8 @@ public class NavigationDisplay : Control
             {
                 vessels.Add(id,ResourceLoader.Load<PackedScene>("res://scenes/Vessel.tscn").Instance<Vessel>());
                 midground.AddChild(vessels[id]);
+                
+                vessels[id].submarineID = id;
             }
 
             vessels[id].Position = new Vector2(prediction.x-x,prediction.y-y).Rotated(-theta)+vessel.Position;

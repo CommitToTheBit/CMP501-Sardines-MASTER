@@ -20,23 +20,20 @@ script = ExtResource( 2 )
 
 [node name="OuterArea" type="Area2D" parent="."]
 visible = false
+collision_layer = 2
 
 [node name="OuterHitbox" type="CollisionShape2D" parent="OuterArea"]
 shape = SubResource( 1 )
 
 [node name="InnerArea" type="Area2D" parent="."]
 visible = false
+collision_layer = 2
 
 [node name="InnerHitbox" type="CollisionShape2D" parent="InnerArea"]
 shape = SubResource( 1 )
 
 [node name="Arc" type="ColorRect" parent="."]
 material = SubResource( 2 )
-margin_left = -1440.0
-margin_top = -1440.0
-margin_right = 1440.0
-margin_bottom = 1440.0
-rect_min_size = Vector2( 2880, 2880 )
 mouse_filter = 2
 color = Color( 1, 1, 1, 0 )
 
