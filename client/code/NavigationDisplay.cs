@@ -235,10 +235,10 @@ public class NavigationDisplay : Control
             return;
     }
 
-    public void ReceiveSoundwaveCollision(int submarineID, float collisionAngle, long collisionTicks)
+    public void ReceiveSoundwaveCollision(int submarineID, bool collisionDot, float collisionAngle, long collisionTicks)
     {
         // DEBUG:
-        GD.Print(submarineID+" receives soundwave at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
+        GD.Print(submarineID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
 
         if (!handler.client.state.GetSubmarines().ContainsKey(submarineID))
             return;

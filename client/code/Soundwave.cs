@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Soundwave : Node2D
 {
-    [Signal] delegate void WaveReceivedBy(int submarineID, float collisionAngle, long collisionTicks);
+    [Signal] delegate void WaveReceivedBy(int submarineID, bool collisionDot, float collisionAngle, long collisionTicks);
 
     ColorRect arc;
     
@@ -17,6 +17,7 @@ public class Soundwave : Node2D
     ShaderMaterial shaderMaterial;
     Tween tween;
 
+    bool dot;
     float thetaRange;
     long init_ticks;
 
@@ -42,10 +43,14 @@ public class Soundwave : Node2D
         collisions.Add(innerArea);
     }
 
-    public async void PropagateWave(float r_initial, float r_range, float r_width, float theta_range, float period, bool collision)
+    public async void PropagateWave(float r_initial, float r_range, bool r_dot, float theta_range, float period, bool collision)
     {
-        r_initial = Mathf.Min(r_initial,r_width);
+        dot = r_dot;
         thetaRange = theta_range;
+
+        // Extra adjustments...
+        float r_width = (r_dot) ? 12.0f : 24.0f;
+        r_initial = Mathf.Min(r_initial,r_width);
 
         // Set canvas...
         arc.RectPosition = -r_range*Vector2.One;
@@ -104,7 +109,7 @@ public class Soundwave : Node2D
             return;
 
         long collisionTicks = DateTime.UtcNow.Ticks-init_ticks;
-        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,collisionAngle,collisionTicks); // Track submarineID, etc...
+        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,dot,collisionAngle,collisionTicks); // Track submarineID, etc...
 
         collisions.Add(receiver);
     }
