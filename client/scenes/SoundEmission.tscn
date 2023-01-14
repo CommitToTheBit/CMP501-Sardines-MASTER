@@ -11,8 +11,6 @@ shader_param/alpha = 1.0
 [node name="SoundEmission" type="Node2D"]
 script = ExtResource( 2 )
 
-[node name="BackBufferCopy" type="BackBufferCopy" parent="."]
-
 [node name="Cone" type="ColorRect" parent="."]
 material = SubResource( 1 )
 margin_left = -360.0

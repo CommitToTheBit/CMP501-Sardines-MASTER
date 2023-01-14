@@ -19,7 +19,7 @@ public class SoundEmission : Node2D
         emissionPeriod = 4.0f;
 
         emissionTimer = new Timer();
-        emissionTimer.WaitTime = 0.05f*emissionPeriod;
+        emissionTimer.WaitTime = 0.07f*emissionPeriod;
         emissionTimer.Autostart = false;
         emissionTimer.OneShot = true;
         AddChild(emissionTimer);
@@ -32,29 +32,17 @@ public class SoundEmission : Node2D
         cone.RectRotation = (GetGlobalMousePosition()-GlobalPosition).Angle()+Mathf.Pi/2;
     }
 
-    public override void _Input(InputEvent @event)
+    public void EmitSoundwave(bool dot)
     {
-        base._Input(@event);
+        if (!emissionTimer.IsStopped())
+            return;
 
-        if (emissionTimer.IsStopped())
-        {
-            bool dot = Input.IsActionJustPressed("ui_dot");
-            bool dash = Input.IsActionJustPressed("ui_dash");
-            if (dot || dash)
-            {
-                Soundwave soundwave = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>();
-                AddChild(soundwave);
+        Soundwave soundwave = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>();
+        AddChild(soundwave);
 
-                soundwave.Rotation = cone.RectRotation;
-                soundwave.PropagateWave(0.0f,1440.0f,(dot) ? 12.0f : 24.0f,45.0f,4.0f,false);
+        soundwave.Rotation = cone.RectRotation;
+        soundwave.PropagateWave(0.0f,1440.0f,(dot) ? 12.0f : 24.0f,45.0f,5.0f,false);
 
-                emissionTimer.Start();
-            }
-        }
-    }
-
-    public void EmitSoundwave()
-    {
-        
+        emissionTimer.Start();
     }
 }

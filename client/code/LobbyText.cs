@@ -13,9 +13,8 @@ public class LobbyText : Text
         handler.client.Connect("ReceivedPacket",this,"Receive");
 
         InitialiseText();
-        //GetNode<TextureButton>("StartGameButton").GrabFocus();
-        GetNode<TextureButton>("StartGameButton").Disabled = false; // FIXME ME: SET TO true; IF IMPLEMENTING A 'HOST'
-        GetNode<TextureButton>("BackButton").GrabFocus();
+        GetNode<TextureButton>("StartGameButton").GrabFocus();
+        UpdateHost();
 
         players = new List<RichTextLabel>();
         for (int i = 0; i < 8; i++)
@@ -38,6 +37,14 @@ public class LobbyText : Text
         newHistory.RemoveAt(history.Count-1);
 
         EmitSignal("ChangeUI",backID,backID,newHistory);
+    }
+
+    public void UpdateHost() // FIXME: Trivial for now, will add 'proper' host functionality later...
+    {
+        bool host = true;
+        if (!host && GetNode<TextureButton>("StartGameButton").HasFocus())
+            GetNode<TextureButton>("BackButton").GrabFocus();
+        GetNode<TextureButton>("StartGameButton").Disabled = !host; 
     }
 
     public void UpdatePlayers()

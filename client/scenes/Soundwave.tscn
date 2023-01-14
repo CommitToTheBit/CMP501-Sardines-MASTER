@@ -30,8 +30,6 @@ visible = false
 [node name="InnerHitbox" type="CollisionShape2D" parent="InnerArea"]
 shape = SubResource( 1 )
 
-[node name="Buffer" type="BackBufferCopy" parent="."]
-
 [node name="Arc" type="ColorRect" parent="."]
 material = SubResource( 2 )
 margin_left = -1440.0

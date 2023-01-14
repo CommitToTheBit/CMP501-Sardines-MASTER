@@ -18,6 +18,7 @@ public class NavigationDisplay : Control
     Dictionary<int,Vessel> vessels;
 
     Vessel vessel;
+    SoundEmission soundEmission;
 
     Sprite sweep;
 
@@ -46,6 +47,7 @@ public class NavigationDisplay : Control
         vessels = new Dictionary<int, Vessel>();
 
         vessel = GetNode<Vessel>("Foreground/Vessel");
+        soundEmission = vessel.GetNode<SoundEmission>("SoundEmission");
 
         sweep = GetNode<Sprite>("Foreground/Sweep");
 
@@ -64,10 +66,10 @@ public class NavigationDisplay : Control
         audioStreamPlayer.Play();*/
     }
 
-    private void ReceivedFrame(Vector2 init_frame)
+    /*private void ReceivedFrame(Vector2 init_frame)
     {
         GD.Print("Received frame!");//frames.Add(init_frame);
-    }
+    }*/
 
     public override void _Process(float delta)
     {
@@ -109,6 +111,22 @@ public class NavigationDisplay : Control
         frames = new List<Vector2>();
 
         audioStreamPlayer.Play();*/
+    }
+    
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+
+        int submarineID = handler.client.submarineID;
+        Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
+
+        if (!submarines.ContainsKey(submarineID) || submarineID < 0)
+            return;
+
+        bool dot = Input.IsActionJustPressed("ui_dot");
+        bool dash = Input.IsActionJustPressed("ui_dash");
+        if (dot || dash)
+            soundEmission.EmitSoundwave(dot);
     }
 
     public void UpdatePosition(float delta) // Interpolate using timestamp since last sighting?
