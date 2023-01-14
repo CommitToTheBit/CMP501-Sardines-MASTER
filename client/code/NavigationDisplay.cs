@@ -162,8 +162,10 @@ public class NavigationDisplay : Control
         submarine.DerivePosition(thrust,steer,delta);
 
         // FIXME: Even with this restriction, once the submarine starts it isn't likely to stop...
-        if (positionTimer.IsStopped() && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !stopped)) // stopped is used to send rest *once*, preventing 'long-term' prediction! 
+        if (positionTimer.IsStopped())// && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !stopped)) // stopped is used to send rest *once*, preventing 'long-term' prediction! 
             positionTimer.Start();
+
+        //GD.Print(stopped);
     }
 
     public void Render()
