@@ -3,13 +3,14 @@ using System;
 
 public class SoundEmission : Node2D
 {
-    [Signal] delegate void WaveReceivedBy(int submarineID, long intervalTicks);
+    [Signal] delegate void WaveReceivedBy(int submarineID, long collisionTicks);
 
     ColorRect cone;
     PackedScene soundwavePackedScene;
 
     Timer emissionTimer;
 
+    float thetaRange;
     float emissionPeriod;
 
     public override void _Ready()
@@ -17,7 +18,8 @@ public class SoundEmission : Node2D
         cone = GetNode<ColorRect>("Cone");
         soundwavePackedScene = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn");
 
-        // Set up delay between soundwaves emitted...
+        // Set up variables for soundwaves emitted
+        thetaRange = 60.0f;
         emissionPeriod = 4.0f;
 
         emissionTimer = new Timer();
@@ -44,13 +46,13 @@ public class SoundEmission : Node2D
 
         soundwave.Rotation = cone.RectRotation;
         soundwave.Connect("WaveReceivedBy",this,"ReceiveWave");
-        soundwave.PropagateWave(0.0f,1440.0f,(dot) ? 12.0f : 24.0f,45.0f,5.0f,true);
+        soundwave.PropagateWave(0.0f,1440.0f,(dot) ? 12.0f : 24.0f,thetaRange,5.0f,true);
 
         emissionTimer.Start();
     }
 
-    public void ReceiveWave(int submarineID, long intervalTicks)
+    public void ReceiveWave(int submarineID, long collisionTicks)
     {
-        EmitSignal("WaveReceivedBy",submarineID,intervalTicks); // Pass values up to NavigationDisplay...
+        EmitSignal("WaveReceivedBy",submarineID,collisionTicks); // Pass values up to NavigationDisplay...
     }
 }

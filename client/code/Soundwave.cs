@@ -17,9 +17,10 @@ public class Soundwave : Node2D
     ShaderMaterial shaderMaterial;
     Tween tween;
 
-    List<Area2D> collisions;
-
+    float thetaRange;
     long init_ticks;
+
+    List<Area2D> collisions;
 
     public override void _Ready()
     {
@@ -35,6 +36,8 @@ public class Soundwave : Node2D
 
         tween = GetNode<Tween>("Tween");
 
+        thetaRange = 0.0f;
+
         collisions = new List<Area2D>();
         collisions.Add(innerArea);
     }
@@ -42,6 +45,7 @@ public class Soundwave : Node2D
     public async void PropagateWave(float r_initial, float r_range, float r_width, float theta_range, float period, bool collision)
     {
         r_initial = Mathf.Min(r_initial,r_width);
+        thetaRange = theta_range;
 
         // Set canvas...
         arc.RectPosition = -r_range*Vector2.One;
@@ -59,7 +63,7 @@ public class Soundwave : Node2D
         // Set shader constants...
         shaderMaterial.SetShaderParam("r_range", r_range);
         shaderMaterial.SetShaderParam("r_width", r_width);
-        shaderMaterial.SetShaderParam("theta_range", theta_range);
+        shaderMaterial.SetShaderParam("theta_range", thetaRange);
 
         // Set shader tween...
         tween.InterpolateMethod(this,"ShadeWave",r_initial,r_range,period);
@@ -91,8 +95,16 @@ public class Soundwave : Node2D
         if (collisions.Contains(receiver))
             return;
 
-        long intervalTicks = DateTime.UtcNow.Ticks-init_ticks;
-        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,intervalTicks); // Track submarineID, etc...
+        float collisionAngle = Mathf.Atan2(receiver.GetGlobalPosition().x-GetGlobalPosition().x, receiver.GetGlobalPosition().y-GetGlobalPosition().y)-Rotation;
+        collisionAngle = 2.0f*Mathf.Pi*(0.5f*collisionAngle/Mathf.Pi-Mathf.Round(0.5f*collisionAngle/Mathf.Pi)); // Restricting range to [0,2Pi)...
+        if (collisionAngle > Mathf.Pi) // ...Then to (-Pi,Pi]...
+            collisionAngle -= 2.0f*Mathf.Pi;
+
+        if (collisionAngle < -0.5f*(Mathf.Pi/180.0f)*thetaRange || collisionAngle > 0.5f*(Mathf.Pi/180.0f)*thetaRange)
+            return;
+
+        long collisionTicks = DateTime.UtcNow.Ticks-init_ticks;
+        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,collisionTicks); // Track submarineID, etc...
 
         collisions.Add(receiver);
     }
