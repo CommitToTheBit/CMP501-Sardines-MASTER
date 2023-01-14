@@ -1,6 +1,6 @@
 % LaTeX Template for short student reports.
 % Citations should be in bibtex format and go in references.bib
-\documentclass[a4paper, 11pt]{article}
+\documentclass[a4paper, 10pt]{article}
 \usepackage[top=3cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
 \geometry{a4paper} 
 \usepackage[utf8]{inputenc}
@@ -31,14 +31,14 @@
 
 \section*{Sardines: A Networked Game}
 
-[Introduction: explain concept of game]
+\textit{Sardines} is a system of communication for 2-8 players. Each player pilots a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves - representative of dots and dashes - to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox, to best restrict attention to the networking techniques at play.
 
 \subsection*{Architecture}\label{Architecture}
 
-\textit{Sardines} is built on a straightforward client-server architecture... 
-Reasons for choice...
-Though the current system does not have many variables to keep track of, the server also provides a `master state' for clients to work from.
-Citation about networking [peer-reviewed]...
+\textit{Sardines}' network uses a straightforward client-server architecture - 
+%Reasons for choice...
+%Though the current system does not have many variables to keep track of, the server also provides a `master state' for clients to work from.
+%Citation about networking [peer-reviewed]...
 
 \vspace{5pt}\noindent
 This may not remain true at a larger scale, however. While it ultimately proved too ambitious for this assignment, the original idea for . Since only navigators would be able to see the surrounding world, they could in some ways act as middle men in the hybrid architecture set out in Figure [FIGURE]. By treating each navigator as a `local' server for their crew of $4$, ...
@@ -58,27 +58,45 @@ As much is set out in RFC 798 %\cite
 Provide reliability paragraph?...
 
 \vspace{5pt}\noindent
-Why not consider UDP?...
-Position updates every 0.1s...\footnote{Could simplify even further with event-based - have server calculate all positions from key presses...}
+There is, of course, an argument for updating positions via UDP. Suppose that a submarine starts at position $A$, fails to update to position $B$: where the ordered nature of TCP means the application will resend and resend this update [EXPLAIN DOWNSIDE], this protocol will simply [GO TO the position C of the next successful].  While the deliberate simplicity of UDP - the [FEATURE \#1], the [FEATURE \#2] - lends itself to the continuous, incremental nature of movement , \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with positions needed reliably but not immediately, and with the robustness of the prediction system used (see `\nameref{Prediction}'), updating position via TCP every 0.1s should be infrequent enough to avoid the backlog described above.\footnote{Could simplify even further with event-based - have server calculate all positions from key presses...}
 
-\paragraph{Application Layer}
+\paragraph{Application Layer} 
 
-Data sent with \texttt{Packet} struct...
-Break down serialisation...
+While it doesn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Client and server communicate using an underlying \texttt{Packet} struct, ...
+[Serialisation!]...
 
 \vspace{5pt}\noindent
-While there isn't the space to break down every protocol in precise detail... [List packets used and what each 
-\begin{itemize}
-\item
+At a more granular level, \textit{Sardines}' \texttt{SendablePacket}s may use any such struct as a \texttt{serialisedBody}:
+\begin{itemize}[noitemsep]
+\item \texttt{SyncPacket} Contains a \texttt{long} \texttt{syncTimestamp}. Sent on connection to standardise server and client calculations for \texttt{DateTime.UtcNow.Ticks} (which may vary from underlying OS to underlying OS, \citealp{msftUTC}).
+\item \texttt{IDPacket} ... (in the hybrid architecture discussed above, this IP would also be used to establish crew-to-navigator connections).
+\item \texttt{SubmarinePacket} 
+\item \texttt{PositionPacket}
+\item \texttt{MorsePacket}
+\item \texttt{EmptyPacket} Contains no variables. Sent when the \texttt{bodyID} corresponds to a function with no arguments (e.g. when a client starts a game with \texttt{bodyID}.
 \end{itemize}
+\texttt{bodyID}s use the following naming convention: IDs \texttt{1XXX} correspond to clients connecting to/disconnecting from a server, \texttt{2XXX} to server functionality while in lobby mode, \texttt{3XXX} to server functionality while in a game mode, and \texttt{4XXX} to client actions which in-game.
 
 \vspace{5pt}\noindent
-As an example, consider how a player might join the lobby...
+While there isn't the space to break down every protocol in precise detail, consider the process of a player joining a lobby:
+\begin{enumerate}[label=\textit{\arabic*}\textit{.}, noitemsep]
+\item \textit{The client registers a TCP connection with the server.} The client then constructs... with ID \texttt{1000}...
+\item \textit{The server receives a \texttt{SyncPacket} from the client.} Calling \texttt{Receive1000()}, the server...
+\item \textit{The client receives a \texttt{SyncPacket} from the server.}
+\item \textit{The server receives an \texttt{IDPacket} from the client.}
+\item \textit{The client receives an \texttt{IDPacket} from the server.}
+\item \textit{All clients receive (further) \texttt{IDPacket}s from the server.}
+\end{enumerate}
+There is arguably some unnecessary back-and-forth to the above, but small packet sizes shouldn't put any meaningful strain on bandwidth. The process is designed first and foremost for ease of programming: treating major protocols as a chain of smaller, simpler steps, it becomes far easier to manage - and document - the application layer. 
+%This description may seem fairly dry, but it serves to ...
+%There is some degree of back-and-forth to this process...
+
 
 \subsection*{API}
 
 % CHECKME: What is an API?
-\textit{Sardines} is built with C\# in the Godot engine. It uses System.Net.Sockets to handle networking, and System.Runtime.InteropServices to serialize/deserialize packet structs. This report notes that...
+\textit{Sardines} is built with C\# in the Godot engine. It uses System.Net.Sockets to handle networking, and System.Runtime.InteropServices to serialize/deserialize packet structs. As noted in Microsoft's documentation \citeyearpar{msftSNS}, System.Net.Sockets implements conventional Berkeley sockets.
+
 
 
 
@@ -90,7 +108,10 @@ Connection class...
 \vspace{5pt}\noindent
 Discuss: offline vs. online updates to position!
 
-\subsection*{Prediction}
+\vspace{5pt}\noindent
+This report would be amiss to skip over the final step: 
+
+\subsection*{Prediction}\label{Prediction}
 
 As discussed under `\nameref{Architecture}',  clients only send position updates every $0.1s$. What this report has so far failed to consider is how this appears to other clients - they experience what should be a smooth, continuous movement as discontinuous jumps over $0.1s$ intervals! Clearly, ... [introduce prediction - with reading?].
 
@@ -99,12 +120,15 @@ When a player chooses to move forward, they do not jump to a constant speed but 
 $$\mathbf{u}_0 = \frac{\mathbf{r}_0-\mathbf{r}_1}{t_0-t_1}, \;\; \mathbf{u}_1 = \frac{\mathbf{r}_1-\mathbf{r}_2}{t_1-t_2}, \;\; \mathbf{a}_0 = \frac{\mathbf{u}_0-\mathbf{u}_1}{t_0-t_1}, \;\; \textrm{respectively.}$$
 These estimates define the quadratic model
 $$ \mathbf{\tilde{r}}(t) = \mathbf{r}_0+\mathbf{u}_0t+\mathbf{a}_0t^2.$$
-In contrast, %? -  
+%FIXME: Subject to experiementation!
+In contrast, the rudder controlling a submarine's rotation $\theta$ \textit{is} controlled at a constant speed, so \textit{Sardines} only uses linear prediction to approximate
+$$\mathbf{\tilde{\theta}}(t) = \mathbf{\theta}_0+\mathbf{\dot{\theta}}_0t$$
+(with subtle, case-specific considerations made given $\theta \in [0,2\pi)$).
 
 
 \vspace{5pt}\noindent
 If prediction is the act of waiting for data, then integration is how one `catches up' on receiving it. On receiving a new \texttt{PositionPacket} at time $t_0$, a programmer might be inclined to start predicting under to a new quadratic model $\mathbf{\tilde{r}}_{\textrm{new}}(t)$ immediately, but if positions $\mathbf{\tilde{r}}_{\textrm{old}}(t_0)$ and $\mathbf{\tilde{r}}_{\textrm{new}}(t_0)$ are visibly far apart, then the player will see the corresponding submarine make an instantaneous jump across the screen.\footnote{This might be regarded interpolation over $T = 0.0s$!} Instead, one takes a set time $T$ to linearly interpolate from the old trajectory to the new:
-$$\mathbf{\tilde{r}} = \begin{cases} 
+$$\mathbf{\tilde{r}}(t) = \begin{cases} 
 \mathbf{\tilde{r}}_{\textrm{old}}(t) & \textrm{if $t < t_0$} \\
 (1-q(t))\mathbf{\tilde{r}}_{\textrm{old}}(t) + q(t)\mathbf{\tilde{r}}_{\textrm{new}}(t) & \textrm{if $t_0 \leq t < t_0+T$} \\
 \mathbf{\tilde{r}}_{\textrm{new}}(t) & \textrm{if $t \geq t_0+T$}
@@ -131,8 +155,8 @@ Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, whi
 
 [SORT THIS LAST THING - BUT PLAN THE TESTING OUT BY 15th?]
 
-%\bibliographystyle{agsm}
-%\bibliography{References}
+\bibliographystyle{agsm}
+\bibliography{References}
 \end{flushleft}
 \end{document}
 
