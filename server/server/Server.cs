@@ -293,7 +293,7 @@ public class Server
                 break;
             case 4102:
                 MorsePacket morsePacket = Packet.Deserialise<MorsePacket>(packet.serialisedBody);
-                //Receive4102(morsePacket.senderID, morsePacket.receiverID, morsePacket.dot, morsePacket.range, morsePacket.angle, morsePacket.interval);
+                Receive4102(morsePacket.senderID, morsePacket.receiverID, morsePacket.dot, morsePacket.range, morsePacket.angle, morsePacket.interval);
                 break;
             case 4190:
                 AudioPacket audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody); // CHECKME: Do we actually need to deserialise this if we aren't modifying the sound?
@@ -489,7 +489,7 @@ public class Server
         HeaderPacket header = new HeaderPacket(4102);
         MorsePacket morse = new MorsePacket(senderID, receiverID, dot, range, angle, interval);
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<MorsePacket>(morse));
-        tcpConnections[serverState.GetSubmarines()[receiverID].captain.clientID].SendPacket(packet);
+        tcpConnections[serverState.GetSubmarine(receiverID).captain.clientID].SendPacket(packet);
     }
 
     private void Receive4190(int clientID, float x, float y, int index)
