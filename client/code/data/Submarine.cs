@@ -242,24 +242,29 @@ public class Submarine
 
     public (float xInterpolation, float yInterpolation, float thetaInterpolation) InterpolatePosition(long timestampPrediction)
     {
-        float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[0]);
-        t = Mathf.Clamp(0.0f,0.05f,t);
-
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
-        if (t >= 0.0f) // DEBUG: Interpolation interval will be half of position packet interval, but we can set this to 0.0f to 'turn off' interpolation // FIXME: Add slider/checkbox for prediction/interpolation, respectively, in settings?
+
+
+        float T = 0.05f;
+        float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[2]);
+        t = Mathf.Clamp(t,0.0f,T)/T;
+
+        return (xInterpolation: (1.0f-t)*backPrediction.x+t*frontPrediction.x, yInterpolation: (1.0f-t)*backPrediction.y+t*frontPrediction.y, thetaInterpolation: (1.0f-t)*backPrediction.theta+t*frontPrediction.theta);
+
+        /*if (t >= 0.05f) // DEBUG: Interpolation interval will be half of position packet interval, but we can set this to 0.0f to 'turn off' interpolation // FIXME: Add slider/checkbox for prediction/interpolation, respectively, in settings?
         {
             return frontPrediction;
         }
         else if (t >= 0.0f)
         {
             t *= 20.0f;
-            return (xInterpolation: (1.0f-t)*frontPrediction.x+t*backPrediction.x, yInterpolation: (1.0f-t)*frontPrediction.y+t*backPrediction.y, thetaInterpolation: (1.0f-t)*frontPrediction.theta+t*backPrediction.theta);
+
         }
         else
         {
             return backPrediction;
-        }
+        }*/
 
         //  BUG/FEATURE: Because packets are sent with timestamps 0.1s apart, if we ever receive two packets at once, we'll automatically 'skip to' the penultimate?
         //  -> Interpolate/some simpler function needs called on every packet received, to update back-end prediction... // FIXME: Appropriate terminology?
