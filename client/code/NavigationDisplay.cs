@@ -230,6 +230,8 @@ public class NavigationDisplay : Control
     {
         // DEBUG:
         GD.Print(receiverID+" receives a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
+        handler.client.Send4102(receiverID,collisionDot,collisionRange,collisionAngle,collisionTicks);
+
 
         if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
             return;
