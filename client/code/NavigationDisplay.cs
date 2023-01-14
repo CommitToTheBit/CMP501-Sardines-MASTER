@@ -229,6 +229,7 @@ public class NavigationDisplay : Control
 
     public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks)
     {
+        // FIXME: Why isn't this allowing sends? Fix tonight, at home!
         if (!handler.client.state.GetSubmarines().ContainsKey(receiverID))
             return;
 

@@ -291,6 +291,10 @@ public class Server
                 PositionPacket positionPacket = Packet.Deserialise<PositionPacket>(packet.serialisedBody);
                 Receive4101(positionPacket.submarineID, positionPacket.x, positionPacket.y, positionPacket.theta, positionPacket.timestamp, index);
                 break;
+            case 4102:
+                MorsePacket morsePacket = Packet.Deserialise<MorsePacket>(packet.serialisedBody);
+                Receive4102(morsePacket.senderID, morsePacket.receiverID, morsePacket.dot, morsePacket.range, morsePacket.angle, morsePacket.interval);
+                break;
             case 4190:
                 AudioPacket audioPacket = Packet.Deserialise<AudioPacket>(packet.serialisedBody); // CHECKME: Do we actually need to deserialise this if we aren't modifying the sound?
                 Receive4190(audioPacket.clientID, audioPacket.x, audioPacket.y, index);
@@ -434,9 +438,6 @@ public class Server
 
             foreach (int submarineID in serverState.fleets[superpower].submarines.Keys)
             {
-                Console.WriteLine("\t"+submarineID);
-                Console.WriteLine("\t"+serverState.fleets[superpower].submarines[submarineID].captain.clientID);
-
                 header = new HeaderPacket(4100); // FIXME: No accounting for crew here
                 SubmarinePacket submarine = new SubmarinePacket(superpowerID, submarineID, serverState.fleets[superpower].submarines[submarineID].captain.clientID, serverState.fleets[superpower].submarines[submarineID].nuclearCapability);
                 packet = new SendablePacket(header, Packet.Serialise<SubmarinePacket>(submarine));
@@ -483,9 +484,12 @@ public class Server
                 tcpConnections[i].SendPacket(packet);
     }
 
-    private void Receive4102(int receiverID, float x, float y, float theta, long timestamp, int index)
+    private void Receive4102(int senderID, int receiverID, bool dot, float range, float angle, long interval)
     {
-
+        HeaderPacket header = new HeaderPacket(4102);
+        MorsePacket morse = new MorsePacket(senderID, receiverID, dot, range, angle, interval);
+        SendablePacket packet = new SendablePacket(header, Packet.Serialise<MorsePacket>(morse));
+        tcpConnections[serverState.GetSubmarines()[receiverID].captain.clientID].SendPacket(packet);
     }
 
     private void Receive4190(int clientID, float x, float y, int index)
