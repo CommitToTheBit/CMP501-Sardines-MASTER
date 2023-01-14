@@ -235,7 +235,7 @@ public class NavigationDisplay : Control
             return;
     }
 
-    public void SendReceiveCollision(int submarineID, float collisionAngle, long collisionTicks)
+    public void ReceiveSoundwaveCollision(int submarineID, float collisionAngle, long collisionTicks)
     {
         // DEBUG:
         GD.Print(submarineID+" receives soundwave at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
