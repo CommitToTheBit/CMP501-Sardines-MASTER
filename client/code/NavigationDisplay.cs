@@ -49,6 +49,7 @@ public class NavigationDisplay : Control
         vessel = GetNode<Vessel>("Foreground/Vessel");
         vessel.GetNode<CollisionShape2D>("Area/Hitbox").Disabled = true; // FIXME: Replace with different mask layer later!
         soundEmission = vessel.GetNode<SoundEmission>("SoundEmission");
+        soundEmission.Connect("WaveReceivedBy",this,"SendSoundwaveCollision");
 
         sweep = GetNode<Sprite>("Foreground/Sweep");
 
@@ -218,7 +219,19 @@ public class NavigationDisplay : Control
     // Sending values from our client state to our server state
     public void SendPosition()
     {
+        if (!handler.client.state.GetSubmarines().ContainsKey(handler.client.submarineID))
+            return;
+
         Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
         handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
+    }
+
+    public void SendSoundwaveCollision(int submarineID, long intervalTicks)
+    {
+        // DEBUG:
+        GD.Print(submarineID+" receives soundwave at "+intervalTicks+"...");
+
+        if (!handler.client.state.GetSubmarines().ContainsKey(submarineID))
+            return;
     }
 }

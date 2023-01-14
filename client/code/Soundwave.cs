@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Soundwave : Node2D
 {
-    [Signal] delegate void WaveReceivedBy();
+    [Signal] delegate void WaveReceivedBy(int submarineID, long intervalTicks);
 
     ColorRect arc;
     
@@ -18,6 +18,8 @@ public class Soundwave : Node2D
     Tween tween;
 
     List<Area2D> collisions;
+
+    long init_ticks;
 
     public override void _Ready()
     {
@@ -65,6 +67,8 @@ public class Soundwave : Node2D
 
         // Propagate wave...
         outerArea.Connect("area_entered",this,"ReceiveWave");
+
+        init_ticks = DateTime.UtcNow.Ticks;
         tween.Start();
 
         // Delete on completion...
@@ -87,8 +91,8 @@ public class Soundwave : Node2D
         if (collisions.Contains(receiver))
             return;
 
-        GD.Print(receiver);
-        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID); // Track submarineID, etc...
+        long intervalTicks = DateTime.UtcNow.Ticks-init_ticks;
+        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,intervalTicks); // Track submarineID, etc...
 
         collisions.Add(receiver);
     }

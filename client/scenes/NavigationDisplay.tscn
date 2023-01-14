@@ -33,8 +33,11 @@ position = Vector2( 480, 360 )
 
 [node name="SoundEmission" parent="Foreground/Vessel" instance=ExtResource( 4 )]
 
-[node name="CollisionDebug" parent="Foreground" instance=ExtResource( 1 )]
+[node name="CollisionDebug1" parent="Foreground" instance=ExtResource( 1 )]
 position = Vector2( 720, 360 )
+
+[node name="CollisionDebug2" parent="Foreground" instance=ExtResource( 1 )]
+position = Vector2( 120, 360 )
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 1 )

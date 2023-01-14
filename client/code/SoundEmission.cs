@@ -3,6 +3,8 @@ using System;
 
 public class SoundEmission : Node2D
 {
+    [Signal] delegate void WaveReceivedBy(int submarineID, long intervalTicks);
+
     ColorRect cone;
     PackedScene soundwavePackedScene;
 
@@ -41,8 +43,14 @@ public class SoundEmission : Node2D
         AddChild(soundwave);
 
         soundwave.Rotation = cone.RectRotation;
+        soundwave.Connect("WaveReceivedBy",this,"ReceiveWave");
         soundwave.PropagateWave(0.0f,1440.0f,(dot) ? 12.0f : 24.0f,45.0f,5.0f,true);
 
         emissionTimer.Start();
+    }
+
+    public void ReceiveWave(int submarineID, long intervalTicks)
+    {
+        EmitSignal("WaveReceivedBy",submarineID,intervalTicks); // Pass values up to NavigationDisplay...
     }
 }
