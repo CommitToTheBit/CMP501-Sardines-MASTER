@@ -226,10 +226,19 @@ public class NavigationDisplay : Control
         handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
     }
 
-    public void SendSoundwaveCollision(int submarineID, long collisionTicks)
+    public void SendSoundwaveCollision(int submarineID, float collisionAngle, long collisionTicks)
     {
         // DEBUG:
         GD.Print(submarineID+" receives soundwave at "+collisionTicks+"...");
+
+        if (!handler.client.state.GetSubmarines().ContainsKey(submarineID))
+            return;
+    }
+
+    public void SendReceiveCollision(int submarineID, float collisionAngle, long collisionTicks)
+    {
+        // DEBUG:
+        GD.Print(submarineID+" receives soundwave at angle "+collisionAngle+" after "+collisionTicks+" ticks...");
 
         if (!handler.client.state.GetSubmarines().ContainsKey(submarineID))
             return;

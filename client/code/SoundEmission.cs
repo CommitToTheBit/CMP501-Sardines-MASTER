@@ -3,7 +3,7 @@ using System;
 
 public class SoundEmission : Node2D
 {
-    [Signal] delegate void WaveReceivedBy(int submarineID, long collisionTicks);
+    [Signal] delegate void WaveReceivedBy(int submarineID, float collisionAngle, long collisionTicks);
 
     ColorRect cone;
     PackedScene soundwavePackedScene;
@@ -51,8 +51,8 @@ public class SoundEmission : Node2D
         emissionTimer.Start();
     }
 
-    public void ReceiveWave(int submarineID, long collisionTicks)
+    public void ReceiveWave(int submarineID, float collisionAngle, long collisionTicks)
     {
-        EmitSignal("WaveReceivedBy",submarineID,collisionTicks); // Pass values up to NavigationDisplay...
+        EmitSignal("WaveReceivedBy",submarineID,collisionAngle,collisionTicks); // Pass values up to NavigationDisplay...
     }
 }

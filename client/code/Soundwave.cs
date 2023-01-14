@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Soundwave : Node2D
 {
-    [Signal] delegate void WaveReceivedBy(int submarineID, long intervalTicks);
+    [Signal] delegate void WaveReceivedBy(int submarineID, float collisionAngle, long collisionTicks);
 
     ColorRect arc;
     
@@ -92,7 +92,7 @@ public class Soundwave : Node2D
 
     public void ReceiveWave(Area2D receiver)
     {
-        if (collisions.Contains(receiver))
+        if (collisions.Contains(receiver) || innerArea.GetOverlappingAreas().Contains(receiver))
             return;
 
         float collisionAngle = Mathf.Atan2(receiver.GetGlobalPosition().x-GetGlobalPosition().x, receiver.GetGlobalPosition().y-GetGlobalPosition().y)-Rotation;
@@ -104,7 +104,7 @@ public class Soundwave : Node2D
             return;
 
         long collisionTicks = DateTime.UtcNow.Ticks-init_ticks;
-        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,collisionTicks); // Track submarineID, etc...
+        EmitSignal("WaveReceivedBy",receiver.GetParent<Vessel>().submarineID,collisionAngle,collisionTicks); // Track submarineID, etc...
 
         collisions.Add(receiver);
     }
