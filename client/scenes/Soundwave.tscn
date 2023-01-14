@@ -1,10 +1,15 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/shaders/arc.gdshader" type="Shader" id=1]
 [ext_resource path="res://code/Soundwave.cs" type="Script" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 1432.0
+resource_local_to_scene = true
+radius = 0.01
+
+[sub_resource type="CircleShape2D" id=3]
+resource_local_to_scene = true
+radius = 0.01
 
 [sub_resource type="ShaderMaterial" id=2]
 resource_local_to_scene = true
@@ -19,7 +24,6 @@ shader_param/alpha = 1.0
 script = ExtResource( 2 )
 
 [node name="OuterArea" type="Area2D" parent="."]
-visible = false
 collision_layer = 2
 
 [node name="OuterHitbox" type="CollisionShape2D" parent="OuterArea"]
@@ -30,7 +34,7 @@ visible = false
 collision_layer = 2
 
 [node name="InnerHitbox" type="CollisionShape2D" parent="InnerArea"]
-shape = SubResource( 1 )
+shape = SubResource( 3 )
 
 [node name="Arc" type="ColorRect" parent="."]
 material = SubResource( 2 )
