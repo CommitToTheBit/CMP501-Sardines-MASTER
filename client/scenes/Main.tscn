@@ -36,6 +36,7 @@ color = Color( 0.0313726, 0.0313726, 0.0627451, 1 )
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="Pixellation" type="ColorRect" parent="PixellationBuffer"]
+visible = false
 material = SubResource( 1 )
 margin_right = 160.0
 margin_bottom = 120.0
@@ -47,6 +48,7 @@ color = Color( 0, 0, 0, 0 )
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="Glow" type="ColorRect" parent="GlowBuffer"]
+visible = false
 material = SubResource( 6 )
 margin_right = 40.0
 margin_bottom = 40.0
