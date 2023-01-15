@@ -201,10 +201,22 @@ public class Submarine
         GD.Print(positionInitialised);
         if (positionInitialised)
         {
-            X[0] = X[1];
-            Y[0] = Y[1];
-            THETA[0] = THETA[1];
-            TIMESTAMP[0] = TIMESTAMP[1];
+            if (timestamp[2] >= TIMESTAMP[1]) // CASE: Previous interpolation has finished
+            {
+                X[0] = X[1];
+                Y[0] = Y[1];
+                THETA[0] = THETA[1];
+                TIMESTAMP[0] = TIMESTAMP[1];
+            }
+            else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
+            {
+                (float x, float y, float theta) interpolation = InterpolatePosition(timestamp[2]);
+
+                X[0] = new float[3] { interpolation.x, 0.0f, 0.0f };
+                Y[0] = new float[3] { interpolation.y, 0.0f, 0.0f };
+                THETA[0] = new float[2] { interpolation.theta, 0.0f }; 
+                TIMESTAMP[0] = timestamp[2];
+            }
 
             // Update parameters of quadratic model
             X[1] = new float[3] { x[2], ux[1], ax[0] };
@@ -250,7 +262,7 @@ public class Submarine
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
 
-        float T = 0.25f;
+        float T = 0.05f;
         float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[1]); // NB: T seconds after frontPrediction was updated, we must be completely on that trajectory!
         t = Mathf.Clamp(t,0.0f,T)/T;
 
