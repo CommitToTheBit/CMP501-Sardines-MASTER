@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  14 JAN 2023 21:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  15 JAN 2023 22:46
 entering extended mode
 **"./CMP501 Report.tex"
 (CMP501 Report.tex
@@ -746,7 +746,12 @@ Package: subcaption 2020/10/07 v1.3j Sub-captions (AR)
 File: l3backend-pdftex.def 2021-03-02 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count310
 \l__pdf_internal_box=\box62
-) (CMP501 Report.aux)
+)
+
+LaTeX Warning: Unused global option(s):
+    [9pt].
+
+(CMP501 Report.aux)
 \openout1 = `"CMP501 Report.aux"'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
@@ -861,21 +866,39 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 44.
 (C:\Users\samdr\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+<./Images//Hybrid Architecture.jpg, id=12, 2095.0772pt x 527.72156pt>
+File: ./Images//Hybrid Architecture.jpg Graphic file (type jpg)
+<use ./Images//Hybrid Architecture.jpg>
+Package pdftex.def Info: ./Images//Hybrid Architecture.jpg  used on input line 
+52.
+(pdftex.def)             Requested size: 411.14528pt x 103.56155pt.
+
 [1
 
-{C:/Users/samdr/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
-(CMP501 Report.bbl [3]) [4] (CMP501 Report.aux)
+{C:/Users/samdr/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./Images//H
+ybrid Architecture.jpg>] [2]
+<./Images//Interpolation.jpg, id=65, 1568.10844pt x 1146.53343pt>
+File: ./Images//Interpolation.jpg Graphic file (type jpg)
+<use ./Images//Interpolation.jpg>
+Package pdftex.def Info: ./Images//Interpolation.jpg  used on input line 143.
+(pdftex.def)             Requested size: 411.14528pt x 300.61089pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3] [4 <./Images//Interpolation.jpg>] (CMP501 Report.bbl) [5] [6]
+(CMP501 Report.aux)
 Package rerunfilecheck Info: File `"CMP501 Report".out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 22380 strings out of 479300
- 407030 string characters out of 2853552
- 697700 words of memory out of 3000000
- 39423 multiletter control sequences out of 15000+200000
- 415414 words of font info for 71 fonts, out of 3000000 for 9000
+ 22417 strings out of 479300
+ 407733 string characters out of 2853552
+ 700077 words of memory out of 3000000
+ 39446 multiletter control sequences out of 15000+200000
+ 415582 words of font info for 72 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,20n,89p,1096b,562s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 87i,20n,89p,1095b,540s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\samdr\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
 tcrm1000.pk><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/font
@@ -893,10 +916,11 @@ rams/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/samdr/AppData
 samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.p
 fb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti8.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
-blic/amsfonts/cm/cmtt10.pfb>
-Output written on "CMP501 Report.pdf" (4 pages, 191778 bytes).
+blic/amsfonts/cm/cmtt10.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on "CMP501 Report.pdf" (6 pages, 950052 bytes).
 PDF statistics:
- 138 PDF objects out of 1000 (max. 8388607)
- 30 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 168 PDF objects out of 1000 (max. 8388607)
+ 38 named destinations out of 1000 (max. 500000)
+ 23 words of extra memory for PDF output out of 10000 (max. 10000000)
 
