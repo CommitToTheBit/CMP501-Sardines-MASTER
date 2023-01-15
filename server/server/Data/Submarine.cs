@@ -195,7 +195,7 @@ public class Submarine
         // Update parameters of quadratic model
         X = new float[3] { x[2], ux[1], ax[0] };
         Y = new float[3] { y[2], uy[1], ay[0] };
-        THETA = new float[3] { theta[2], utheta[1], atheta[0] };
+        THETA = new float[2] { theta[1], utheta[0] }; // NB: Left linear, since rudder moves 'zero to sixty'!
         TIMESTAMP = timestamp[2];
     }
 
@@ -207,7 +207,7 @@ public class Submarine
         // Quadratically predict positions at time t
         float xPrediction = X[0] + X[1] * t + 0.5f * X[2] * t * t;
         float yPrediction = Y[0] + Y[1] * t + 0.5f * Y[2] * t * t;
-        float thetaPrediction = THETA[0] + THETA[1] * t + 0.5f * THETA[2] * t * t;
+        float thetaPrediction = THETA[0] + THETA[1] * t;
 
         return (xPrediction: xPrediction, yPrediction: yPrediction, thetaPrediction: thetaPrediction);
     }
