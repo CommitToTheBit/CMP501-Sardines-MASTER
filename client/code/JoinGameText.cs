@@ -12,6 +12,8 @@ public class JoinGameText : Text
     private string underscore;
     private Timer timer;
 
+    private bool ipReady;
+
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
@@ -36,6 +38,8 @@ public class JoinGameText : Text
         timer.Connect("timeout",this,"SetUnderscore",new Godot.Collections.Array() {"!"});
         
         ipPseudoButton.GrabFocus();
+
+        ipReady = true;
     }
 
     public override void _Input(InputEvent @event)
@@ -85,6 +89,12 @@ public class JoinGameText : Text
 
     public void IPPressed()
     {
+        // Prevents double presses...
+        if (!ipReady)
+            return;
+        ipReady = false;
+
+        // DEBUG:
         GD.Print("IP Pressed... "+ip+"...");
 
         // Handling invalid IP addresses...
@@ -103,14 +113,18 @@ public class JoinGameText : Text
         }
         catch
         {
+            ipReady = true;
+
+            // DEBUG:
             GD.Print("Invalid IP...");
+
             return;
         }
 
         // FIXME: Set up a timeout on connection? Play a spinning wheel while doing so?
         if (!handler.client.Connect(ip))
         {
-
+            ipReady = true;
         }
 
         // If we have successfully connected to the server, then our first 1000 packet has been sent...
@@ -130,6 +144,10 @@ public class JoinGameText : Text
     {
         switch (packetID)
         {
+            case 1001:
+                ipReady = handler.client.GetClientID() < 0; // Allow another press if the client has been rejected!
+                return;
+
             case 1201:
                 List<string> newHistory = new List<string>(history);
                 newHistory.Add(id);

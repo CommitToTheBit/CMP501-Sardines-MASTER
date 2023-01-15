@@ -279,7 +279,7 @@ public class Client : Node
         // Client receives ID confirmation/rejection
         clientID = init_clientID;
 
-        if (clientID < 0 || clientIPs.ContainsKey(clientID))
+        if (clientID < 0 || clientIPs.ContainsKey(clientID)) // Client has been 'formally' rejected...
             return;
 
         clientIPs.Add(init_clientID,init_clientIP);
@@ -306,7 +306,14 @@ public class Client : Node
         if (clientIPs.ContainsKey(init_clientID))
             clientIPs.Remove(init_clientID);
 
-        // NEED TO HANDLE REMOVING SUBMARINES!
+        // If the client controls a submarine, stop predicting any movement...
+        Dictionary<int, Submarine> submarines = state.GetSubmarines();
+        foreach (int submarineID in submarines.Keys)
+            if (submarines[submarineID].captain.clientID == init_clientID)
+                for (int i = 0; i < 2; i++)
+                    state.UpdateSubmarine(submarineID,submarines[submarineID].x[2],submarines[submarineID].y[2],submarines[submarineID].theta[2],submarines[submarineID].timestamp[2]+1);
+        
+        // NEED TO HANDLE RE-JOINING SUBMARINES?
     }
 
     private void Receive1200()
