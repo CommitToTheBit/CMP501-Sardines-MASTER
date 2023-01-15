@@ -46,8 +46,10 @@
 \vspace{5pt}\noindent
 In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting each submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2-8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
 
+\vspace{5pt}\noindent
 \begin{figure}[h]
 \centering
+\includegraphics[width=0.85\textwidth]{Hybrid Architecture}
 \caption{Potential hybrid architecture for a $32$-player version of \textit{Sardines} (simplified).}
 \label{Hybrid Architecture}
 \end{figure}
@@ -100,7 +102,7 @@ There is arguably some unnecessary back-and-forth to the above, but small packet
 
 
 
-
+\pagebreak
 \subsection*{Integration}
 
 Asynchronous I/O...
@@ -139,7 +141,8 @@ In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are se
 
 \begin{figure}[h]
 \centering
-\caption{Interpolation from trajectory $\mathbf{\tilde{r}}_{\textrm{old}}(t)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$.}
+\includegraphics[width=0.85\textwidth]{Interpolation}
+\caption{Interpolation from trajectory $\mathbf{\tilde{r}}_{\textrm{old}}(t)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$ (blue); chosen over $\mathbf{\tilde{r}}_{\textrm{old}}(t_0)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$ (red).}
 \label{Interpolation}
 \end{figure}
 
@@ -154,6 +157,7 @@ To further `smooth over' the application's conflict resolution, the receiving cl
 \vspace{5pt}\noindent
 Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, which they see reach a receiver at $t_0+\Delta t$. On the arrival of the corresponding packet at $t_1$, then, the receiving client has to decide where the wave was emitted from \textit{in its local view of the game}. The obvious choice would be the `true origin' $\mathbf{r}$, but \textit{Sardines} uses the backwards prediction $\mathbf{\tilde{r}}(t_1-\Delta t)$. As [FIGURE] puts it in [REFERENCE], [QUOTE]; conflict resolution is the art of deciding which quantities are preserved across clients, and \textit{Sardines} - a system designed around slow, real-time communications - is far less concerned with a shared view of geography than it is a shared view of delay.
 
+\pagebreak
 \subsection*{Testing}
 
 \vspace{5pt}\noindent
