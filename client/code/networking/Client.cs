@@ -16,6 +16,7 @@ public class Client : Node
     private const string CLIENTIP = "127.0.0.1";// FIXME: How to get own IP?
     private const string SERVERIP = "192.168.1.200";//"80.44.238.161";
     private const int SERVERPORT = 5555;
+    private const int DELAY_SAMPLE_SIZE = 5;
 
     // Variables
     private Socket clientSocket;
@@ -29,7 +30,7 @@ public class Client : Node
     public State state;
 
     private long started;
-
+    public List<long> delaySamples;
     public long delay;
 
     public bool sandboxBlocking;
@@ -66,6 +67,9 @@ public class Client : Node
 
         started = DateTime.UtcNow.Ticks;
         Console.WriteLine("Client started at " + started+".");
+
+        delaySamples = new List<long>();
+        delay = 0;
 
         sandboxBlocking = false;
 
@@ -266,9 +270,22 @@ public class Client : Node
         // clientMoment and serverMoment should occur at (roughly) the same time
         long clientTimestamp = (syncTimestamp+DateTime.UtcNow.Ticks)/2; // MAJOR LIMITATION: Assumes inbound AND outbound lag the same!
 
+        delaySamples.Add(serverTimestamp-clientTimestamp);
+        if (delaySamples.Count < DELAY_SAMPLE_SIZE) // Sample delay multiple times, for more reliable estimate...
+        {
+            HeaderPacket syncHeader = new HeaderPacket(1000);
+            SyncPacket sync = new SyncPacket(0);
+            SendablePacket syncPacket = new SendablePacket(syncHeader,Packet.Serialise<SyncPacket>(sync));
+            serverConnection.SendPacket(syncPacket);
+            return;
+        }
+
         // If clientTimestamp < serverTimestamp, the client is delayed behind the server
         // We add this delay to future client calculations, to 'catch them up' with the server
-        delay = serverTimestamp-clientTimestamp;
+        delay = 0;
+        foreach (int delaySample in delaySamples)
+            delay += delaySample;
+        delay /= DELAY_SAMPLE_SIZE;
 
         // DEBUG:
         GD.Print("We are a delay of "+delay+" behind the server...");
