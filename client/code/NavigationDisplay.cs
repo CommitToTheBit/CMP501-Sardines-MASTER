@@ -160,13 +160,13 @@ public class NavigationDisplay : Control
         bool left = Input.IsActionPressed("ui_port");
         bool right = Input.IsActionPressed("ui_starboard");
 
-        thrust = 0.0f;
+        thrust = 0.0f; // NB: Change in second-order quantity
         thrust += (up) ? 1.0f : 0.0f;
         thrust -= (down) ? 1.0f : 0.0f;
 
-        steer = 0.0f;
-        steer += (left) ? Mathf.Pi/16 : 0.0f;
-        steer -= (right) ? Mathf.Pi/16 : 0.0f;
+        steer = 0.0f; // NB: Change in first-order quantity
+        steer += (left) ? 1.0f : 0.0f;
+        steer -= (right) ? 1.0f : 0.0f;
 
         submarine.DerivePosition(thrust,steer,delta);
 
