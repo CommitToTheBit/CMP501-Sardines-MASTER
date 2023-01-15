@@ -44,7 +44,7 @@
 \citeauthor{bauer04} \citeyearpar{bauer04} evaluate the scalability of this architecture, finding that with $n$ entity states (for the purposes of the report, players), client-server costs grow at order $O(n^2)$, compared to peer-to-peer's $O(n^3)$. They ultimately conclude that ``The client-server architecture exhibits the lowest growth in overall system cost, however, with the disadvantage that the entire growth must be handled by the central server.''  
 
 \vspace{5pt}\noindent
-In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting each submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2-8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
+In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting each submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2$-$8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
 
 \vspace{5pt}\noindent
 \begin{figure}[h]
@@ -61,27 +61,26 @@ As much is set out in RFC 798 \citeyearpar{rfc793}, where \citeauthor{rfc793} in
 Provide reliability paragraph?...
 
 \vspace{5pt}\noindent
-There is, of course, an argument for updating positions via UDP. Suppose that a submarine starts at position $A$, fails to update to position $B$: where the ordered nature of TCP means the application will resend and resend this update [EXPLAIN DOWNSIDE], this protocol will simply [GO TO the position C of the next successful].  While the deliberate simplicity of UDP - the [FEATURE \#1], the [FEATURE \#2] - lends itself to the continuous, incremental nature of movement , \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with positions needed reliably but not immediately, and with the robustness of the prediction system used (see `\nameref{Prediction}'), updating position via TCP every 0.1s should be infrequent enough to avoid the backlog described above.\footnote{Could simplify even further with event-based - have server calculate all positions from key presses...}
+There is, of course, an argument for updating positions via UDP. Suppose that a submarine starts at position $A$, fails to update to position $B$: where the ordered nature of TCP means the application will resend and resend this update [EXPLAIN DOWNSIDE], this protocol will simply [GO TO the position C of the next successful].  While the deliberate simplicity of UDP - the [FEATURE \#1], the [FEATURE \#2] - lends itself to the continuous, incremental nature of movement , \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with positions needed reliably but not immediately, and with the robustness of the prediction system used (see `\nameref{Prediction}'), updating position via TCP every 0.1s should be infrequent enough to avoid the backlog described above.
 
 \paragraph{Application Layer} 
 
-While it doesn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Data is sent via an underlying \texttt{Packet} struct, ...
-[Serialisation!]...
+While it needn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Data is sent via \texttt{SendablePacket}s, consisting of a fixed-length \texttt{HeaderPacket} and one of several structs encoded as a \texttt{serialisedBody}. The header, always read first, contains a \texttt{bodyID}  that tells the receiver how many bytes of the body need deserialised; as discussed in the labs, this application handles variable-length messages in much the same way as the DNS protocol.
 
 \vspace{5pt}\noindent
-At a more granular level, \textit{Sardines}' \texttt{SendablePacket}s may use any such struct as a \texttt{serialisedBody}:
+At a more granular level, a \texttt{serialisedBody} may encode one of many structs, for one of many purposes:
 \begin{itemize}[noitemsep]
 \item \texttt{SyncPacket} Contains a \texttt{long} \texttt{syncTimestamp}. Sent on connection to standardise server and client calculations for \texttt{DateTime.UtcNow.Ticks} (which may vary from underlying OS to underlying OS, \citealp{msftUTC}).
-\item \texttt{IDPacket} ... (in the hybrid architecture discussed above, this IP would also be used to establish crew-to-navigator connections).
-\item \texttt{SubmarinePacket} 
-\item \texttt{PositionPacket}
-\item \texttt{MorsePacket}
-\item \texttt{EmptyPacket} Contains no variables. Sent when the \texttt{bodyID} corresponds to a function with no arguments (e.g. when a client starts a game with \texttt{bodyID}.
+\item \texttt{IDPacket} Contains an \texttt{int} \texttt{clientID}, and a \texttt{char[]} \texttt{clientIP} that requires, by definition, no more than $16$ characters. Sent to initialise a unique identity for each client, and more generally let players track who else is playing.\footnote{In the hybrid architecture discussed above, the IP would also be used to establish crew-to-navigator connections.}
+\item \texttt{SubmarinePacket} Contains an \texttt{int} \texttt{submarineID}, the controller's \texttt{clientID}, and additional variables corresponding to future functionalities. Similarly initialises a unique identity for each submarine.\footnote{And similarly, the distinction between \texttt{clientID} and \texttt{submarineID} is only meaningful, of course, with multiple clients per submarine.}
+\item \texttt{PositionPacket} Contains a submarine's \texttt{x}-, \texttt{y}-coordinates and rotation \texttt{theta} at a certain time \texttt{timestamp}. Sent client-to-server as updates to the master game state, and server-to-client for prediction and rendering.
+\item \texttt{MorsePacket} Similarly contains the necessary parameters to render a soundwave's arc on the receiving client's screen.
+\item \texttt{EmptyPacket} Contains no variables. Sent when the \texttt{bodyID} corresponds to a function with no arguments (e.g. \texttt{bodyID} \texttt{2310} tells a server in lobby mode to initialise a game).
 \end{itemize}
-\texttt{bodyID}s use the following naming convention: IDs \texttt{1XXX} correspond to clients connecting to/disconnecting from a server, \texttt{2XXX} to server functionality while in lobby mode, \texttt{3XXX} to server functionality while in a game mode, and \texttt{4XXX} to client actions which in-game.
+\texttt{bodyID}s adopt an informal naming convention: IDs \texttt{1XXX} refer to clients connecting to/disconnecting from a server, \texttt{2XXX} to server functionality while in lobby mode, \texttt{3XXX} to server functionality while in a game mode, and \texttt{4XXX} to client states and actions while in-game.
 
 \vspace{5pt}\noindent
-While there isn't the space to break down every protocol in precise detail, consider the process of a player joining a lobby:
+While there isn't the space to break down every protocol in precise detail, all have been designed with the same underlying philosophy. Consider, for instance, the process of joining a lobby:
 \begin{enumerate}[label=\textit{\arabic*}\textit{.}, noitemsep]
 \item \textit{The client registers a TCP connection with the server.} The client then constructs... with ID \texttt{1000}...
 \item \textit{The server receives a \texttt{SyncPacket} from the client.} Calling \texttt{Receive1000()}, the server...
@@ -90,7 +89,7 @@ While there isn't the space to break down every protocol in precise detail, cons
 \item \textit{The client receives an \texttt{IDPacket} from the server.}
 \item \textit{All clients receive (further) \texttt{IDPacket}s from the server.}
 \end{enumerate}
-There is arguably some unnecessary back-and-forth to the above, but small packet sizes shouldn't put any meaningful strain on bandwidth. The process is designed first and foremost for ease of programming: treating major protocols as a chain of smaller, simpler steps, it becomes far easier to manage - and document - the application layer. 
+There is arguably some unnecessary back-and-forth to the above, but small packet sizes shouldn't put any meaningful strain on bandwidth. The process is designed for ease of programming: treating major protocols as a chain of smaller, simpler steps, it becomes far easier to manage - and document - the application layer. 
 %This description may seem fairly dry, but it serves to ...
 %There is some degree of back-and-forth to this process...
 
