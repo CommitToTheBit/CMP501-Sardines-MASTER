@@ -6,6 +6,9 @@ public class Soundwave : Node2D
 {
     [Signal] delegate void WaveReceivedBy(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks);
 
+    public const float DOT_WIDTH = 12.0f;
+    public const float DASH_WIDTH = 24.0f;
+
     ColorRect arc;
     
     Area2D outerArea;
@@ -49,8 +52,8 @@ public class Soundwave : Node2D
         thetaRange = theta_range;
 
         // Extra adjustments...
-        float r_width = (r_dot) ? 12.0f : 24.0f;
-        r_initial = Mathf.Min(r_initial,r_width);
+        float r_width = (r_dot) ? DOT_WIDTH : DASH_WIDTH;
+        r_initial = Mathf.Max(r_initial,r_width);
 
         // Set canvas...
         arc.RectPosition = -r_range*Vector2.One;

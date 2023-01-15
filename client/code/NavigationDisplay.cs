@@ -23,6 +23,7 @@ public class NavigationDisplay : Control
 
     Vessel vessel;
     SoundEmission soundEmission;
+    PackedScene soundwavePackedScene;
 
     Sprite sweep;
 
@@ -60,6 +61,7 @@ public class NavigationDisplay : Control
         vessel.GetNode<CollisionShape2D>("Area/Hitbox").Disabled = true; // FIXME: Replace with different mask layer later!
         soundEmission = vessel.GetNode<SoundEmission>("SoundEmission");
         soundEmission.Connect("WaveReceivedBy",this,"SendSoundwaveCollision");
+        soundwavePackedScene = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn");
 
         sweep = GetNode<Sprite>("Foreground/Sweep");
 
@@ -270,8 +272,22 @@ public class NavigationDisplay : Control
         if (handler.client.state.GetSubmarines()[senderID].captain.clientID < 0)
             return;
 
-        Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
+        Submarine sender = handler.client.state.GetSubmarines()[senderID];
+        Submarine receiver = handler.client.state.GetSubmarines()[handler.client.submarineID];
+
         long timestamp = DateTime.UtcNow.Ticks+handler.client.delay;
-        (float x, float y, float theta) origin = submarines[id].InterpolatePosition(timestamp);
+        (float x, float y, float theta) sent = sender.InterpolatePosition(timestamp-collisionInterval);
+
+        // Spawn soundwave
+        Soundwave soundwave = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn").Instance<Soundwave>();
+        AddChild(soundwave);
+
+        soundwave.Position = new Vector2(sent.x-receiver.x[2],sent.y-receiver.y[2]).Rotated(-receiver.theta[2])+vessel.Position;
+
+
+        float r_range = (soundwave.Position-vessel.Position).Length();
+        r_range += (collisionDot) ? 0.5f*Soundwave.DOT_WIDTH : 0.5f*Soundwave.DASH_WIDTH;
+
+        soundwave.PropagateWave(r_range,r_range,collisionDot,180.0f,3.0f,false);
     }
 }

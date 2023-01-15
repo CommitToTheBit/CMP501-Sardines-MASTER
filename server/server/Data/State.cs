@@ -138,6 +138,7 @@ public class State
 
         return submarines;
     }
+
     private Superpower GetSubmarineSuperpower(int submarineID)
     {
         foreach (Superpower superpower in fleets.Keys)
