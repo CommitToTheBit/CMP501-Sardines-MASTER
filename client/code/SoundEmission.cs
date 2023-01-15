@@ -19,7 +19,7 @@ public class SoundEmission : Node2D
         soundwavePackedScene = ResourceLoader.Load<PackedScene>("res://scenes/Soundwave.tscn");
 
         // Set up variables for soundwaves emitted
-        thetaRange = 60.0f;
+        thetaRange = 180.0f;
         emissionPeriod = 4.0f;
 
         emissionTimer = new Timer();

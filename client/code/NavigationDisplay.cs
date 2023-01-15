@@ -283,11 +283,10 @@ public class NavigationDisplay : Control
         AddChild(soundwave);
 
         soundwave.Position = new Vector2(sent.x-receiver.x[2],sent.y-receiver.y[2]).Rotated(-receiver.theta[2])+vessel.Position;
-
+        soundwave.Rotation = Mathf.Atan2((vessel.Position.x-soundwave.Position.x),-(vessel.Position.y-soundwave.Position.y))-collisionAngle;
 
         float r_range = (soundwave.Position-vessel.Position).Length();
         r_range += (collisionDot) ? 0.5f*Soundwave.DOT_WIDTH : 0.5f*Soundwave.DASH_WIDTH;
-
-        soundwave.PropagateWave(r_range,r_range,collisionDot,180.0f,3.0f,false);
+        soundwave.PropagateWave(r_range,r_range,collisionDot,collisionRange,0.42f,false);
     }
 }

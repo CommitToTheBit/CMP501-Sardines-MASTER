@@ -103,7 +103,7 @@ public class Soundwave : Node2D
         if (collisions.Contains(receiver) || innerArea.GetOverlappingAreas().Contains(receiver))
             return;
 
-        float collisionAngle = Mathf.Atan2(receiver.GlobalPosition.x-GlobalPosition.x, -(receiver.GlobalPosition.y-GlobalPosition.y))-Rotation; // NB: Need to re-orient y-axis!
+        float collisionAngle = Mathf.Atan2(receiver.GlobalPosition.x-GlobalPosition.x, -(receiver.GlobalPosition.y-GlobalPosition.y))-Rotation; // NB: Need to re-orient y-axis! // FIXME: Why not y first?
         collisionAngle = 2.0f*Mathf.Pi*(0.5f*collisionAngle/Mathf.Pi-Mathf.Round(0.5f*collisionAngle/Mathf.Pi)); // Restricting range to [0,2Pi)...
         if (collisionAngle > Mathf.Pi) // ...Then to (-Pi,Pi]...
             collisionAngle -= 2.0f*Mathf.Pi;
