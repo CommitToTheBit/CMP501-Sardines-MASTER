@@ -265,7 +265,7 @@ public class Client : Node
         delay = serverTimestamp-clientTimestamp;
 
         // DEBUG:
-        Console.WriteLine("We are a delay of "+delay+" behind the server...");
+        GD.Print("We are a delay of "+delay+" behind the server...");
 
         // Now that we've (re-)synced, we send our initial ID Packet...
         HeaderPacket header = new HeaderPacket(1001);

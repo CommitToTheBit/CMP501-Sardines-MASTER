@@ -237,7 +237,7 @@ public class NavigationDisplay : Control
             return;
 
         Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
-        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks+handler.client.delay);
+        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks-handler.client.delay);
 
         xSent[0] = xSent[1];
         xSent[1] = xSent[2];
