@@ -275,7 +275,7 @@ public class NavigationDisplay : Control
         Submarine sender = handler.client.state.GetSubmarines()[senderID];
         Submarine receiver = handler.client.state.GetSubmarines()[handler.client.submarineID];
 
-        long timestamp = DateTime.UtcNow.Ticks;//+handler.client.delay;
+        long timestamp = receiver.timestamp[2];//DateTime.UtcNow.Ticks;//+handler.client.delay;
         (float x, float y, float theta) sent = sender.InterpolatePosition(timestamp-collisionInterval);
 
         // Spawn soundwave
