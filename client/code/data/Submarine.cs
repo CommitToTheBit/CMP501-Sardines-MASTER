@@ -146,7 +146,7 @@ public class Submarine
             u = 0.0f;
 
         rudder += (Mathf.Pi/16.0f)*delta*steer;
-        rudder = Mathf.Clamp(rudder,-Mathf.Pi/4.0f,Mathf.Pi/4.0f);
+        rudder = Mathf.Clamp(rudder,-Mathf.Pi/8.0f,Mathf.Pi/8.0f);
 
         float xFront = x[2]+0.5f*length*Mathf.Sin(theta[2]); // x-coordinate of front of submarine
         xFront += delta*u*Mathf.Sin(theta[2]); // Horizontal movement
