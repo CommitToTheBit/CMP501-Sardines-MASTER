@@ -138,16 +138,6 @@ public class State
 
         return submarines;
     }
-
-    public Submarine GetSubmarine(int submarineID)
-    {
-        foreach (Superpower superpower in fleets.Keys)
-            if (fleets[superpower].submarines.ContainsKey(submarineID))
-                return fleets[superpower].submarines[submarineID];
-
-        return new Submarine(-1,"",false);
-    }
-
     private Superpower GetSubmarineSuperpower(int submarineID)
     {
         foreach (Superpower superpower in fleets.Keys)

@@ -489,7 +489,7 @@ public class Server
         HeaderPacket header = new HeaderPacket(4102);
         MorsePacket morse = new MorsePacket(senderID, receiverID, dot, range, angle, interval);
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<MorsePacket>(morse));
-        tcpConnections[clientIDConnections.FindIndex(x => x == serverState.GetSubmarine(receiverID).captain.clientID)].SendPacket(packet);
+        tcpConnections[clientIDConnections.FindIndex(x => x == serverState.GetSubmarines()[receiverID].captain.clientID)].SendPacket(packet);
     }
 
     private void Receive4190(int clientID, float x, float y, int index)

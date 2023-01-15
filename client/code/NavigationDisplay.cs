@@ -255,11 +255,10 @@ public class NavigationDisplay : Control
     public void SendSoundwaveCollision(int receiverID, bool collisionDot, float collisionRange, float collisionAngle, long collisionInterval)
     {
         // Filters out any 'null' submarines
-        if (handler.client.state.GetSubmarine(receiverID).captain.clientID < 0)
+        if (handler.client.state.GetSubmarines()[receiverID].captain.clientID < 0)
             return;
 
         handler.client.Send4102(handler.client.submarineID,receiverID,collisionDot,collisionRange,collisionAngle,collisionInterval);
-        GD.Print(receiverID);
     }
 
     public void ReceiveSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionInterval)
@@ -268,7 +267,11 @@ public class NavigationDisplay : Control
         GD.Print(senderID+" sent a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionInterval+" ticks...");
 
         // Filters out any 'null' submarines
-        if (handler.client.state.GetSubmarine(senderID).captain.clientID < 0)
+        if (handler.client.state.GetSubmarines()[senderID].captain.clientID < 0)
             return;
+
+        Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
+        long timestamp = DateTime.UtcNow.Ticks+handler.client.delay;
+        (float x, float y, float theta) origin = submarines[id].InterpolatePosition(timestamp);
     }
 }
