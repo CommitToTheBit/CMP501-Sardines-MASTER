@@ -139,7 +139,7 @@ public class NavigationDisplay : Control
 
         soundEmission.thetaRange += (Input.IsActionJustPressed("ui_widen")) ? 15.0f : 0.0f;
         soundEmission.thetaRange -= (Input.IsActionJustPressed("ui_shrink")) ? 15.0f : 0.0f;
-        soundEmission.thetaRange = Mathf.Clamp(soundEmission.thetaRange,7.5f,360.0f);
+        soundEmission.thetaRange = Mathf.Clamp(soundEmission.thetaRange,60.0f,360.0f);
 
         bool dot = Input.IsActionJustPressed("ui_dot");
         bool dash = Input.IsActionJustPressed("ui_dash");
