@@ -258,7 +258,7 @@ public class Client : Node
         // Client uses syncTimestamp to estimate when the bounce occurred, then compares to serverTimestamp to estimate the delay between device clocks
 
         // clientMoment and serverMoment should occur at (roughly) the same time
-        long clientTimestamp = (syncTimestamp+DateTime.UtcNow.Ticks)/2;
+        long clientTimestamp = (syncTimestamp+DateTime.UtcNow.Ticks)/2; // MAJOR LIMITATION: Assumes inbound AND outbound lag the same!
 
         // If clientTimestamp < serverTimestamp, the client is delayed behind the server
         // We add this delay to future client calculations, to 'catch them up' with the server

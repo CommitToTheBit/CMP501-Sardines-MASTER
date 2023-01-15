@@ -192,7 +192,7 @@ public class NavigationDisplay : Control
         float y = submarines[submarineID].y[2];
         float theta = submarines[submarineID].theta[2];
 
-        long timestamp = DateTime.UtcNow.Ticks+handler.client.delay;
+        long timestamp = submarines[submarineID].timestamp[2]-handler.client.delay; // Convert external players back to 'local' client time
         long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
         float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
@@ -237,7 +237,7 @@ public class NavigationDisplay : Control
             return;
 
         Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
-        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],DateTime.UtcNow.Ticks-handler.client.delay);
+        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],submarine.timestamp[2]+handler.client.delay);
 
         xSent[0] = xSent[1];
         xSent[1] = xSent[2];
