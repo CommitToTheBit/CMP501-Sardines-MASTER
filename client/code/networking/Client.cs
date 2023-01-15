@@ -425,7 +425,7 @@ public class Client : Node
     {
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*? This is built in to Submarine.cs, to some extent...
-        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp);
+        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp-delay);
     }
 
     private void Receive4102(int senderID, bool dot, float range, float angle, long interval)
@@ -455,7 +455,7 @@ public class Client : Node
         // Client sends details of their own submarine to server
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(4101);
-        PositionPacket submarine = new PositionPacket(submarineID,x,y,theta,timestamp);
+        PositionPacket submarine = new PositionPacket(submarineID,x,y,theta,timestamp+delay);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<PositionPacket>(submarine));
         serverConnection.SendPacket(packet);
     }
