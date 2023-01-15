@@ -139,8 +139,12 @@ $$\mathbf{\tilde{r}}(t) = \begin{cases}
 In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are sent via TCP every $0.1s$; interpolation therefore takes place over a strictly shorter interval $T = 0.05s$. 
 %Footnote - quirk of how we deal with being two packets behind?
 
-\vspace{5pt}\noindent
-[GRAPHICSX: Handdrawn diagram of interpolation and prediction interaction?]
+
+\begin{figure}[h]
+\centering
+\caption{Interpolation from trajectory $\mathbf{\tilde{r}}_{\textrm{old}}(t)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$.}
+\label{Interpolation}
+\end{figure}
 
 \vspace{5pt}\noindent
 To fully understand how \textit{Sardines} uses it prediction techniques, this report must first introduce a core challenge of any networked game: conflict resolution.
@@ -156,7 +160,19 @@ Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, whi
 
 \subsection*{Testing}
 
-[SORT THIS LAST THING - BUT PLAN THE TESTING OUT BY 15th?]
+\vspace{5pt}\noindent
+[PARAGRAPH OF METHODOLOGY]
+Using clumsy...
+Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to clumsy's `Lag' and 
+
+\vspace{5pt}\noindent
+Testing lag and throttle simultaneously yields unsurprising results. Having established acceptable network conditions - [TIME]$ms$ lag, a [$\%$ chance of [TIME]$ms$ throttle -
+
+\vspace{5pt}\noindent
+Recall the interpolation technique described above. Since $T < 0.1s$, the report has assumed the submarine being interpolated appears at position starts on a predicted trajectory at time $t_0$ - does this assumption hold in practice? If two \texttt{PositionPacket}s have been throttled, and arrive within $T$ seconds of each other, it follows that the submarine will not have finished its first interpolation by the time the second one starts! In this edge case of being caught mid-interpolation at some point $\mathbf{r}_0$, \textit{Sardines} prioritises catching up; rather than using a predicted trajectory as in Figure \ref{Interpolation}, the subsequent interpolation simplifies calculations by taking $\mathbf{\tilde{r}}_{\textrm{old}}(t) = \mathbf{r}_0$.
+
+\vspace{5pt}\noindent
+Indeed, for all the optimisations and oversights discussed in this section, its worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. While there current 
 
 \bibliographystyle{agsm}
 \bibliography{References}
