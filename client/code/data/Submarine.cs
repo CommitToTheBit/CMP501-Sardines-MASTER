@@ -32,9 +32,6 @@ public class Submarine
     private float[][] THETA;
     private long[] TIMESTAMP;
 
-    private bool[] predictionInitialised;
-    private int[] predictionWait;
-
     // Constructor
     public Submarine(int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
@@ -225,12 +222,6 @@ public class Submarine
             Y[1] = new float[3] { y[2], uy[1], ay[0] };
             THETA[1] = new float[2] { theta[1], utheta[0] }; // NB: Left linear, since rudder moves 'zero to sixty'!
             TIMESTAMP[1] = timestamp[2];
-
-            for (int i = 0; i < 2; i++)
-                if (!predictionInitialised[i])
-                    predictionInitialised[i] = (--predictionWait[i]) == 0;
-            
-            GD.Print(predictionWait[0]);
         }
         else
         {
@@ -249,16 +240,13 @@ public class Submarine
             Y[0] = Y[1];
             THETA[0] = THETA[1];
             TIMESTAMP[0] = TIMESTAMP[1];
-
-            predictionInitialised = new bool[2] { false, false };
-            predictionWait = new int[2] { 3, 2 };
         }
     }
 
     public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction, int index)
     {
-        // Don't use prediction too early! Just need to wait for a few packets...
-        if (!predictionInitialised[index])
+        // Don't bother predicting the first couple of moves from rest... // FXIME: Could not predict move 0, linearly predict move 1, then use quadratic, but it's only a few (barely perceptible!) tenths of a second
+        if (x[0] == x[1] && y[0] == y[1] && theta[0] == theta[1])
             return (xPrediction: X[index][0], yPrediction: Y[index][0], thetaPrediction: THETA[index][0]);
 
         // Derive delta from timestamps
