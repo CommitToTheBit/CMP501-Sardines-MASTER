@@ -1,6 +1,6 @@
 % LaTeX Template for short student reports.
 % Citations should be in bibtex format and go in references.bib
-\documentclass[a4paper, 10pt]{article}
+\documentclass[a4paper, 9pt]{article}
 \usepackage[top=3cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
 \geometry{a4paper} 
 \usepackage[utf8]{inputenc}
@@ -35,7 +35,7 @@
 
 \subsection*{Architecture}\label{Architecture}
 
-\textit{Sardines}' network uses a straightforward client-server architecture, providing a single `master' game state essential in minimising disputes (see `\nameref{Prediction}'). Furthermore, the architecture uses local input processing - each client takes responsibility for processing their own player's actions and transmitting the resulting changes, rather than leaving the central server to compute a new master state directly from raw input. This distributes the game's physics-based movement calculations in a far more even fashion; an authoritative server with less trust in the player would better prevent cheating \citep{gmbta10}, but any notion of `cheating' will be of little concern while \textit{Sardines} remains at sandbox game.
+\textit{Sardines}' network uses a straightforward client-server architecture, with the server's `master' game state well-positioned to minimise disputes (see `\nameref{Prediction}'). Furthermore, the architecture uses local input processing - each client takes responsibility for processing their own player's actions and transmitting the resulting changes, rather than leaving the central server to compute a new master state directly from raw input. This distributes the game's physics-based movement calculations in a far more even fashion; an authoritative server with less trust in the player would better prevent cheating \citep{gmbta10}, but `cheating' will be of little concern while \textit{Sardines} remains a sandbox game.
 %Reasons for choice...
 %Though the current system does not have many variables to keep track of, the server also provides a `master state' for clients to work from.
 %Citation about networking [peer-reviewed]...
@@ -44,19 +44,17 @@
 \citeauthor{bauer04} \citeyearpar{bauer04} evaluate the scalability of this architecture, finding that with $n$ entity states (for the purposes of the report, players), client-server costs grow at order $O(n^2)$, compared to peer-to-peer's $O(n^3)$. They ultimately conclude that ``The client-server architecture exhibits the lowest growth in overall system cost, however, with the disadvantage that the entire growth must be handled by the central server.''  
 
 \vspace{5pt}\noindent
-In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting a singe submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2-8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
+In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting each submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2-8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
 
 \begin{figure}[h]
 \centering
-\caption{Potential hybrid architecture for a $32$-player version of \textit{Sardines}.}
+\caption{Potential hybrid architecture for a $32$-player version of \textit{Sardines} (simplified).}
 \label{Hybrid Architecture}
 \end{figure}
 
 \subsection*{Protocols}
 
-\paragraph{Transport Layer}
-
-TCP: Reliable, etc...
+\paragraph{Transport Layer} In \textit{Sardines}, client and server communicate through TCP connections, chosen for their reliability. 
 As much is set out in RFC 798 \citeyearpar{rfc793}, where \citeauthor{rfc793} introduces the protocol:.... %`` ''
 Provide reliability paragraph?...
 
@@ -65,7 +63,7 @@ There is, of course, an argument for updating positions via UDP. Suppose that a 
 
 \paragraph{Application Layer} 
 
-While it doesn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Client and server communicate using an underlying \texttt{Packet} struct, ...
+While it doesn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Data is sent via an underlying \texttt{Packet} struct, ...
 [Serialisation!]...
 
 \vspace{5pt}\noindent
@@ -139,14 +137,12 @@ $$\mathbf{\tilde{r}}(t) = \begin{cases}
 In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are sent via TCP every $0.1s$; interpolation therefore takes place over a strictly shorter interval $T = 0.05s$. 
 %Footnote - quirk of how we deal with being two packets behind?
 
-
 \begin{figure}[h]
 \centering
 \caption{Interpolation from trajectory $\mathbf{\tilde{r}}_{\textrm{old}}(t)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$.}
 \label{Interpolation}
 \end{figure}
 
-\vspace{5pt}\noindent
 To fully understand how \textit{Sardines} uses it prediction techniques, this report must first introduce a core challenge of any networked game: conflict resolution.
 
 \vspace{5pt}\noindent
@@ -163,7 +159,20 @@ Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, whi
 \vspace{5pt}\noindent
 [PARAGRAPH OF METHODOLOGY]
 Using clumsy...
-Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to clumsy's `Lag' and 
+Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to performance under latency and throttle
+
+\paragraph{Latency} Latency (or, colloquially, lag) is...
+
+\begin{figure}[h]
+\centering
+\caption{Three simultaneous, local views of the game world, at [ACCEPTABLE LAG]$ms$ lag (above); [UNACCEPTABLE LAG]$ms$ lag (below).}
+\label{Lag Testing}
+\end{figure}
+
+\vspace{5pt}\noindent
+[Paragraph of Evaluation] The choice of a TCP as the application's sole transport protocol is seems to be of [little/significant] disadvantage here. [Central idea: design decisions that seem optimal in theory, but need tested in practice!]
+
+\paragraph{Throttle} [EXPLANATION OF THROTTLE AND TESTING]
 
 \vspace{5pt}\noindent
 Testing lag and throttle simultaneously yields unsurprising results. Having established acceptable network conditions - [TIME]$ms$ lag, a [$\%$ chance of [TIME]$ms$ throttle -
@@ -172,7 +181,7 @@ Testing lag and throttle simultaneously yields unsurprising results. Having esta
 Recall the interpolation technique described above. Since $T < 0.1s$, the report has assumed the submarine being interpolated appears at position starts on a predicted trajectory at time $t_0$ - does this assumption hold in practice? If two \texttt{PositionPacket}s have been throttled, and arrive within $T$ seconds of each other, it follows that the submarine will not have finished its first interpolation by the time the second one starts! In this edge case of being caught mid-interpolation at some point $\mathbf{r}_0$, \textit{Sardines} prioritises catching up; rather than using a predicted trajectory as in Figure \ref{Interpolation}, the subsequent interpolation simplifies calculations by taking $\mathbf{\tilde{r}}_{\textrm{old}}(t) = \mathbf{r}_0$.
 
 \vspace{5pt}\noindent
-Indeed, for all the optimisations and oversights discussed in this section, its worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. While there current 
+Indeed, for all the optimisations and oversights discussed in this section, its worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. While [Conclude here, or one final paragraph for more general reflection?].
 
 \bibliographystyle{agsm}
 \bibliography{References}
