@@ -39,7 +39,7 @@ public class NavigationDisplay : Control
 
         // Set up timer for sending position packets
         positionTimer = new Timer();
-        positionTimer.WaitTime = 0.1f;
+        positionTimer.WaitTime = 0.5f;
         positionTimer.Autostart = false;
         positionTimer.OneShot = true;
         AddChild(positionTimer);
