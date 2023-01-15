@@ -4,14 +4,20 @@ using System.Collections.Generic;
 
 public class DesertText : Text
 {
+    private Handler handler;
+
     public override void _Ready()
     {
+        handler = GetNode<Handler>("/root/Handler");
+
         InitialiseText();
         GetNode<TextureButton>("NegativeButton").GrabFocus(); 
     }
 
     public void AffirmativePressed()
     {
+        handler.client.Disconnect();
+
         EmitSignal("ChangeUI","MainMenu","MainMenu",new List<string>());
     }
 

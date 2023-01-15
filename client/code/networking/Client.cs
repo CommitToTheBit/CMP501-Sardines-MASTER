@@ -168,6 +168,12 @@ public class Client : Node
             disconnected |= serverConnection.Write();
     }
 
+    public void Disconnect()
+    {
+        disconnected = true;
+        serverConnection.GetSocket().Dispose();
+    }
+
     // Server 'Calls'
     private void ReceivePacket(SendablePacket packet)
     {
@@ -446,6 +452,15 @@ public class Client : Node
     }
 
     // Client 'Calls'
+    public void Send1003()
+    {
+        // Client leaves a server manually
+        HeaderPacket header = new HeaderPacket(1003);
+        EmptyPacket empty = new EmptyPacket();
+        SendablePacket packet = new SendablePacket(header,Packet.Serialise<EmptyPacket>(empty));
+        serverConnection.SendPacket(packet);
+    }
+
     public void Send2310()
     {
         // Client sends message to server to start sandbox mode
