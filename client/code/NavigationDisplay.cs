@@ -196,8 +196,10 @@ public class NavigationDisplay : Control
         float y = submarines[submarineID].y[2];
         float theta = submarines[submarineID].theta[2];
 
-        long timestamp = submarines[submarineID].timestamp[2];//-handler.client.delay; // Convert external players back to 'local' client time
+        long timestamp = DateTime.UtcNow.Ticks;//submarines[submarineID].timestamp[2];//-handler.client.delay; // Convert external players back to 'local' client time
         long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
+
+        //(float x, float y, float theta) origin = submarines[submarineID].QuadraticPredictPosition(timestamp,1); // We can cheat this!
 
         float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
         sweep.Rotation = sweepTheta+3*Mathf.Pi/2;
