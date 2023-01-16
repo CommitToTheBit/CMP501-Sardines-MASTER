@@ -373,13 +373,11 @@ public class Server
         }
 
 
-        if (serverState.mode == State.Mode.lobby)
+        if (serverState.mode == State.Mode.lobby) // No one can rejoin mid-game - but their icon will be left on screen!
         {
             header = new HeaderPacket(1201);
             packet = new SendablePacket(header, Packet.Serialise<EmptyPacket>(new EmptyPacket()));
             tcpConnections[index].SendPacket(packet);
-
-            // FIXME: Also send... hostID... settings...
         }
     }
 

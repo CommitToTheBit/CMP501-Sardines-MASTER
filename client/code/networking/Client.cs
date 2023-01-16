@@ -334,7 +334,7 @@ public class Client : Node
         long interpolationTimestamp = (submarineID >= 0) ? state.GetSubmarines()[submarineID].timestamp[2] : DateTime.UtcNow.Ticks; 
         foreach (int submarineID in submarines.Keys)
             if (submarines[submarineID].captain.clientID == init_clientID)
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 3; i++) // Brings abandoned submarine fully to rest // CHECKME: Erroneous use of interpolationTimestamp?
                     state.UpdateSubmarine(submarineID,submarines[submarineID].x[2],submarines[submarineID].y[2],submarines[submarineID].theta[2],submarines[submarineID].timestamp[2]+1,interpolationTimestamp);
         
         // NEED TO HANDLE RE-JOINING SUBMARINES?
@@ -523,6 +523,11 @@ public class Client : Node
     public int GetClientID()
     {
         return clientID;
+    }
+
+    public void SetClientID(int init_clientID)
+    {
+        clientID = init_clientID;
     }
 
     public List<int> GetClientIDs()

@@ -18,6 +18,11 @@ public class DesertText : Text
     {
         handler.client.Disconnect();
 
+        // Reset client's networking component (except for clientID!)
+        int clientID = handler.client.GetClientID();
+        handler.client = new Client();
+        handler.client.SetClientID(clientID);
+
         EmitSignal("ChangeUI","MainMenu","MainMenu",new List<string>());
     }
 
