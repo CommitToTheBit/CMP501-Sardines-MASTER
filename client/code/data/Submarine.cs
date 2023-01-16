@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class Submarine
 {
-    const float T_INTERPOLATION = 0.05f; // Interpolation period
+    const float T_INTERPOLATION = 0.8f; // Interpolation period
 
     // Public status variables:
     public Crew captain;
@@ -225,7 +225,7 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
+            if (true)//interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
             {
                 X[0] = X[1];
                 Y[0] = Y[1];
@@ -305,13 +305,13 @@ public class Submarine
 
     public (float xInterpolation, float yInterpolation, float thetaInterpolation) InterpolatePosition(long timestampPrediction)
     {
-        return QuadraticPredictPosition(timestampPrediction,1);
-
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
 
         float t = Mathf.Pow(10, -7) * (timestampPrediction - INTERPOLATION_TIMESTAMP); // NB: T seconds after frontPrediction was updated, we must be completely on that trajectory!
         t = Mathf.Clamp(t,0.0f,T_INTERPOLATION)/T_INTERPOLATION;
+
+        return (xInterpolation: (1.0f-t)*x[1]+t*x[2], yInterpolation: (1.0f-t)*y[1]+t*y[2], thetaInterpolation: (1.0f-t)*theta[1]+t*theta[2]);
 
         return (xInterpolation: (1.0f-t)*backPrediction.x+t*frontPrediction.x, yInterpolation: (1.0f-t)*backPrediction.y+t*frontPrediction.y, thetaInterpolation: (1.0f-t)*backPrediction.theta+t*frontPrediction.theta);
     }
