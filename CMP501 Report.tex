@@ -31,7 +31,7 @@
 
 \section*{Sardines: A Networked Game}
 
-\textit{Sardines} is a system of communication for 2-8 players. Each player controls a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves - representative of dots and dashes - to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox, to best restrict attention to the networking techniques at play.
+\textit{Sardines} is a system of communication for 2-8 players. Each player controls a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves - representative of dots and dashes - to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox to best restrict attention to the networking techniques at play.
 
 \subsection*{Architecture}\label{Architecture}
 
@@ -46,26 +46,28 @@
 \vspace{5pt}\noindent
 In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting each submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2$-$8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
 
-\vspace{5pt}\noindent
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\textwidth]{Hybrid Architecture}
-\caption{Potential hybrid architecture for a $32$-player version of \textit{Sardines} (simplified).}
+\caption{Potential hybrid architecture for a scaled version of \textit{Sardines}.}
 \label{Hybrid Architecture}
 \end{figure}
 
 \subsection*{Protocols}
 
-\paragraph{Transport Layer} In \textit{Sardines}, client and server communicate through TCP connections, chosen for their reliability. 
-As much is set out in RFC 798 \citeyearpar{rfc793}, where \citeauthor{rfc793} introduces the protocol:.... %`` ''
-Provide reliability paragraph?...
+\paragraph{Transport Layer} In the application, client and server communicate through TCP connections, chosen for their robustness.
+As set out in RFC 798 \citeyearpar{rfc793}, where \citeauthor{rfc793} introduces the transport protocol,  %`` ''
+\begin{quote}
+Very few assumptions are made as to the reliability of the communication protocols below the TCP layer.  TCP assumes it can obtain a simple, potentially unreliable datagram service from the lower level protocols.  In principle, the TCP should be able to operate above a wide spectrum of communication systems.
+\end{quote}
+That the protocol guarantees reliability in-and-of-itself makes it perfect for \textit{Sardines}' purposes: for any two players to meaningfully communicate in morse code, they must be able to trust that their dots and dashes reach one another in order and without error.
 
 \vspace{5pt}\noindent
-There is, of course, an argument for updating positions via UDP. Suppose that a submarine starts at position $A$, fails to update to position $B$: where the ordered nature of TCP means the application will resend and resend this update [EXPLAIN DOWNSIDE], this protocol will simply [GO TO the position C of the next successful].  While the deliberate simplicity of UDP - the [FEATURE \#1], the [FEATURE \#2] - lends itself to the continuous, incremental nature of movement , \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with positions needed reliably but not immediately, and with the robustness of the prediction system used (see `\nameref{Prediction}'), updating position via TCP every 0.1s should be infrequent enough to avoid the backlog described above.
+There is, of course, an argument for updating positions via UDP. Suppose that a submarine starts at point $A$, and fails to update to point $B$ - whereas a TCP connection will resend and resend this update until it succeeds, its ordered nature potentially holding up more important or immediate data, UDP just assumes it \textit{has} sent correctly and moves on to the next point $C$. The minimalism of the protocol lends itself to the continuous, incremental nature of movement, but \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with trajectories needed reliably but not immediately, and given the robustness of the prediction system used (see `\nameref{Prediction}') updating position via TCP every 0.1s would seem infrequent enough to avoid the backlog described above.
 
 \paragraph{Application Layer} 
 
-While it needn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Data is sent via \texttt{SendablePacket}s, consisting of a fixed-length \texttt{HeaderPacket} and one of several structs encoded as a \texttt{serialisedBody}. The header, always read first, contains a \texttt{bodyID}  that tells the receiver how many bytes of the body need deserialised; as discussed in the labs, this application handles variable-length messages in much the same way as the DNS protocol.
+While it needn't consider the internetwork and hardware layers of the protocol stack, the application layer of \textit{Sardines}' network necessarily interacts with the transport layer directly below it. Data is sent in a stream of \texttt{SendablePacket}s, consisting of a fixed-length \texttt{HeaderPacket} and one of several structs encoded as a \texttt{serialisedBody}. The header, always read first, contains a \texttt{bodyID}  that tells the receiver how many bytes of the body need deserialised; as discussed in the CMP501 labs, this application handles variable-length messages in much the same way as the DNS protocol.
 
 \vspace{5pt}\noindent
 At a more granular level, a \texttt{serialisedBody} may encode one of many structs, for one of many purposes:
@@ -74,7 +76,7 @@ At a more granular level, a \texttt{serialisedBody} may encode one of many struc
 \item \texttt{IDPacket} Contains an \texttt{int} \texttt{clientID}, and a \texttt{char[]} \texttt{clientIP} that requires, by definition, no more than $16$ characters. Sent to initialise a unique identity for each client, and more generally let players track who else is playing.\footnote{In the hybrid architecture discussed above, the IP would also be used to establish crew-to-navigator connections.}
 \item \texttt{SubmarinePacket} Contains an \texttt{int} \texttt{submarineID}, the controller's \texttt{clientID}, and additional variables corresponding to future functionalities. Similarly initialises a unique identity for each submarine.\footnote{And similarly, the distinction between \texttt{clientID} and \texttt{submarineID} is only meaningful, of course, with multiple clients per submarine.}
 \item \texttt{PositionPacket} Contains a submarine's \texttt{x}-, \texttt{y}-coordinates and rotation \texttt{theta} at a certain time \texttt{timestamp}. Sent client-to-server as updates to the master game state, and server-to-client for prediction and rendering.
-\item \texttt{MorsePacket} Similarly contains the necessary parameters to render a soundwave's arc on the receiving client's screen.
+\item \texttt{MorsePacket} Similarly contains the necessary parameters to render a soundwave on the receiver's screen.
 \item \texttt{EmptyPacket} Contains no variables. Sent when the \texttt{bodyID} corresponds to a function with no arguments (e.g. \texttt{bodyID} \texttt{2310} tells a server in lobby mode to initialise a game).
 \end{itemize}
 \texttt{bodyID}s adopt an informal naming convention: IDs \texttt{1XXX} refer to clients connecting to/disconnecting from a server, \texttt{2XXX} to server functionality while in lobby mode, \texttt{3XXX} to server functionality while in a game mode, and \texttt{4XXX} to client states and actions while in-game.
