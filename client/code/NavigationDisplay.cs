@@ -88,7 +88,7 @@ public class NavigationDisplay : Control
     public override void _Process(float delta)
     {
         // FIXME: Deactivated to check other network changes in isolation
-        
+
         // Take in player controls
         UpdatePosition(delta);
 
@@ -196,7 +196,7 @@ public class NavigationDisplay : Control
         float y = submarines[submarineID].y[2];
         float theta = submarines[submarineID].theta[2];
 
-        long timestamp = submarines[submarineID].timestamp[2];//-handler.client.delay; // Convert external players back to 'local' client time
+        long timestamp = submarines[submarineID].timestamp[2];// But DateTime.UtcNow.Ticks is better for single throttle?
         long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
         //(float x, float y, float theta) origin = submarines[submarineID].QuadraticPredictPosition(timestamp,1); // We can cheat this!

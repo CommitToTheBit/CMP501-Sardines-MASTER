@@ -200,7 +200,7 @@ public class Submarine
     // Prediction
     public void UpdatePredictionModel(long interpolationTimestamp) // No inputs, as updating from the submarine's logged positions
     {
-        //long newTimestamp = DateTime.UtcNow.Ticks; 
+        interpolationTimestamp = DateTime.UtcNow.Ticks; 
         //GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
 
         //long sum = INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION);
@@ -256,6 +256,12 @@ public class Submarine
             Y[1] = new float[3] { y[2], uy[1], ay[0] };
             THETA[1] = new float[2] { theta[1], utheta[0] }; // NB: Left linear, since rudder moves 'zero to sixty'!
             TIMESTAMP[1] = timestamp[2];
+
+            // DEBUG:
+            //X[0] = X[1];
+            //Y[0] = Y[1];
+            //THETA[0] = THETA[1];
+            //TIMESTAMP[0] = TIMESTAMP[1];
         }
         else
         {
