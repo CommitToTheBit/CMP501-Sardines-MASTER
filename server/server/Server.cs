@@ -111,7 +111,7 @@ public class Server
             {
                 Socket clientSocket = serverSocket.Accept();
 
-                if (tcpConnections.Count() < MAX_CONNECTIONS) // FIXME: Need stricter condition to stop new joiners mid-game (i.e. clientIDs.Count() <= MAX_CONNECTIONS) // FIXME: Close socket before message sends!
+                if (tcpConnections.Count() < MAX_CONNECTIONS && serverState.mode == State.Mode.lobby) // Only allow joiners in lobby!
                 {
                     tcpConnections.Add(new TCPConnection(clientSocket));
                     clientIDConnections.Add(-1);
@@ -463,7 +463,10 @@ public class Server
 
     private void Receive3200()
     {
-        // FIXME: Need to 'wipe' remaining clients of their knowledge, connections, etc...
+        // Need to 'wipe' remaining clients of their knowledge, connections, etc...
+        tcpConnections = new List<TCPConnection>(MAX_PENDING_CONNECTIONS);
+        clientIDConnections = new List<int>();
+        clientIPs = new Dictionary<int, string>();
 
         serverState.StartLobby();
     }
