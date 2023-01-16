@@ -94,7 +94,7 @@ public class Client : Node
         try
         {
             clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(serverIP),SERVERPORT));
-            disconnected = !clientSocket.Poll(1000000, SelectMode.SelectWrite); // CHECKME: Set this based on Clumsy results! // CHECKME: Async - separate thread/simultaneously?
+            disconnected = !clientSocket.Poll(2000000, SelectMode.SelectWrite); // CHECKME: Set this based on Clumsy results! // CHECKME: Async - separate thread/simultaneously?
 
             if (!disconnected)//clientSocket.Poll(100000, SelectMode.SelectWrite)) // Immediately sync on connection...
             {
