@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public class Client : Node
 {
     [Signal] delegate void ReceivedPacket(int packetID);
+    [Signal] delegate void ReceivedKick();
     [Signal] delegate void ReceivedSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionTicks);
 
     [Signal] delegate void ReceivedFrame(Vector2 frame);
@@ -300,10 +301,16 @@ public class Client : Node
     private void Receive1001(int init_clientID, string init_clientIP)
     {
         // Client receives ID confirmation/rejection
+        if (init_clientID < 0)
+        {
+            EmitSignal("ReceivedKick");
+            return;
+        }
+
         clientID = init_clientID;
 
-        if (clientID < 0 || clientIPs.ContainsKey(clientID)) // Client has been 'formally' rejected...
-            return;
+        if (clientIPs.ContainsKey(clientID)) // Client has been 'formally' rejected...
+              return;
 
         clientIPs.Add(init_clientID,init_clientIP);
 

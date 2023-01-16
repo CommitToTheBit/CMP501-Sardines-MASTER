@@ -116,11 +116,16 @@ public class Server
                     tcpConnections.Add(new TCPConnection(clientSocket));
                     clientIDConnections.Add(-1);
                 }
-                else
+                else // We could send the client a "Sorry, we're busy!" message here, if we wanted...
                 {
-                    Console.WriteLine("Disposing?");
-                    TCPConnection tcpConnection = new TCPConnection(clientSocket);
-                    tcpConnection.GetSocket().Dispose();
+                    //TCPConnection tcpConnection = new TCPConnection(clientSocket);
+
+                    //HeaderPacket header = new HeaderPacket(1002);
+                    //IDPacket id = new IDPacket(-1, "".ToCharArray());
+                    //SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
+                    //tcpConnection.SendPacket(packet);
+
+                    //tcpConnection.GetSocket().Dispose();
                     return; // FIXME: Is there any need to return here?
                 }
 

@@ -18,6 +18,7 @@ public class JoinGameText : Text
     {
         handler = GetNode<Handler>("/root/Handler");
         handler.client.Connect("ReceivedPacket",this,"Receive");
+        handler.client.Connect("ReceivedKick",this,"ReceiveKick");
 
         InitialiseText();
         ipPseudoButton = GetNode<PseudoButton>("IPPseudoButton");
@@ -144,9 +145,9 @@ public class JoinGameText : Text
     {
         switch (packetID)
         {
-            case 1001:
-                ipReady = handler.client.GetClientID() < 0; // Allow another press if the client has been rejected!
-                return;
+            //case 1001:
+            //    ipReady = handler.client.GetClientID() < 0; // Allow another press if the client has been rejected!
+            //    return;
 
             case 1201:
                 List<string> newHistory = new List<string>(history);
@@ -156,5 +157,10 @@ public class JoinGameText : Text
                 return;
         }
         // NOTE: There will be other cases here!
+    }
+
+    public void ReceiveKick()
+    {
+        ipReady = true;
     }
 }
