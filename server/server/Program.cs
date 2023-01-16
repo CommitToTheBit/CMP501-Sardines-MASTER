@@ -12,6 +12,7 @@ class Program
 
         while (true)
         {
+            Console.WriteLine(DateTime.UtcNow.Ticks);
             server.Read();
             server.Update();
             server.Write();

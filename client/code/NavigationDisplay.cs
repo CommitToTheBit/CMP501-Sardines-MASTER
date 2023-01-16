@@ -88,6 +88,7 @@ public class NavigationDisplay : Control
     public override void _Process(float delta)
     {
         // FIXME: Deactivated to check other network changes in isolation
+        GD.Print(DateTime.UtcNow.Ticks);
 
         // Take in player controls
         UpdatePosition(delta);
