@@ -136,7 +136,7 @@ public class Client : Node
             writeable.Add(serverConnection.GetSocket());
         }
 
-        Socket.Select(readable, writeable, null, 0);
+        Socket.Select(readable, writeable, null, 10000);
 
         if (readable.Contains(serverConnection.GetSocket()))
             disconnected |= serverConnection.Read();
@@ -168,7 +168,7 @@ public class Client : Node
             writeable.Add(serverConnection.GetSocket());
         }
 
-        Socket.Select(readable, writeable, null, 0);
+        Socket.Select(readable, writeable, null, 10000);
 
         if (writeable.Contains(serverConnection.GetSocket()))
             disconnected |= serverConnection.Write();

@@ -102,7 +102,7 @@ public class Server
                 writeable.Add(tcpConnection.GetSocket());
         }
 
-        Socket.Select(readable, writeable, null, 1000000);
+        Socket.Select(readable, writeable, null, 10000);
         //Console.WriteLine(tcpConnections.Count + " clients, " + readable.Count + " are ready to read.");
 
         if (readable.Contains(serverSocket))
@@ -181,7 +181,7 @@ public class Server
                 writeable.Add(tcpConnection.GetSocket());
         }
 
-        Socket.Select(readable, writeable, null, 1000000);
+        Socket.Select(readable, writeable, null, 10000);
 
         // Check each of the clients.
         for (int i = 0; i < tcpConnections.Count();)
