@@ -143,12 +143,20 @@ public class Server
     public void Update()
     {
         // STEP 1: Process all packets received
-        for (int i = 0; i < tcpConnections.Count; i++)
+        for (int i = tcpConnections.Count-1; i >= 0; i--)
+        {
+            if (tcpConnections[i].disconnect)
+            {
+                Disconnect(i);
+                continue;
+            }
+
             while (tcpConnections[i].isRecvPacket())
             {
                 SendablePacket packet = tcpConnections[i].RecvPacket();
-                ReceivePacket(packet,i);
+                ReceivePacket(packet, i);
             }
+        }
 
         // STEP 2: Process changes to state (including those changed by server?)
         // ...Or will this just be handled by send/receives? Barring minimal points like time intervals, etc...
@@ -205,17 +213,19 @@ public class Server
         tcpConnections[index].GetSocket().Dispose(); // FIXME: Difference between close and dispose?
         tcpConnections.RemoveAt(index);
 
-        for (int i = 0; i < tcpConnections.Count; i++)
+        if (clientIDConnections[index] >= 0)
         {
-            HeaderPacket header = new HeaderPacket(1003);
-            IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[clientIDConnections[index]].ToCharArray());
-            SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
-            tcpConnections[i].SendPacket(packet);
-        }
+            for (int i = 0; i < tcpConnections.Count; i++)
+            {
+                HeaderPacket header = new HeaderPacket(1003);
+                IDPacket id = new IDPacket(clientIDConnections[index], clientIPs[clientIDConnections[index]].ToCharArray());
+                SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
+                tcpConnections[i].SendPacket(packet);
+            }
 
-        // DEBUG: Comment this out for more 'memory'
-        clientIPs.Remove(clientIDConnections[index]);
-        clientIDConnections.RemoveAt(index);
+            clientIPs.Remove(clientIDConnections[index]); // DEBUG: Comment this out for more 'memory'
+        }
+        clientIDConnections.RemoveAt(index); // DEBUG: Comment this out for more 'memory'
 
         // DEBUG:
         if (clientIDConnections.Count > 0)
@@ -243,7 +253,7 @@ public class Server
         Console.WriteLine();
 
         // If we are connected to no clients, we return to the lobby...
-        if (clientIDConnections.Count == 0)
+        if (clientIPs.Count == 0)
             Receive3200();
 
         return;
@@ -315,12 +325,16 @@ public class Server
         bool newConnection = clientIDConnections[index] == -1;
 
         // A robust way of rejecting clients...
-        if (tcpConnections.Count() >= MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
+        if (true || tcpConnections.Count() >= MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
         {
+            // DEBUG
+            Console.WriteLine("\tClient "+clientID+" rejected: "+((tcpConnections.Count >= MAX_CONNECTIONS) ? "Too many players!" : "Mid-game!"));
+
             HeaderPacket rejectionHeader = new HeaderPacket(1001);
             IDPacket rejectionID = new IDPacket(-1, clientIP.ToCharArray());
             SendablePacket rejectionPacket = new SendablePacket(rejectionHeader, Packet.Serialise<IDPacket>(rejectionID));
             tcpConnections[index].SendPacket(rejectionPacket);
+            tcpConnections[index].disconnect = true; // Disconnects *after* send!
 
             return;
         }

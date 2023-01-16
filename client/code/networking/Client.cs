@@ -177,6 +177,9 @@ public class Client : Node
     {
         disconnected = true;
         serverConnection.GetSocket().Dispose();
+
+        delaySamples = new List<long>();
+        delay = 0;
     }
 
     // Server 'Calls'
@@ -303,9 +306,7 @@ public class Client : Node
         // Client receives ID confirmation/rejection
         if (init_clientID < 0)
         {
-            delaySamples = new List<long>();
-            delay = 0;
-
+            //Disconnect();
             EmitSignal("ReceivedKick");
             return;
         }

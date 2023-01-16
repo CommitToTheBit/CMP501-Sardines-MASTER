@@ -28,6 +28,8 @@ public class TCPConnection
     private List<SendablePacket> recvQueue;
     private List<SendablePacket> sendQueue;
 
+    public bool disconnect;
+
     // FIXME: Add delays to connections?
 
     // Constructor
@@ -49,6 +51,8 @@ public class TCPConnection
 
         recvQueue = new List<SendablePacket>();
         sendQueue = new List<SendablePacket>();
+
+        disconnect = false;
 
         // FIXME: Add delays to connections!
         //delay = 0;

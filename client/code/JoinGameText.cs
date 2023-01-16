@@ -161,6 +161,13 @@ public class JoinGameText : Text
 
     public void ReceiveKick()
     {
+        GD.Print("Kicked!");
+
+        // Reset client's networking component (except for clientID!)
+        int clientID = handler.client.GetClientID();
+        handler.client = new Client();
+        handler.client.SetClientID(clientID);
+
         ipReady = true;
     }
 }
