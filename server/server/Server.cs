@@ -8,9 +8,8 @@ using System.Collections.Generic;
 public class Server
 {
     // Constants
-    const int MIN_CONNECTIONS = 5;
-    const int MAX_CONNECTIONS = 8;
-    const int MAX_PENDING_CONNECTIONS = 1;
+    const int MIN_CONNECTIONS = 1;
+    const int MAX_CONNECTIONS = 2;
 
     // Variables
     private Socket serverSocket;
@@ -60,7 +59,7 @@ public class Server
         serverSocket.Bind(localEndPoint);
         serverSocket.Listen();
 
-        tcpConnections = new List<TCPConnection>(MAX_PENDING_CONNECTIONS);
+        tcpConnections = new List<TCPConnection>();
         clientIDConnections = new List<int>();
         clientIPs = new Dictionary<int, string>();
         maxClientID = -1;
@@ -326,7 +325,7 @@ public class Server
         bool newConnection = clientIDConnections[index] == -1;
 
         // A robust way of rejecting clients...
-        if (tcpConnections.Count() >= MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
+        if (tcpConnections.Count() > MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
         {
             // DEBUG
             Console.WriteLine("\tClient "+clientID+" rejected: "+((tcpConnections.Count >= MAX_CONNECTIONS) ? "Too many players!" : "Mid-game!"));
@@ -480,7 +479,7 @@ public class Server
     private void Receive3200()
     {
         // Need to 'wipe' remaining clients of their knowledge, connections, etc...
-        tcpConnections = new List<TCPConnection>(MAX_PENDING_CONNECTIONS);
+        tcpConnections = new List<TCPConnection>();
         clientIDConnections = new List<int>();
         clientIPs = new Dictionary<int, string>();
 
