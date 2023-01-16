@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class Submarine
 {
-    const float T_INTERPOLATION = 0.025f; // Interpolation period
+    const float T_INTERPOLATION = 0.1f; // Interpolation period
 
     // Public status variables:
     public Crew captain;
@@ -225,14 +225,14 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (true)//interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
-            {
-                X[0] = X[1];
-                Y[0] = Y[1];
-                THETA[0] = THETA[1];
-                TIMESTAMP[0] = TIMESTAMP[1];
-            }
-            else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
+            //if (true)//interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
+            //{
+            X[0] = X[1];
+            Y[0] = Y[1];
+            THETA[0] = THETA[1];
+            TIMESTAMP[0] = TIMESTAMP[1];
+            //}
+            /*else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
             {
                 (float x, float y, float theta) interpolation = InterpolatePosition(interpolationTimestamp);
 
@@ -249,7 +249,7 @@ public class Submarine
 
                 GD.Print("Catching up submarine from client "+captain.clientID+"!");
                 GD.Print(((float)(interpolationTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
-            }
+            }*/
 
             // Update parameters of quadratic model
             X[1] = new float[3] { x[2], ux[1], ax[0] };
