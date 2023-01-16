@@ -121,7 +121,7 @@ public class State
         try
         {
             fleets[superpower].submarines[submarineID].UpdatePosition(x, y, theta, timestamp);
-            fleets[superpower].submarines[submarineID].UpdatePredictionModel(interpolationTimestamp);
+            fleets[superpower].submarines[submarineID].UpdatePredictionModel();
         }
         catch
         {
