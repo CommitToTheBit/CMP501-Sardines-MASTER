@@ -80,9 +80,10 @@ public class Client : Node
     // Destructor
     ~Client()
     {
-        clientSocket.Close();
+        serverConnection.GetSocket().Dispose();
+        clientSocket.Dispose();
     }
-    
+
     // Accessors
     public bool IsConnected()
     {
@@ -173,10 +174,15 @@ public class Client : Node
             disconnected |= serverConnection.Write();
     }
 
-    public void Disconnect()
+    public void Reset()
     {
         disconnected = true;
+
+        clientSocket.Dispose();
         serverConnection.GetSocket().Dispose();
+
+        clientSocket = new Socket(IPAddress.Parse(CLIENTIP).AddressFamily,SocketType.Stream,ProtocolType.Tcp); 
+        serverConnection = new TCPConnection(clientSocket);
 
         delaySamples = new List<long>();
         delay = 0;
@@ -303,11 +309,15 @@ public class Client : Node
 
     private void Receive1001(int init_clientID, string init_clientIP)
     {
+        GD.Print(init_clientID);
+
         // Client receives ID confirmation/rejection
         if (init_clientID < 0)
         {
-            //Disconnect();
+            GD.Print(init_clientID);
+
             EmitSignal("ReceivedKick");
+            Reset();
             return;
         }
 
