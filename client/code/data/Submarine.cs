@@ -283,7 +283,6 @@ public class Submarine
         }
 
         INTERPOLATION_TIMESTAMP = interpolationTimestamp;
-        GD.Print("End reached!");
     }
 
     public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction, int index)

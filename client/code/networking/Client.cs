@@ -500,7 +500,7 @@ public class Client : Node
 
         // DEBUG:
         if (init_game > 0 && (position_counter++)%10 == 0)
-            GD.Print(init_timestamp-init_game);
+            GD.Print(init_timestamp-delay-init_game);
 
     }
 
