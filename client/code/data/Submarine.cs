@@ -35,6 +35,9 @@ public class Submarine
     private long[] TIMESTAMP;
     private long INTERPOLATION_TIMESTAMP;
 
+    private float stationaryX, stationaryY;
+    private float stationaryTheta;
+
     // Constructor
     public Submarine(int init_clientID, string init_clientIP, bool init_nuclearCapability)
     {
@@ -97,6 +100,10 @@ public class Submarine
             return UpdatePosition(init_x, init_y, init_theta, init_timestamp);
 
         // Initialise position of submarine
+        stationaryX = init_x;
+        stationaryY = init_y;
+        stationaryTheta = init_theta;
+
         x = new float[3] { init_x, init_x, init_x };
         y = new float[3] { init_y, init_y, init_y };
         theta = new float[3] { init_theta, init_theta, init_theta };
@@ -124,6 +131,10 @@ public class Submarine
         // Disregard any position updates sent out of order (makes no sense to factor something the player hasn't seen into any model!)
         if (init_timestamp <= timestamp[2])
             return false;
+
+        stationaryX = x[0];
+        stationaryY = y[0];
+        stationaryTheta = theta[0];
 
         x = new float[3] { x[1], x[2], init_x };
         y = new float[3] { y[1], y[2], init_y };
@@ -266,7 +277,7 @@ public class Submarine
     public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction, int index)
     {
         // Don't bother predicting the first couple of moves from rest... // FXIME: Could not predict move 0, linearly predict move 1, then use quadratic, but it's only a few (barely perceptible!) tenths of a second
-        if (x[0] == x[1] && y[0] == y[1] && theta[0] == theta[1])
+        if ((x[0] == stationaryX && y[0] == stationaryY && theta[0] == stationaryTheta) || (x[1] == x[0] && y[1] == y[0] && theta[1] == theta[0])) // Second clause covers for lack of stationaryVariables integration elsewhere!
             return (xPrediction: X[index][0], yPrediction: Y[index][0], thetaPrediction: THETA[index][0]);
 
         // Derive delta from timestamps
