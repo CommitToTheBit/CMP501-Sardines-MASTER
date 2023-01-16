@@ -31,6 +31,8 @@ public class NavigationDisplay : Control
     private List<Vector2> frames;
     private AudioEffectCapture _effect;
 
+    public bool reset;
+
     public override void _Ready()
     {
         handler = GetNode<Handler>("/root/Handler");
@@ -79,6 +81,7 @@ public class NavigationDisplay : Control
 
         audioStreamPlayer.Play();*/
 
+        reset = false;
         Hide();
     }
 
@@ -89,6 +92,8 @@ public class NavigationDisplay : Control
 
     public void Reset()
     {
+        foreach (int submarineID in vessels.Keys)
+            vessels[submarineID].QueueFree();
         vessels = new Dictionary<int, Vessel>();
 
         sending = true;
@@ -96,12 +101,21 @@ public class NavigationDisplay : Control
         ySent = new float[3] { 0.0f, 0.0f, 0.0f };
         thetaSent = new float[3] { 0.0f, 0.0f, 0.0f };
 
+        reset = false;
         Hide();
     }
 
     public override void _Process(float delta)
     {
-        // FIXME: Deactivated to check other network changes in isolation
+        if (!Visible)
+        {
+            return;
+        }
+        if (reset)
+        {
+            Reset();
+            return;
+        }    
 
         // Take in player controls
         UpdatePosition(delta);
@@ -144,6 +158,9 @@ public class NavigationDisplay : Control
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
+
+        if (!Visible)
+            return;
 
         int submarineID = handler.client.submarineID;
         Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
