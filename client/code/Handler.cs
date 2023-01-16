@@ -16,9 +16,12 @@ public class Handler : Node
     {
         if (client.IsConnected())
         {
-            client.Write();
-            client.Read();
-            client.Update();
+            for (int i = 0; i < 3; i++)
+            {
+                client.Write();
+                client.Read();
+                client.Update();
+            }
         }
         else
         {
