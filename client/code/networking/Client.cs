@@ -331,10 +331,11 @@ public class Client : Node
 
         // If the client controls a submarine, stop predicting any movement...
         Dictionary<int, Submarine> submarines = state.GetSubmarines();
+        long interpolationTimestamp = (submarineID >= 0) ? state.GetSubmarines()[submarineID].timestamp[2] : DateTime.UtcNow.Ticks; 
         foreach (int submarineID in submarines.Keys)
             if (submarines[submarineID].captain.clientID == init_clientID)
                 for (int i = 0; i < 2; i++)
-                    state.UpdateSubmarine(submarineID,submarines[submarineID].x[2],submarines[submarineID].y[2],submarines[submarineID].theta[2],submarines[submarineID].timestamp[2]+1);
+                    state.UpdateSubmarine(submarineID,submarines[submarineID].x[2],submarines[submarineID].y[2],submarines[submarineID].theta[2],submarines[submarineID].timestamp[2]+1,interpolationTimestamp);
         
         // NEED TO HANDLE RE-JOINING SUBMARINES?
     }
@@ -455,7 +456,8 @@ public class Client : Node
     {
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*? This is built in to Submarine.cs, to some extent...
-        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp-delay);
+        long interpolationTimestamp = (submarineID >= 0) ? state.GetSubmarines()[submarineID].timestamp[2] : DateTime.UtcNow.Ticks; // This timestamp keeps up with the current frame
+        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp-delay,interpolationTimestamp);
     }
 
     private void Receive4102(int senderID, bool dot, float range, float angle, long interval)

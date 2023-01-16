@@ -106,14 +106,14 @@ public class State
         fleets[superpower].AddSubmarine(submarineID,clientID,clientIP,nuclearCapability);
     }
 
-    public void UpdateSubmarine(int submarineID, float x, float y, float theta, long timestamp)
+    public void UpdateSubmarine(int submarineID, float x, float y, float theta, long timestamp, long interpolationTimestamp)
     {
         // FIXME: Maybe needs to be more 'in range'?
         Superpower superpower = GetSubmarineSuperpower(submarineID);
         try 
         {
             if (fleets[superpower].submarines[submarineID].UpdatePosition(x, y, theta, timestamp))
-                fleets[superpower].submarines[submarineID].UpdatePredictionModel(); // Only updates prediction model if position has changed...
+                fleets[superpower].submarines[submarineID].UpdatePredictionModel(interpolationTimestamp); // Only updates prediction model if position has changed...
         }
         catch
         {

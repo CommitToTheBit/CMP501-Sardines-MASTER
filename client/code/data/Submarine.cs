@@ -61,7 +61,7 @@ public class Submarine
 
         INTERPOLATION_TIMESTAMP = 0;
 
-        UpdatePredictionModel();
+        UpdatePredictionModel(0);
     }
 
     // Copy Constructor
@@ -115,7 +115,7 @@ public class Submarine
         rudder = 0.0f;
 
         // Initialise prediction variables via UpdateQuadraticModel
-        UpdatePredictionModel();
+        UpdatePredictionModel(init_timestamp);
 
         positionInitialised = true;
         return true;
@@ -198,7 +198,7 @@ public class Submarine
     }
 
     // Prediction
-    public void UpdatePredictionModel() // No inputs, as updating from the submarine's logged positions
+    public void UpdatePredictionModel(long interpolationTimestamp) // No inputs, as updating from the submarine's logged positions
     {
         long newTimestamp = DateTime.UtcNow.Ticks; 
         //GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
@@ -225,7 +225,7 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (newTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
+            if (interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
             {
                 X[0] = X[1];
                 Y[0] = Y[1];
@@ -234,7 +234,7 @@ public class Submarine
             }
             else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
             {
-                (float x, float y, float theta) interpolation = InterpolatePosition(newTimestamp);
+                (float x, float y, float theta) interpolation = InterpolatePosition(interpolationTimestamp);
 
                 X[0] = new float[3] { interpolation.x, 0.0f, 0.0f };
                 Y[0] = new float[3] { interpolation.y, 0.0f, 0.0f };
@@ -270,7 +270,7 @@ public class Submarine
             TIMESTAMP[0] = TIMESTAMP[1];
         }
 
-        INTERPOLATION_TIMESTAMP = newTimestamp;
+        INTERPOLATION_TIMESTAMP = interpolationTimestamp;
         GD.Print("End reached!");
     }
 
