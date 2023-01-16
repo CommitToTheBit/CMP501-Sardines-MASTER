@@ -46,9 +46,10 @@
 \vspace{5pt}\noindent
 In light of their findings, this report proposes a hybrid architecture for \textit{Sardines} to adopt at scale. While it ultimately proved too ambitious for this assignment, the original idea for the game was that \textit{multiple} players work together in piloting each submarine: a co-operative exercise with a navigator relaying key information about the surroundings, and a small team of other crewmates individually controlling acceleration, steering, etc. With only navigators witnessing the global game state first-hand, Figure \ref{Hybrid Architecture} positions these clients as `local' servers, processing (up to, say) $3$ players' inputs simulataneously, and relaying major changes to the game state back down to this crew. Not only does this topology require less of the central server's bandwidth (it still maintains $2$-$8$ connections, while each navigator has up to $4$ and other crewmates exactly $1$),  but demands far less calculation than if all $32$ players send their highly-individualised updates directly to the master state.
 
+\vspace{0pt}\noindent
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.85\textwidth]{Hybrid Architecture}
+\includegraphics[width=0.75\textwidth]{Hybrid Architecture}
 \caption{Potential hybrid architecture for a scaled version of \textit{Sardines}.}
 \label{Hybrid Architecture}
 \end{figure}
@@ -63,7 +64,7 @@ Very few assumptions are made as to the reliability of the communication protoco
 That the protocol guarantees reliability in-and-of-itself makes it perfect for \textit{Sardines}' purposes: for any two players to meaningfully communicate in morse code, they must be able to trust that their dots and dashes reach one another in order and without error.
 
 \vspace{5pt}\noindent
-There is, of course, an argument for updating positions via UDP. Suppose that a submarine starts at point $A$, and fails to update to point $B$ - whereas a TCP connection will resend and resend this update until it succeeds, its ordered nature potentially holding up more important or immediate data, UDP just assumes it \textit{has} sent correctly and moves on to the next point $C$. The minimalism of the protocol lends itself to the continuous, incremental nature of movement, but \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with trajectories needed reliably but not immediately, and given the robustness of the prediction system used (see `\nameref{Prediction}') updating position via TCP every 0.1s would seem infrequent enough to avoid the backlog described above.
+There is, of course, an argument for updating positions via UDP. Suppose a submarine starts at point $A$, and fails to update to point $B$ - whereas a TCP connection will resend and resend this update until it succeeds, its ordered nature potentially holding up more important or immediate data, UDP assumes it \textit{has} sent correctly and moves on to the next point $C$. The minimalism of the protocol lends itself to the continuous, incremental nature of movement, but \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with trajectories needed reliably but not immediately, and given a robust prediction system (see `\nameref{Prediction}') updating position via TCP every 0.1s should be infrequent enough to avoid the backlog described above.
 
 \paragraph{Application Layer} 
 
@@ -73,8 +74,8 @@ While it needn't consider the internetwork and hardware layers of the protocol s
 At a more granular level, a \texttt{serialisedBody} may encode one of many structs, for one of many purposes:
 \begin{itemize}[noitemsep]
 \item \texttt{SyncPacket} Contains a \texttt{long} \texttt{syncTimestamp}. Sent on connection to standardise server and client calculations for \texttt{DateTime.UtcNow.Ticks} (which may vary from underlying OS to underlying OS, \citealp{msftUTC}).
-\item \texttt{IDPacket} Contains an \texttt{int} \texttt{clientID}, and a \texttt{char[]} \texttt{clientIP} that requires, by definition, no more than $16$ characters. Sent to initialise a unique identity for each client, and more generally let players track who else is playing.\footnote{In the hybrid architecture discussed above, the IP would also be used to establish crew-to-navigator connections.}
-\item \texttt{SubmarinePacket} Contains an \texttt{int} \texttt{submarineID}, the controller's \texttt{clientID}, and additional variables corresponding to future functionalities. Similarly initialises a unique identity for each submarine.\footnote{And similarly, the distinction between \texttt{clientID} and \texttt{submarineID} is only meaningful, of course, with multiple clients per submarine.}
+\item \texttt{IDPacket} Contains an \texttt{int} \texttt{clientID}, and a \texttt{char[]} \texttt{clientIP} that requires, by definition, no more than $16$ characters. Sent to initialise a client's unique identity, and let players track who else is playing.\footnote{In the hybrid architecture discussed above, the IP would also be used to establish crew-to-navigator connections.}
+\item \texttt{SubmarinePacket} Contains an \texttt{int} \texttt{submarineID}, the controller's \texttt{clientID}, and additional variables corresponding to future functionalities. Similarly initialises a unique identity for each submarine.\footnote{And similarly, the distinction between \texttt{clientID} and \texttt{submarineID} is only meaningful with multiple clients per submarine.}
 \item \texttt{PositionPacket} Contains a submarine's \texttt{x}-, \texttt{y}-coordinates and rotation \texttt{theta} at a certain time \texttt{timestamp}. Sent client-to-server as updates to the master game state, and server-to-client for prediction and rendering.
 \item \texttt{MorsePacket} Similarly contains the necessary parameters to render a soundwave on the receiver's screen.
 \item \texttt{EmptyPacket} Contains no variables. Sent when the \texttt{bodyID} corresponds to a function with no arguments (e.g. \texttt{bodyID} \texttt{2310} tells a server in lobby mode to initialise a game).
@@ -84,12 +85,12 @@ At a more granular level, a \texttt{serialisedBody} may encode one of many struc
 \vspace{5pt}\noindent
 While there isn't the space to break down every protocol in precise detail, all have been designed with the same underlying philosophy. Consider, for instance, the process of joining a lobby:
 \begin{enumerate}[label=\textit{\arabic*}\textit{.}, noitemsep]
-\item \textit{The client registers a TCP connection with the server.} The client then constructs... with ID \texttt{1000}...
-\item \textit{The server receives a \texttt{SyncPacket} from the client.} Calling \texttt{Receive1000()}, the server...
-\item \textit{The client receives a \texttt{SyncPacket} from the server.}
-\item \textit{The server receives an \texttt{IDPacket} from the client.}
-\item \textit{The client receives an \texttt{IDPacket} from the server.}
-\item \textit{All clients receive (further) \texttt{IDPacket}s from the server.}
+\item \textit{The client registers a TCP connection with the server, and sends a \texttt{syncPacket} (ID \texttt{1000}).} %The client then constructs a \texttt{syncPacket} (ID \texttt{1000}) to send over the connection.
+\item \textit{The server receives a \texttt{SyncPacket} from the client, and returns it via \texttt{Receive1000()}} %Calling \texttt{Receive1000()}, the server returns its own \texttt{syncPacket}, with \texttt{syncTimestamp} set to the timestamp on the received \texttt{HeaderPacket}.
+\item \textit{The client receives a \texttt{SyncPacket} from the server, estimates the two devices' time difference, and sends an \texttt{IDPacket} (ID \texttt{1001}).} %With its own version of \texttt{Receive1000()}, the client uses the packet to estimate the time difference with the server. An \texttt{IDPacket} (ID \texttt{1001}) is then sent to confirm the player's identity.
+\item \textit{The server receives an \texttt{IDPacket} from the client, changes the \texttt{clientID} if it is unrecognised,\footnote{Or banned! Here, the server returns an \texttt{IDPacket} with a strictly negative \texttt{clientID}, which cues the client to disconnect.} and returns it via \texttt{Receive1001()}.} %If it recognises the received \texttt{clientID}, \texttt{Receive1001()} returns it unchanged; if it is unrecognised, it returns a newly-assigned identity.\footnote{And if, for any reason, the player is recognised as banned from the server, it will return a strictly negative \texttt{clientID} that the client takes as its cue to disconnect!} % (or, to reject the client, returns the packet with \texttt{clientID} set to \texttt{-1}).
+\item \textit{The client receives an \texttt{IDPacket} from the server, a 'formal' acceptance into the lobby.} %The client adopts the returned \texttt{clientID}, taking this as a `formal' acceptance onto the server.
+\item \textit{All clients receive (further) \texttt{IDPacket}s from the server (IDs \texttt{1002}). These tell players in the lobby who has just joined, and vice versa.}
 \end{enumerate}
 There is arguably some unnecessary back-and-forth to the above, but small packet sizes shouldn't put any meaningful strain on bandwidth. The process is designed for ease of programming: treating major protocols as a chain of smaller, simpler steps, it becomes far easier to manage - and document - the application layer. 
 %This description may seem fairly dry, but it serves to ...
@@ -101,9 +102,6 @@ There is arguably some unnecessary back-and-forth to the above, but small packet
 % CHECKME: What is an API?
 \textit{Sardines} is built with C\# in the Godot engine. It uses System.Net.Sockets to handle networking, and System.Runtime.InteropServices to serialize/deserialize packet structs. As noted in Microsoft's documentation \citeyearpar{msftSNS}, System.Net.Sockets implements conventional Berkeley sockets.
 
-
-
-\pagebreak
 \subsection*{Integration}
 
 Asynchronous I/O...
@@ -142,7 +140,7 @@ In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are se
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.85\textwidth]{Interpolation}
+\includegraphics[width=0.75\textwidth]{Interpolation}
 \caption{Interpolation from trajectory $\mathbf{\tilde{r}}_{\textrm{old}}(t)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$ (blue); chosen over $\mathbf{\tilde{r}}_{\textrm{old}}(t_0)$ to $\mathbf{\tilde{r}}_{\textrm{new}}(t)$ (red).}
 \label{Interpolation}
 \end{figure}
