@@ -38,6 +38,10 @@ public class Client : Node
 
     public int submarineID;
 
+    // DEBUG
+    private long init_game;
+    private int position_counter;
+
     // Constructor
     public Client()
     {
@@ -75,6 +79,7 @@ public class Client : Node
         sandboxBlocking = false;
 
         submarineID = -1;
+
     }
 
     // Destructor
@@ -205,7 +210,7 @@ public class Client : Node
         // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
 
         // DEBUG:
-        GD.Print("Received packet " + packet.header.bodyID + "...");
+        //GD.Print("Received packet " + packet.header.bodyID + "...");
 
         SyncPacket syncPacket;
         IDPacket idPacket;
@@ -278,7 +283,7 @@ public class Client : Node
         EmitSignal("ReceivedPacket",packet.header.bodyID);
 
         // DEBUG:
-        GD.Print();
+        //GD.Print();
     }
 
     private void Receive1000(long serverTimestamp, long syncTimestamp)
@@ -432,6 +437,10 @@ public class Client : Node
                 GD.Print("\t\t\tCaptain "+state.fleets[superpower].submarines[submarineID].captain.clientID+", IP Address "+captainAddress+"...");
             }
         }
+
+        // DEBUG:
+        init_game = state.GetSubmarines()[submarineID].timestamp[2];
+        position_counter = 0;
     }
 
     private void Receive4000(int superpowerID, int diplomatID)
@@ -488,6 +497,11 @@ public class Client : Node
         // FIXME: Who should get priority if client and server update the submarine *at the same time*? This is built in to Submarine.cs, to some extent...
         long interpolationTimestamp = (submarineID >= 0) ? state.GetSubmarines()[submarineID].timestamp[2] : DateTime.UtcNow.Ticks; // This timestamp keeps up with the current frame
         state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp-delay,interpolationTimestamp);
+
+        // DEBUG:
+        if (init_game > 0 && (position_counter++)%10 == 0)
+            GD.Print(init_timestamp-init_game);
+
     }
 
     private void Receive4102(int senderID, bool dot, float range, float angle, long interval)
