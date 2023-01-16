@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 public class Submarine
 {
+    const float T_INTERPOLATION = 0.05f; // Interpolation period
+
     // Public status variables:
     public Crew captain;
     public Dictionary<int, Crew> crew;
@@ -200,7 +202,7 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (timestamp[2] >= TIMESTAMP[1]) // CASE: Previous interpolation has finished
+            if (timestamp[2] >= TIMESTAMP[1]+Mathf.Pow(10,7)*T_INTERPOLATION) // CASE: Previous interpolation has finished
             {
                 X[0] = X[1];
                 Y[0] = Y[1];
@@ -267,9 +269,8 @@ public class Submarine
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
 
-        float T = 0.05f;
         float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[1]); // NB: T seconds after frontPrediction was updated, we must be completely on that trajectory!
-        t = Mathf.Clamp(t,0.0f,T)/T;
+        t = Mathf.Clamp(t,0.0f,T_INTERPOLATION)/T_INTERPOLATION;
 
         return (xInterpolation: (1.0f-t)*backPrediction.x+t*frontPrediction.x, yInterpolation: (1.0f-t)*backPrediction.y+t*frontPrediction.y, thetaInterpolation: (1.0f-t)*backPrediction.theta+t*frontPrediction.theta);
     }
