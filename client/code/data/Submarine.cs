@@ -200,10 +200,10 @@ public class Submarine
     // Prediction
     public void UpdatePredictionModel(long interpolationTimestamp) // No inputs, as updating from the submarine's logged positions
     {
-        long newTimestamp = DateTime.UtcNow.Ticks; 
+        //long newTimestamp = DateTime.UtcNow.Ticks; 
         //GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
 
-        long sum = INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION);
+        //long sum = INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION);
         //GD.Print(sum);
 
         //GD.Print(newTimestamp - INTERPOLATION_TIMESTAMP);
@@ -239,10 +239,10 @@ public class Submarine
                 X[0] = new float[3] { interpolation.x, 0.0f, 0.0f };
                 Y[0] = new float[3] { interpolation.y, 0.0f, 0.0f };
                 THETA[0] = new float[2] { interpolation.theta, 0.0f }; 
-                TIMESTAMP[0] = newTimestamp;
+                TIMESTAMP[0] = interpolationTimestamp;
 
                 GD.Print("Catching up submarine from client "+captain.clientID+"!");
-                GD.Print(((float)(newTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
+                GD.Print(((float)(interpolationTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
             }
 
             // Update parameters of quadratic model
