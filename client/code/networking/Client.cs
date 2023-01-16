@@ -184,8 +184,17 @@ public class Client : Node
         clientSocket = new Socket(IPAddress.Parse(CLIENTIP).AddressFamily,SocketType.Stream,ProtocolType.Tcp); 
         serverConnection = new TCPConnection(clientSocket);
 
+        clientIDs = new List<int>();
+        clientIPs = new Dictionary<int, string>();
+
+        state = new State(State.Mode.lobby, 0);
+
         delaySamples = new List<long>();
         delay = 0;
+        
+        sandboxBlocking = false;
+
+        submarineID = -1;
     }
 
     // Server 'Calls'

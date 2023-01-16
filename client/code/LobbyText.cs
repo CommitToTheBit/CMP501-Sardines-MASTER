@@ -32,6 +32,8 @@ public class LobbyText : Text
 
     public void BackPressed()
     {
+        handler.client.Reset();
+
         string backID = history[history.Count-1];
         List<string> newHistory = new List<string>(history);
         newHistory.RemoveAt(history.Count-1);

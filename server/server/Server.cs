@@ -147,6 +147,7 @@ public class Server
         {
             if (tcpConnections[i].disconnect)
             {
+                // Only applies *AFTER* formal rejection!
                 Disconnect(i);
                 continue;
             }
@@ -222,9 +223,9 @@ public class Server
                 SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
                 tcpConnections[i].SendPacket(packet);
             }
-
-            clientIPs.Remove(clientIDConnections[index]); // DEBUG: Comment this out for more 'memory'
         }
+
+        clientIPs.Remove(clientIDConnections[index]); // DEBUG: Comment this out for more 'memory'
         clientIDConnections.RemoveAt(index); // DEBUG: Comment this out for more 'memory'
 
         // DEBUG:
@@ -253,7 +254,7 @@ public class Server
         Console.WriteLine();
 
         // If we are connected to no clients, we return to the lobby...
-        if (clientIPs.Count == 0)
+        if (tcpConnections.Count == 0)
             Receive3200();
 
         return;
@@ -325,7 +326,7 @@ public class Server
         bool newConnection = clientIDConnections[index] == -1;
 
         // A robust way of rejecting clients...
-        if (true || tcpConnections.Count() >= MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
+        if (tcpConnections.Count() >= MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
         {
             // DEBUG
             Console.WriteLine("\tClient "+clientID+" rejected: "+((tcpConnections.Count >= MAX_CONNECTIONS) ? "Too many players!" : "Mid-game!"));
@@ -506,9 +507,13 @@ public class Server
         MorsePacket morse = new MorsePacket(senderID, receiverID, dot, range, angle, interval);
         SendablePacket packet = new SendablePacket(header, Packet.Serialise<MorsePacket>(morse));
 
-        int index = clientIDConnections.FindIndex(x => x == serverState.GetSubmarines()[receiverID].captain.clientID);
-        if (index >= 0) // Ignore if the client is not currently connected!
-            tcpConnections[index].SendPacket(packet);
+        Dictionary<int,Submarine> submarines = serverState.GetSubmarines();
+        if (submarines.ContainsKey(receiverID))
+        {
+            int index = clientIDConnections.FindIndex(x => x == submarines[receiverID].captain.clientID);
+            if (index >= 0) // Ignore if the client is not currently connected!
+                tcpConnections[index].SendPacket(packet);
+        }
     }
 
     private void Receive4190(int clientID, float x, float y, int index)
