@@ -184,7 +184,7 @@ public class NavigationDisplay : Control
     public void Render()
     {
         const float SWEEP_PERIOD = 6.0f;
-        const float VISIBLE_PERIOD = 5.4f;
+        const float VISIBLE_PERIOD = 50.4f;
 
         int submarineID = handler.client.submarineID;
         Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();

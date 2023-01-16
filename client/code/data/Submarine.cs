@@ -33,6 +33,7 @@ public class Submarine
     private float[][] X, Y;
     private float[][] THETA;
     private long[] TIMESTAMP;
+    private long INTERPOLATION_TIMESTAMP;
 
     // Constructor
     public Submarine(int init_clientID, string init_clientIP, bool init_nuclearCapability)
@@ -186,6 +187,9 @@ public class Submarine
     // Prediction
     public void UpdatePredictionModel() // No inputs, as updating from the submarine's logged positions
     {
+        long newTimestamp = DateTime.UtcNow.Ticks; 
+        GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP+Mathf.Pow(10,7)*T_INTERPOLATION);
+
         // Timestamps converted to seconds
         float[] deltas = new float[2] { Mathf.Pow(10, -7) * (timestamp[1] - timestamp[0]), Mathf.Pow(10, -7) * (timestamp[2] - timestamp[1]) };
 
@@ -202,7 +206,7 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (timestamp[2] >= TIMESTAMP[1]+Mathf.Pow(10,7)*T_INTERPOLATION) // CASE: Previous interpolation has finished
+            if (newTimestamp >= INTERPOLATION_TIMESTAMP+Mathf.Pow(10,7)*T_INTERPOLATION) // CASE: Previous interpolation has finished
             {
                 X[0] = X[1];
                 Y[0] = Y[1];
@@ -211,7 +215,7 @@ public class Submarine
             }
             else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
             {
-                (float x, float y, float theta) interpolation = InterpolatePosition(timestamp[2]);
+                (float x, float y, float theta) interpolation = InterpolatePosition(newTimestamp);
 
                 X[0] = new float[3] { interpolation.x, 0.0f, 0.0f };
                 Y[0] = new float[3] { interpolation.y, 0.0f, 0.0f };
@@ -245,6 +249,8 @@ public class Submarine
             THETA[0] = THETA[1];
             TIMESTAMP[0] = TIMESTAMP[1];
         }
+
+        INTERPOLATION_TIMESTAMP = newTimestamp;
     }
 
     public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction, int index)
@@ -269,7 +275,7 @@ public class Submarine
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);
 
-        float t = Mathf.Pow(10, -7) * (timestampPrediction - TIMESTAMP[1]); // NB: T seconds after frontPrediction was updated, we must be completely on that trajectory!
+        float t = Mathf.Pow(10, -7) * (timestampPrediction - INTERPOLATION_TIMESTAMP); // NB: T seconds after frontPrediction was updated, we must be completely on that trajectory!
         t = Mathf.Clamp(t,0.0f,T_INTERPOLATION)/T_INTERPOLATION;
 
         return (xInterpolation: (1.0f-t)*backPrediction.x+t*frontPrediction.x, yInterpolation: (1.0f-t)*backPrediction.y+t*frontPrediction.y, thetaInterpolation: (1.0f-t)*backPrediction.theta+t*frontPrediction.theta);
