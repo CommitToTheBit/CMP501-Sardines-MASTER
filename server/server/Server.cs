@@ -111,23 +111,9 @@ public class Server
             {
                 Socket clientSocket = serverSocket.Accept();
 
-                if (tcpConnections.Count() < MAX_CONNECTIONS && serverState.mode == State.Mode.lobby) // Only allow joiners in lobby!
-                {
-                    tcpConnections.Add(new TCPConnection(clientSocket));
-                    clientIDConnections.Add(-1);
-                }
-                else // We could send the client a "Sorry, we're busy!" message here, if we wanted...
-                {
-                    //TCPConnection tcpConnection = new TCPConnection(clientSocket);
-
-                    //HeaderPacket header = new HeaderPacket(1002);
-                    //IDPacket id = new IDPacket(-1, "".ToCharArray());
-                    //SendablePacket packet = new SendablePacket(header, Packet.Serialise<IDPacket>(id));
-                    //tcpConnection.SendPacket(packet);
-
-                    //tcpConnection.GetSocket().Dispose();
-                    return; // FIXME: Is there any need to return here?
-                }
+                // 'Formal' rejection introduced later! 
+                tcpConnections.Add(new TCPConnection(clientSocket));
+                clientIDConnections.Add(-1);
 
             }
             catch
@@ -328,7 +314,17 @@ public class Server
         bool newClient = clientID < 0;
         bool newConnection = clientIDConnections[index] == -1;
 
-        // FIXME: Need a robust way of rejecting clients...
+        // A robust way of rejecting clients...
+        if (tcpConnections.Count() >= MAX_CONNECTIONS || serverState.mode != State.Mode.lobby) // Only allow joiners in lobby!
+        {
+            HeaderPacket rejectionHeader = new HeaderPacket(1001);
+            IDPacket rejectionID = new IDPacket(-1, clientIP.ToCharArray());
+            SendablePacket rejectionPacket = new SendablePacket(rejectionHeader, Packet.Serialise<IDPacket>(rejectionID));
+            tcpConnections[index].SendPacket(rejectionPacket);
+
+            return;
+        }
+
 
         // If our client is new, assign a unique clientID
         clientIDConnections[index] = (clientID >= 0) ? clientID : ++maxClientID;

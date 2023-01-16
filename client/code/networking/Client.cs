@@ -303,6 +303,9 @@ public class Client : Node
         // Client receives ID confirmation/rejection
         if (init_clientID < 0)
         {
+            delaySamples = new List<long>();
+            delay = 0;
+
             EmitSignal("ReceivedKick");
             return;
         }
