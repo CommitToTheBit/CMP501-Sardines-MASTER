@@ -241,6 +241,12 @@ public class Submarine
                 THETA[0] = new float[2] { interpolation.theta, 0.0f }; 
                 TIMESTAMP[0] = interpolationTimestamp;
 
+                // DEBUG:
+                //X[1] = new float[3] { x[2], ux[1], ax[0] };
+                //Y[1] = new float[3] { y[2], uy[1], ay[0] };
+                //THETA[1] = new float[2] { theta[1], utheta[0] }; // NB: Left linear, since rudder moves 'zero to sixty'!
+                //TIMESTAMP[1] = timestamp[2];
+
                 GD.Print("Catching up submarine from client "+captain.clientID+"!");
                 GD.Print(((float)(interpolationTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
             }
