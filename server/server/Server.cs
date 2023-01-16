@@ -9,7 +9,7 @@ public class Server
 {
     // Constants
     const int MIN_CONNECTIONS = 1;
-    const int MAX_CONNECTIONS = 2;
+    const int MAX_CONNECTIONS = 8;
 
     // Variables
     private Socket serverSocket;

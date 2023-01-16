@@ -18,6 +18,7 @@ public class DesertText : Text
     {
         handler.client.Reset();
 
+        GetParent().GetParent().GetNode<NavigationDisplay>("Monitor/Display/NavigationDisplay").Reset();
         EmitSignal("ChangeUI","MainMenu","MainMenu",new List<string>());
     }
 

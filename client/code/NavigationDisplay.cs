@@ -78,12 +78,26 @@ public class NavigationDisplay : Control
         }
 
         audioStreamPlayer.Play();*/
+
+        Hide();
     }
 
     /*private void ReceivedFrame(Vector2 init_frame)
     {
         GD.Print("Received frame!");//frames.Add(init_frame);
     }*/
+
+    public void Reset()
+    {
+        vessels = new Dictionary<int, Vessel>();
+
+        sending = true;
+        xSent = new float[3] { 0.0f, 0.0f, 0.0f };
+        ySent = new float[3] { 0.0f, 0.0f, 0.0f };
+        thetaSent = new float[3] { 0.0f, 0.0f, 0.0f };
+
+        Hide();
+    }
 
     public override void _Process(float delta)
     {
