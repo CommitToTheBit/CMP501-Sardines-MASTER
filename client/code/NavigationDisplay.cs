@@ -41,7 +41,7 @@ public class NavigationDisplay : Control
 
         // Set up timer for sending position packets
         positionTimer = new Timer();
-        positionTimer.WaitTime = 1.0f;
+        positionTimer.WaitTime = 0.1f;
         positionTimer.Autostart = false;
         positionTimer.OneShot = true;
         AddChild(positionTimer);
@@ -196,11 +196,11 @@ public class NavigationDisplay : Control
         bool right = Input.IsActionPressed("ui_starboard");
 
         thrust = 0.0f; // NB: Change in second-order quantity
-        thrust += (up) ? 1.0f : 0.0f;
+        thrust += (up || handler.client.GetClientID() > 0) ? 1.0f : 0.0f; // DEBUG: Automatically move NPC clients
         thrust -= (down) ? 1.0f : 0.0f;
 
         steer = 0.0f; // NB: Change in first-order quantity
-        steer += (left) ? 1.0f : 0.0f;
+        steer += (left || handler.client.GetClientID() > 0) ? 1.0f : 0.0f; // DEBUG: Automatically move NPC clients
         steer -= (right) ? 1.0f : 0.0f;
 
         submarine.DerivePosition(thrust,steer,delta);
