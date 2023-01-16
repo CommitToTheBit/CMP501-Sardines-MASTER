@@ -208,7 +208,6 @@ public class NavigationDisplay : Control
                 continue;
 
             (float x, float y, float theta) prediction = submarines[id].InterpolatePosition(timestamp);
-            GD.Print(submarines[id].timestamp[2]-timestamp);
 
             if (!vessels.ContainsKey(id))
             {

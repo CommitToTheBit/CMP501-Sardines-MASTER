@@ -215,6 +215,8 @@ public class Submarine
                 Y[0] = new float[3] { interpolation.y, 0.0f, 0.0f };
                 THETA[0] = new float[2] { interpolation.theta, 0.0f }; 
                 TIMESTAMP[0] = timestamp[2];
+
+                GD.Print("Catching up submarine from client "+captain.clientID+"!");
             }
 
             // Update parameters of quadratic model
