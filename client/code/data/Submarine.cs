@@ -311,8 +311,6 @@ public class Submarine
         float t = Mathf.Pow(10, -7) * (timestampPrediction - INTERPOLATION_TIMESTAMP); // NB: T seconds after frontPrediction was updated, we must be completely on that trajectory!
         t = Mathf.Clamp(t,0.0f,T_INTERPOLATION)/T_INTERPOLATION;
 
-        return (xInterpolation: (1.0f-t)*x[1]+t*x[2], yInterpolation: (1.0f-t)*y[1]+t*y[2], thetaInterpolation: (1.0f-t)*theta[1]+t*theta[2]);
-
         return (xInterpolation: (1.0f-t)*backPrediction.x+t*frontPrediction.x, yInterpolation: (1.0f-t)*backPrediction.y+t*frontPrediction.y, thetaInterpolation: (1.0f-t)*backPrediction.theta+t*frontPrediction.theta);
     }
 }
