@@ -56,6 +56,8 @@ public class Submarine
         u = 0.0f;
         rudder = 0.0f;
 
+        INTERPOLATION_TIMESTAMP = 0;
+
         UpdatePredictionModel();
     }
 
@@ -188,7 +190,10 @@ public class Submarine
     public void UpdatePredictionModel() // No inputs, as updating from the submarine's logged positions
     {
         long newTimestamp = DateTime.UtcNow.Ticks; 
-        GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP+Mathf.Pow(10,7)*T_INTERPOLATION);
+        GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
+
+        long sum = INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION);
+        GD.Print(sum);
 
         // Timestamps converted to seconds
         float[] deltas = new float[2] { Mathf.Pow(10, -7) * (timestamp[1] - timestamp[0]), Mathf.Pow(10, -7) * (timestamp[2] - timestamp[1]) };
@@ -206,7 +211,7 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (newTimestamp >= INTERPOLATION_TIMESTAMP+Mathf.Pow(10,7)*T_INTERPOLATION) // CASE: Previous interpolation has finished
+            if (newTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
             {
                 X[0] = X[1];
                 Y[0] = Y[1];
@@ -251,6 +256,7 @@ public class Submarine
         }
 
         INTERPOLATION_TIMESTAMP = newTimestamp;
+        GD.Print("End reached!");
     }
 
     public (float xPrediction, float yPrediction, float thetaPrediction) QuadraticPredictPosition(long timestampPrediction, int index)
