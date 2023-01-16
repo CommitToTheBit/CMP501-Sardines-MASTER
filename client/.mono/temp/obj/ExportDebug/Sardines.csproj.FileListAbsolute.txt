@@ -1,0 +1,9 @@
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\bin\ExportDebug\Sardines.dll
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\bin\ExportDebug\Sardines.pdb
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.csproj.AssemblyReference.cache
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.AssemblyInfoInputs.cache
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.AssemblyInfo.cs
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.csproj.CoreCompileInputs.cache
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.dll
+C:\Users\Sam\Documents\GitHub\Sardines\client\.mono\temp\obj\ExportDebug\Sardines.pdb
