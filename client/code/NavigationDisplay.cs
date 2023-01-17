@@ -215,7 +215,7 @@ public class NavigationDisplay : Control
     public void Render()
     {
         const float SWEEP_PERIOD = 6.0f;
-        const float VISIBLE_PERIOD = 50.4f;
+        const float VISIBLE_PERIOD = 5.4f;
 
         int submarineID = handler.client.submarineID;
         Dictionary<int,Submarine> submarines = handler.client.state.GetSubmarines();
@@ -229,11 +229,6 @@ public class NavigationDisplay : Control
 
         long timestamp = submarines[submarineID].timestamp[2];// But DateTime.UtcNow.Ticks is better for single throttle?
         long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
-
-        //(float x, float y, float theta) origin = submarines[submarineID].QuadraticPredictPosition(timestamp,1); // We can cheat this!
-        //x = origin.x;
-        //y = origin.y;
-        //theta = origin.theta;
 
         float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
         sweep.Rotation = sweepTheta+3*Mathf.Pi/2;

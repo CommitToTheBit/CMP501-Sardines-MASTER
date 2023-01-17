@@ -33,7 +33,6 @@ margin_bottom = 900.0
 color = Color( 0.0313726, 0.0313726, 0.0627451, 1 )
 
 [node name="PixellationBuffer" type="BackBufferCopy" parent="."]
-visible = false
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="Pixellation" type="ColorRect" parent="PixellationBuffer"]
@@ -45,7 +44,6 @@ mouse_filter = 2
 color = Color( 0, 0, 0, 0 )
 
 [node name="GlowBuffer" type="BackBufferCopy" parent="."]
-visible = false
 rect = Rect2( 0, 0, 1920, 1080 )
 
 [node name="Glow" type="ColorRect" parent="GlowBuffer"]
