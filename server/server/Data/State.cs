@@ -84,7 +84,7 @@ public class State
     {
         // STEP 0: Set 'start of game'
         mode = Mode.sandbox;
-        globalStart = DateTime.UtcNow.Ticks;
+        globalStart = 0;// DateTime.UtcNow.Ticks;
         fleets = new Dictionary<Superpower, Fleet>();
 
         // STEP 1: Set player roles
