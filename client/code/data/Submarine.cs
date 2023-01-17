@@ -35,6 +35,7 @@ public class Submarine
     private long[] TIMESTAMP;
     private long INTERPOLATION_TIMESTAMP;
 
+    // FIXME: 'Fold in' to x, y, theta in future...
     private float stationaryX, stationaryY;
     private float stationaryTheta;
 
@@ -149,11 +150,11 @@ public class Submarine
     // Physics
     public void DerivePosition(float thrust, float steer, float delta)
     {
+        // Physical derivation of acceleration with quadratic drag
+        // CC: http://engineeringdotnet.blogspot.com/2010/04/simple-2d-car-physics-in-games.html?m=1
+
         //const float conversion = 10.0f;
         const float length = 40.0f;
-
-        //UpdatePosition(x[2]-50.0f*delta*steer,y[2]-50.0f*delta*thrust,0.0f,timestamp[2]+(long)(Mathf.Pow(10,7)*delta));
-        //return;
 
         // FIXME: Calculate x/y accelaterations, velocities *analytically*
         //a += conversion*delta*thrust;
@@ -235,8 +236,9 @@ public class Submarine
                 THETA[0] = new float[2] { interpolation.theta, 0.0f }; 
                 TIMESTAMP[0] = interpolationTimestamp;
 
-                GD.Print("Catching up submarine from client "+captain.clientID+"!");
-                GD.Print(((float)(interpolationTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
+                // DEBUG:
+                //GD.Print("Catching up submarine from client "+captain.clientID+"!");
+                //GD.Print(((float)(interpolationTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
             }
 
             // Update parameters of quadratic model
@@ -244,12 +246,6 @@ public class Submarine
             Y[1] = new float[3] { y[2], uy[1], ay[0] };
             THETA[1] = new float[2] { theta[1], utheta[0] }; // NB: Left linear, since rudder moves 'zero to sixty'!
             TIMESTAMP[1] = timestamp[2];
-
-            // DEBUG:
-            //X[0] = X[1];
-            //Y[0] = Y[1];
-            //THETA[0] = THETA[1];
-            //TIMESTAMP[0] = TIMESTAMP[1];
         }
         else
         {
@@ -292,10 +288,10 @@ public class Submarine
 
     public (float xInterpolation, float yInterpolation, float thetaInterpolation) InterpolatePosition(long timestampPrediction)
     {
-        // DEBUG:
+        // DEBUG: Useful for isolating bugs!
         //return (xInterpolation: x[2], yInterpolation: y[2], thetaInterpolation: theta[2]);
 
-        // DEBUG:
+        // DEBUG: Likewise!
         //return QuadraticPredictPosition(timestampPrediction,1);
 
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);

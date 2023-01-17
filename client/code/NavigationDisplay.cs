@@ -179,7 +179,7 @@ public class NavigationDisplay : Control
         long timestamp = submarines[submarineID].timestamp[2]; // NB: Minimal use of Ticks...
         long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
-        float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
+        float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; // NB: Desynced sonars are a useful indicator while debugging...
         sweep.Rotation = sweepTheta+3*Mathf.Pi/2;
         
         // Updating other players relative to this player's POV
