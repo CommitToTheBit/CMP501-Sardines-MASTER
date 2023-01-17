@@ -11,8 +11,8 @@ public static class Packet
 
     }
 
-    /* --------------------------------------------------------------------------------------------------------------- */
-    /* CC: https://stackoverflow.com/questions/47649798/convert-object-to-byte-array-without-serialization-nor-padding */
+    /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+    /* This enclosed section is from: Stack Overflow (2017) Convert Object To Byte Array Without Serialization nor Padding. Available at https://stackoverflow.com/questions/47649798/convert-object-to-byte-array-without-serialization-nor-padding (Accessed: 17 January 2023) */
     public static byte[] Serialise<T>(T packet) where T : struct
     {
         byte[] data = new byte[Marshal.SizeOf(typeof(T))];
@@ -32,7 +32,7 @@ public static class Packet
 
         return packet;
     }
-    /* --------------------------------------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
     public static int GetSize(int packetID)
     {
@@ -128,11 +128,11 @@ public struct IDPacket
 {
     public int clientID;
 
-    /* ---------------------------------------------------------------------------------------- */
-    /* CC: https://stackoverflow.com/questions/46279646/safe-fixed-size-array-in-struct-c-sharp */
+    /* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+    /* This enclosed section is from: Stack Overflow (2017) Safe Fixed Size Array in struct C#. Available at https://stackoverflow.com/questions/46279646/safe-fixed-size-array-in-struct-c-sharp (Accessed: 17 January 2023) */
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4 * 4)] // An IP address has at most 15 characters
     public char[] clientIP;
-    /* ---------------------------------------------------------------------------------------- */
+    /* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
     public IDPacket(int init_clientID, char[] init_clientIP)
     {
