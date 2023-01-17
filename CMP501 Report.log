@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  17 JAN 2023 19:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  17 JAN 2023 20:24
 entering extended mode
 **"./CMP501 Report.tex"
 (CMP501 Report.tex
@@ -887,23 +887,23 @@ Package pdftex.def Info: ./Images//Interpolation.jpg  used on input line 139.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [3] [4 <./Images//Interpolation.jpg>]
-<./Images//100ms Latency (0).png, id=87, 304.88907pt x 228.10219pt>
+<./Images//100ms Latency (0).png, id=86, 304.88907pt x 228.10219pt>
 File: ./Images//100ms Latency (0).png Graphic file (type png)
 <use ./Images//100ms Latency (0).png>
-Package pdftex.def Info: ./Images//100ms Latency (0).png  used on input line 16
-9.
+Package pdftex.def Info: ./Images//100ms Latency (0).png  used on input line 17
+0.
 (pdftex.def)             Requested size: 145.11053pt x 108.56544pt.
-<./Images//100ms Latency (2).png, id=89, 304.13625pt x 227.34938pt>
+<./Images//100ms Latency (2).png, id=88, 304.13625pt x 227.34938pt>
 File: ./Images//100ms Latency (2).png Graphic file (type png)
 <use ./Images//100ms Latency (2).png>
 Package pdftex.def Info: ./Images//100ms Latency (2).png  used on input line 17
-4.
+5.
 (pdftex.def)             Requested size: 145.11053pt x 108.47427pt.
-<./Images//100ms Latency (1).png, id=90, 302.63063pt x 227.34938pt>
+<./Images//100ms Latency (1).png, id=89, 302.63063pt x 227.34938pt>
 File: ./Images//100ms Latency (1).png Graphic file (type png)
 <use ./Images//100ms Latency (1).png>
-Package pdftex.def Info: ./Images//100ms Latency (1).png  used on input line 17
-9.
+Package pdftex.def Info: ./Images//100ms Latency (1).png  used on input line 18
+0.
 (pdftex.def)             Requested size: 145.11053pt x 109.01198pt.
  (CMP501 Report.bbl [5 <./Images//100ms Latency (0).png> <./Images//100ms Laten
 cy (2).png> <./Images//100ms Latency (1).png>]) [6] (CMP501 Report.aux)
@@ -913,11 +913,11 @@ Package rerunfilecheck Info: File `"CMP501 Report".out' has not changed.
 Here is how much of TeX's memory you used:
  22443 strings out of 479300
  408476 string characters out of 2853552
- 700060 words of memory out of 3000000
- 39467 multiletter control sequences out of 15000+200000
+ 700102 words of memory out of 3000000
+ 39468 multiletter control sequences out of 15000+200000
  415582 words of font info for 72 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,22n,89p,1199b,644s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 87i,22n,89p,1201b,644s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\samdr\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
 tcrm1000.pk><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/font
@@ -937,9 +937,9 @@ fb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti8.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmtt10.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/f
 onts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on "CMP501 Report.pdf" (6 pages, 1112575 bytes).
+Output written on "CMP501 Report.pdf" (6 pages, 1110929 bytes).
 PDF statistics:
- 173 PDF objects out of 1000 (max. 8388607)
- 40 named destinations out of 1000 (max. 500000)
+ 171 PDF objects out of 1000 (max. 8388607)
+ 39 named destinations out of 1000 (max. 500000)
  38 words of extra memory for PDF output out of 10000 (max. 10000000)
 
