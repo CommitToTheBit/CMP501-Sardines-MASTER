@@ -150,8 +150,10 @@ public class Submarine
     // Physics
     public void DerivePosition(float thrust, float steer, float delta)
     {
+        /* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */ 
+        /* This enclosed section has been adapted from: Engineering .NET (2010) Simple 2D Car Steering Physics in Games. Available at http://engineeringdotnet.blogspot.com/2010/04/simple-2d-car-physics-in-games.html?m=1 (Accessed: 17 January 2023) */
+
         // Physical derivation of acceleration with quadratic drag
-        // CC: http://engineeringdotnet.blogspot.com/2010/04/simple-2d-car-physics-in-games.html?m=1
 
         //const float conversion = 10.0f;
         const float length = 40.0f;
@@ -190,6 +192,7 @@ public class Submarine
         else if (theta[2]-2*Mathf.Pi*ithetaNew >= Mathf.Pi/2 && fthetaNew < -Mathf.Pi/2)
             ithetaNew++;
         float thetaNew = 2*Mathf.Pi*ithetaNew+fthetaNew;
+        /* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
         // FIXME: Use of timestamp[2]+delta here could be shaky if sending/receiving own position?
         long timestampNew = timestamp[2]+(long)(Mathf.Pow(10,7)*delta);
