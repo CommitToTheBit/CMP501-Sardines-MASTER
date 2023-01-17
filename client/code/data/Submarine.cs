@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class Submarine
 {
-    const float T_INTERPOLATION = 0.1f; // Interpolation period
+    const float T_INTERPOLATION = 0.5f; // Interpolation period
 
     // Public status variables:
     public Crew captain;
@@ -122,7 +122,7 @@ public class Submarine
     }
 
     // 'Logging' updates to position
-    public bool UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp, long init_delay = 0)
+    public bool UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp, long interPolationTimestamp = 0, long init_delay = 0)
     {
         // If position is uninitialised, do that!
         if (!positionInitialised)
@@ -141,7 +141,7 @@ public class Submarine
         theta = new float[3] { theta[1], theta[2], init_theta };
         timestamp = new long[3] { timestamp[1], timestamp[2], init_timestamp };
 
-        UpdatePredictionModel();
+        UpdatePredictionModel(interPolationTimestamp);
 
         return true;
     }
@@ -310,7 +310,7 @@ public class Submarine
         //return (xInterpolation: x[2], yInterpolation: y[2], thetaInterpolation: theta[2]);
 
         // DEBUG:
-        return QuadraticPredictPosition(timestampPrediction,1);
+        //return QuadraticPredictPosition(timestampPrediction,1);
 
         (float x, float y, float theta) frontPrediction = QuadraticPredictPosition(timestampPrediction,1);
         (float x, float y, float theta) backPrediction = QuadraticPredictPosition(timestampPrediction,0);

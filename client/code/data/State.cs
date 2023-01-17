@@ -112,7 +112,7 @@ public class State
         Superpower superpower = GetSubmarineSuperpower(submarineID);
         try 
         {
-            fleets[superpower].submarines[submarineID].UpdatePosition(x, y, theta, timestamp, delay);
+            fleets[superpower].submarines[submarineID].UpdatePosition(x, y, theta, timestamp, interpolationTimestamp, delay);
         }
         catch
         {
