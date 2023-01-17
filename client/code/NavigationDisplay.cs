@@ -146,11 +146,11 @@ public class NavigationDisplay : Control
         bool right = Input.IsActionPressed("ui_starboard");
 
         thrust = 0.0f; // NB: Change in second-order quantity
-        thrust += (up || handler.client.GetClientID() > 0) ? 1.0f : 0.0f; // DEBUG: Automatically move NPC clients
+        thrust += (up) ? 1.0f : 0.0f; // DEBUG: Can automatically move NPC clients, if we like!
         thrust -= (down) ? 1.0f : 0.0f;
 
         steer = 0.0f; // NB: Change in first-order quantity
-        steer += (left || handler.client.GetClientID() > 0) ? 1.0f : 0.0f; // DEBUG: Automatically move NPC clients
+        steer += (left) ? 1.0f : 0.0f; // DEBUG: Can automatically move NPC clients, if we like!
         steer -= (right) ? 1.0f : 0.0f;
 
         submarine.DerivePosition(thrust,steer,delta);
