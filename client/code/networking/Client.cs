@@ -49,8 +49,8 @@ public class Client : Node
         serverConnection = new TCPConnection(clientSocket);
         disconnected = true;
 
-        /* -------------------------------------------------------------------- */
-        /* CC: https://stackoverflow.com/questions/6803073/get-local-ip-address */
+        /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
+        /* This enclosed section is from: Stack Overflow (2011) Get Local IP Address. Available at https://stackoverflow.com/questions/6803073/get-local-ip-address (Accessed: 17 January 2023) */
         clientIP = "";
         var host = Dns.GetHostEntry(Dns.GetHostName()); // CHECKME: Is System.Net.Dns too advanced?
         foreach (var ip in host.AddressList)
@@ -60,7 +60,7 @@ public class Client : Node
                 clientIP = ip.ToString();
             }
         }
-        /* -------------------------------------------------------------------- */
+        /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
         // Initialise for New Game 
         clientID = -1;

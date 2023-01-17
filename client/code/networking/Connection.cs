@@ -6,8 +6,9 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+/* ---------------------------------------------------------------------------------- */
+/* This enclosed section is adapted from CMP501 Lab 4: I/O Multiplexing with “select” */
 
-/* CC: Labs! */
 public class TCPConnection
 {
     // Constants
@@ -226,3 +227,5 @@ public class TCPConnection
         sendQueue.Add(packet);
     }
 }
+
+/* ---------------------------------------------------------------------------------- */

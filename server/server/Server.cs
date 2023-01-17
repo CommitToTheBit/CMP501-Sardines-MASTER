@@ -24,23 +24,8 @@ public class Server
     // Constructor
     public Server()
     {
-        /*
-        *   CC: https://www.c-sharpcorner.com/blogs/how-to-get-public-ip-address-using-c-sharp1, 12.42pm, 27.11.22 
-        */
-        /*String address = "";
-        WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
-        using (WebResponse response = request.GetResponse())
-        using (StreamReader stream = new StreamReader(response.GetResponseStream()))
-        {
-            address = stream.ReadToEnd();
-        }
-
-        int first = address.IndexOf("Address: ") + 9;
-        int last = address.LastIndexOf("</body>");
-        address = address.Substring(first, last - first);*/
-
-        /* -------------------------------------------------------------------- */
-        /* CC: https://stackoverflow.com/questions/6803073/get-local-ip-address */
+        /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
+        /* This enclosed section is from: Stack Overflow (2011) Get Local IP Address. Available at https://stackoverflow.com/questions/6803073/get-local-ip-address (Accessed: 17 January 2023) */
         var host = Dns.GetHostEntry(Dns.GetHostName()); // CHECKME: Is System.Net.Dns too advanced?
         string internetworkIP = "not found";
         foreach (var ip in host.AddressList)
@@ -50,7 +35,7 @@ public class Server
                 internetworkIP = ip.ToString();
             }
         }
-        /* -------------------------------------------------------------------- */
+        /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
         IPAddress ipAddress = IPAddress.Parse(internetworkIP);
         IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 5555);
@@ -63,8 +48,6 @@ public class Server
         clientIDConnections = new List<int>();
         clientIPs = new Dictionary<int, string>();
         maxClientID = -1;
-
-
 
         serverState = new State(0);
 
