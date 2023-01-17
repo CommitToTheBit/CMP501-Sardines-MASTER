@@ -305,7 +305,7 @@ public class Submarine
     public (float xInterpolation, float yInterpolation, float thetaInterpolation) InterpolatePosition(long timestampPrediction)
     {
         // DEBUG:
-        //return (xInterpolation: x[2], yInterpolation: y[2], thetaInterpolation: theta[2]);
+        return (xInterpolation: x[2], yInterpolation: y[2], thetaInterpolation: theta[2]);
 
         // DEBUG:
         return QuadraticPredictPosition(timestampPrediction,1);
