@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  17 JAN 2023 16:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.3) (preloaded format=pdflatex 2021.3.17)  17 JAN 2023 17:02
 entering extended mode
 **"./CMP501 Report.tex"
 (CMP501 Report.tex
@@ -887,10 +887,10 @@ Package rerunfilecheck Info: File `"CMP501 Report".out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 22416 strings out of 479300
- 407712 string characters out of 2853552
- 700081 words of memory out of 3000000
- 39443 multiletter control sequences out of 15000+200000
+ 22412 strings out of 479300
+ 407647 string characters out of 2853552
+ 700057 words of memory out of 3000000
+ 39440 multiletter control sequences out of 15000+200000
  415582 words of font info for 72 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  87i,20n,89p,1095b,562s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -913,9 +913,9 @@ fb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti8.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmtt10.pfb><C:/Users/samdr/AppData/Local/Programs/MiKTeX 2.9/f
 onts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on "CMP501 Report.pdf" (6 pages, 957654 bytes).
+Output written on "CMP501 Report.pdf" (6 pages, 956749 bytes).
 PDF statistics:
- 167 PDF objects out of 1000 (max. 8388607)
- 40 named destinations out of 1000 (max. 500000)
+ 164 PDF objects out of 1000 (max. 8388607)
+ 39 named destinations out of 1000 (max. 500000)
  23 words of extra memory for PDF output out of 10000 (max. 10000000)
 
