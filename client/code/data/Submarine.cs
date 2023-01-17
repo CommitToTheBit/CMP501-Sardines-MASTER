@@ -141,6 +141,8 @@ public class Submarine
         theta = new float[3] { theta[1], theta[2], init_theta };
         timestamp = new long[3] { timestamp[1], timestamp[2], init_timestamp };
 
+        UpdatePredictionModel();
+
         return true;
     }
 
@@ -198,7 +200,7 @@ public class Submarine
     }
 
     // Prediction
-    public void UpdatePredictionModel(long interpolationTimestamp) // No inputs, as updating from the submarine's logged positions
+    public void UpdatePredictionModel(long interpolationTimestamp = 0) // No inputs, as updating from the submarine's logged positions
     {
         //interpolationTimestamp = DateTime.UtcNow.Ticks; 
         //GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
@@ -304,6 +306,8 @@ public class Submarine
 
     public (float xInterpolation, float yInterpolation, float thetaInterpolation) InterpolatePosition(long timestampPrediction)
     {
+        
+
         // DEBUG:
         //return (xInterpolation: x[2], yInterpolation: y[2], thetaInterpolation: theta[2]);
 

@@ -39,7 +39,7 @@ public class Client : Node
     public int submarineID;
 
     // DEBUG
-    private long init_game;
+    public long init_game;
     private int position_counter;
 
     // Constructor
