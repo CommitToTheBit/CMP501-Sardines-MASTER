@@ -218,7 +218,8 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            if (interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
+            long midInterpolation = interpolationTimestamp-INTERPOLATION_TIMESTAMP;
+            if (midInterpolation == 0 || midInterpolation >= (long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
             {
                 X[0] = X[1];
                 Y[0] = Y[1];
