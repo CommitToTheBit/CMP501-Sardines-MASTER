@@ -310,7 +310,7 @@ public class Client : Node
         foreach (int delaySample in delaySamples)
             delay += delaySample;
         delay /= DELAY_SAMPLE_SIZE;
-        delay = 0; // DEBUG
+        //delay = 0; // DEBUG
 
         // DEBUG:
         GD.Print("We are a delay of "+delay+" behind the server...");
@@ -497,11 +497,11 @@ public class Client : Node
         // FIXME: Add range checks on server and client sides...
         // FIXME: Who should get priority if client and server update the submarine *at the same time*? This is built in to Submarine.cs, to some extent...
         long interpolationTimestamp = (submarineID >= 0) ? state.GetSubmarines()[submarineID].timestamp[2] : DateTime.UtcNow.Ticks; // This timestamp keeps up with the current frame
-        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp-delay,interpolationTimestamp);
+        state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp,interpolationTimestamp,delay);
 
         // DEBUG:
         if (init_game > 0 && (position_counter++)%10 == 0)
-            GD.Print(init_timestamp-delay-init_game);
+            GD.Print(init_timestamp-init_game);
 
     }
 
@@ -541,7 +541,7 @@ public class Client : Node
         // Client sends details of their own submarine to server
         // FIXME: Since this will never be sent erroneously, can't we remove all arguments?
         HeaderPacket header = new HeaderPacket(4101);
-        PositionPacket submarine = new PositionPacket(submarineID,x,y,theta,timestamp+delay);
+        PositionPacket submarine = new PositionPacket(submarineID,x,y,theta,timestamp);
         SendablePacket packet = new SendablePacket(header,Packet.Serialise<PositionPacket>(submarine));
         serverConnection.SendPacket(packet);
     }

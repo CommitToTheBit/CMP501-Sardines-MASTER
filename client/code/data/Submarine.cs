@@ -122,11 +122,11 @@ public class Submarine
     }
 
     // 'Logging' updates to position
-    public bool UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp)
+    public bool UpdatePosition(float init_x, float init_y, float init_theta, long init_timestamp, long init_delay = 0)
     {
         // If position is uninitialised, do that!
         if (!positionInitialised)
-            return InitialisePosition(init_x, init_y, init_theta, init_timestamp);
+            return InitialisePosition(init_x, init_y, init_theta, init_timestamp+init_delay);
 
         // Disregard any position updates sent out of order (makes no sense to factor something the player hasn't seen into any model!)
         if (init_timestamp <= timestamp[2])
