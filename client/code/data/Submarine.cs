@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class Submarine
 {
-    const float T_INTERPOLATION = 0.05f; // Interpolation period
+    const float T_INTERPOLATION = 0.1f; // Interpolation period
 
     // Public status variables:
     public Crew captain;
