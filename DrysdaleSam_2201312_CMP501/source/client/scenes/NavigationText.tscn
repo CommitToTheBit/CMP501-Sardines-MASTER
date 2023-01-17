@@ -1,0 +1,672 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/fonts/AlteHaasGroteskBold.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://code/NavigationText.cs" type="Script" id=2]
+[ext_resource path="res://assets/fonts/dynamics/instruction_normal.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/fonts/dynamics/instruction_bold.tres" type="DynamicFont" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 120
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 1 )
+
+[node name="NavigationText" type="VBoxContainer"]
+margin_right = 540.0
+margin_bottom = 1080.0
+rect_min_size = Vector2( 540, 1080 )
+rect_pivot_offset = Vector2( -451, -76 )
+script = ExtResource( 2 )
+
+[node name="Spacing #1" type="Control" parent="."]
+margin_right = 540.0
+margin_bottom = 151.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Placeholder" type="Label" parent="."]
+visible = false
+margin_top = 441.0
+margin_right = 540.0
+margin_bottom = 585.0
+custom_colors/font_color = Color( 0.909804, 0.941176, 0.941176, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "[NAV.]"
+
+[node name="MorseCodeKey" type="VBoxContainer" parent="."]
+margin_top = 155.0
+margin_right = 540.0
+margin_bottom = 925.0
+custom_constants/separation = 10
+
+[node name="MorseABC" type="HBoxContainer" parent="MorseCodeKey"]
+margin_right = 540.0
+margin_bottom = 50.0
+custom_constants/separation = 0
+
+[node name="MorseA" type="RichTextLabel" parent="MorseCodeKey/MorseABC"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]A [/b][/color][color=#e8f0f0].-[/color]"
+text = ">  A .-"
+
+[node name="MorseB" type="RichTextLabel" parent="MorseCodeKey/MorseABC"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]B [/b][/color][color=#e8f0f0]-...[/color]"
+text = ">  B -..."
+
+[node name="MorseC" type="RichTextLabel" parent="MorseCodeKey/MorseABC"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]C [/b][/color][color=#e8f0f0]-.-.[/color]"
+text = ">  C -.-."
+
+[node name="MorseDEF" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 60.0
+margin_right = 540.0
+margin_bottom = 110.0
+custom_constants/separation = 0
+
+[node name="MorseD" type="RichTextLabel" parent="MorseCodeKey/MorseDEF"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]D [/b][/color][color=#e8f0f0]-..[/color]"
+text = ">  D -.."
+
+[node name="MorseE" type="RichTextLabel" parent="MorseCodeKey/MorseDEF"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]E [/b][/color][color=#e8f0f0].[/color]"
+text = ">  E ."
+
+[node name="MorseF" type="RichTextLabel" parent="MorseCodeKey/MorseDEF"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]F [/b][/color][color=#e8f0f0]..-.[/color]"
+text = ">  F ..-."
+
+[node name="MorseGHI" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 120.0
+margin_right = 540.0
+margin_bottom = 170.0
+custom_constants/separation = 0
+
+[node name="MorseG" type="RichTextLabel" parent="MorseCodeKey/MorseGHI"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]G [/b][/color][color=#e8f0f0]--.[/color]"
+text = ">  G --."
+
+[node name="MorseH" type="RichTextLabel" parent="MorseCodeKey/MorseGHI"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]H [/b][/color][color=#e8f0f0]....[/color]"
+text = ">  H ...."
+
+[node name="MorseI" type="RichTextLabel" parent="MorseCodeKey/MorseGHI"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]I [/b][/color][color=#e8f0f0]..[/color]"
+text = ">  I .."
+
+[node name="MorseJKL" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 180.0
+margin_right = 540.0
+margin_bottom = 230.0
+custom_constants/separation = 0
+
+[node name="MorseJ" type="RichTextLabel" parent="MorseCodeKey/MorseJKL"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]J [/b][/color][color=#e8f0f0].---[/color]"
+text = ">  J .---"
+
+[node name="MorseK" type="RichTextLabel" parent="MorseCodeKey/MorseJKL"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]K [/b][/color][color=#e8f0f0]-.-[/color]"
+text = ">  K -.-"
+
+[node name="MorseL" type="RichTextLabel" parent="MorseCodeKey/MorseJKL"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]L [/b][/color][color=#e8f0f0].-..[/color]"
+text = ">  L .-.."
+
+[node name="MorseMNO" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 240.0
+margin_right = 540.0
+margin_bottom = 290.0
+custom_constants/separation = 0
+
+[node name="MorseM" type="RichTextLabel" parent="MorseCodeKey/MorseMNO"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]M [/b][/color][color=#e8f0f0]--[/color]"
+text = ">  M --"
+
+[node name="MorseN" type="RichTextLabel" parent="MorseCodeKey/MorseMNO"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]N [/b][/color][color=#e8f0f0]-.[/color]"
+text = ">  N -."
+
+[node name="MorseO" type="RichTextLabel" parent="MorseCodeKey/MorseMNO"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]O [/b][/color][color=#e8f0f0]---[/color]"
+text = ">  O ---"
+
+[node name="MorsePQR" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 300.0
+margin_right = 540.0
+margin_bottom = 350.0
+custom_constants/separation = 0
+
+[node name="MorseP" type="RichTextLabel" parent="MorseCodeKey/MorsePQR"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]P [/b][/color][color=#e8f0f0].--.[/color]"
+text = ">  P .--."
+
+[node name="MorseQ" type="RichTextLabel" parent="MorseCodeKey/MorsePQR"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]Q [/b][/color][color=#e8f0f0]--.-[/color]"
+text = ">  Q --.-"
+
+[node name="MorseR" type="RichTextLabel" parent="MorseCodeKey/MorsePQR"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]R [/b][/color][color=#e8f0f0].-.[/color]"
+text = ">  R .-."
+
+[node name="MorseSTU" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 360.0
+margin_right = 540.0
+margin_bottom = 410.0
+custom_constants/separation = 0
+
+[node name="MorseS" type="RichTextLabel" parent="MorseCodeKey/MorseSTU"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]S [/b][/color][color=#e8f0f0]...[/color]"
+text = ">  S ..."
+
+[node name="MorseT" type="RichTextLabel" parent="MorseCodeKey/MorseSTU"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]T [/b][/color][color=#e8f0f0]-[/color]"
+text = ">  T -"
+
+[node name="MorseU" type="RichTextLabel" parent="MorseCodeKey/MorseSTU"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]U [/b][/color][color=#e8f0f0]..-[/color]"
+text = ">  U ..-"
+
+[node name="MorseVWX" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 420.0
+margin_right = 540.0
+margin_bottom = 470.0
+custom_constants/separation = 0
+
+[node name="MorseV" type="RichTextLabel" parent="MorseCodeKey/MorseVWX"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]V [/b][/color][color=#e8f0f0]...-[/color]"
+text = ">  V ...-"
+
+[node name="MorseW" type="RichTextLabel" parent="MorseCodeKey/MorseVWX"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]W [/b][/color][color=#e8f0f0].--[/color]"
+text = ">  W .--"
+
+[node name="MorseX" type="RichTextLabel" parent="MorseCodeKey/MorseVWX"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]X [/b][/color][color=#e8f0f0]-..-[/color]"
+text = ">  X -..-"
+
+[node name="MorseYZ" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 480.0
+margin_right = 540.0
+margin_bottom = 530.0
+custom_constants/separation = 0
+
+[node name="MorseY" type="RichTextLabel" parent="MorseCodeKey/MorseYZ"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]Y [/b][/color][color=#e8f0f0]--.-[/color]"
+text = ">  Y --.-"
+
+[node name="MorseZ" type="RichTextLabel" parent="MorseCodeKey/MorseYZ"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]Z [/b][/color][color=#e8f0f0]--..[/color]"
+text = ">  Z --.."
+
+[node name="Spacing #1" type="Control" parent="MorseCodeKey/MorseYZ"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Spacing" type="Control" parent="MorseCodeKey"]
+visible = false
+margin_top = 540.0
+margin_right = 540.0
+margin_bottom = 540.0
+
+[node name="Morse1-3" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 540.0
+margin_right = 540.0
+margin_bottom = 590.0
+custom_constants/separation = 0
+
+[node name="Morse1" type="RichTextLabel" parent="MorseCodeKey/Morse1-3"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]1 [/b][/color][color=#e8f0f0].----[/color]"
+text = ">  1 .----"
+
+[node name="Morse2" type="RichTextLabel" parent="MorseCodeKey/Morse1-3"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]2 [/b][/color][color=#e8f0f0]..---[/color]"
+text = ">  2 ..---"
+
+[node name="Morse3" type="RichTextLabel" parent="MorseCodeKey/Morse1-3"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]3 [/b][/color][color=#e8f0f0]...--[/color]"
+text = ">  3 ...--"
+
+[node name="Morse4-6" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 600.0
+margin_right = 540.0
+margin_bottom = 650.0
+custom_constants/separation = 0
+
+[node name="Morse4" type="RichTextLabel" parent="MorseCodeKey/Morse4-6"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]4 [/b][/color][color=#e8f0f0]....-[/color]"
+text = ">  4 ....-"
+
+[node name="Morse5" type="RichTextLabel" parent="MorseCodeKey/Morse4-6"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]5 [/b][/color][color=#e8f0f0].....[/color]"
+text = ">  5 ....."
+
+[node name="Morse6" type="RichTextLabel" parent="MorseCodeKey/Morse4-6"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]6 [/b][/color][color=#e8f0f0]-....[/color]"
+text = ">  6 -...."
+
+[node name="Morse7-9" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 660.0
+margin_right = 540.0
+margin_bottom = 710.0
+custom_constants/separation = 0
+
+[node name="Morse7" type="RichTextLabel" parent="MorseCodeKey/Morse7-9"]
+margin_right = 180.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]7 [/b][/color][color=#e8f0f0]--...[/color]"
+text = ">  7 --..."
+
+[node name="Morse8" type="RichTextLabel" parent="MorseCodeKey/Morse7-9"]
+margin_left = 180.0
+margin_right = 360.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]8 [/b][/color][color=#e8f0f0]---..[/color]"
+text = ">  8 ---.."
+
+[node name="Morse9" type="RichTextLabel" parent="MorseCodeKey/Morse7-9"]
+margin_left = 360.0
+margin_right = 540.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]9 [/b][/color][color=#e8f0f0]-....[/color]"
+text = ">  9 -...."
+
+[node name="Morse0" type="HBoxContainer" parent="MorseCodeKey"]
+margin_top = 720.0
+margin_right = 540.0
+margin_bottom = 770.0
+custom_constants/separation = 0
+
+[node name="Morse0" type="RichTextLabel" parent="MorseCodeKey/Morse0"]
+margin_right = 270.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 180, 50 )
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/default_color = Color( 1, 1, 1, 0 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[b]>  [/b][color=#646e76][b]0 [/b][/color][color=#e8f0f0]-----[/color]"
+text = ">  0 -----"
+
+[node name="Spacing #1" type="Control" parent="MorseCodeKey/Morse0"]
+margin_left = 270.0
+margin_right = 540.0
+margin_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Spacing #2" type="Control" parent="."]
+margin_top = 929.0
+margin_right = 540.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3

@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/Monitor.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/shaders/pixellation.gdshader" type="Shader" id=2]
+[ext_resource path="res://scenes/MainMenuText.tscn" type="PackedScene" id=3]
+[ext_resource path="res://code/Main.cs" type="Script" id=4]
+[ext_resource path="res://assets/shaders/glow.gdshader" type="Shader" id=5]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 2 )
+shader_param/bitdepth = 6.0
+shader_param/black = Plane( 0.01, 0.02, 0.02, 1 )
+shader_param/white = Plane( 0.1, 0.8, 0.4, 1 )
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 5 )
+shader_param/crt_dark = Vector3( 0.01, 0.02, 0.02 )
+shader_param/crt_light = Vector3( 0.1, 0.8, 0.4 )
+shader_param/crt_falloff_exponent = 0.5
+shader_param/bloom_radius = 1.0
+shader_param/bloom_normalisation = 0.4
+
+[node name="Main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
+
+[node name="Monitor" parent="." instance=ExtResource( 1 )]
+margin_left = 180.0
+margin_top = 180.0
+margin_right = 1140.0
+margin_bottom = 900.0
+color = Color( 0.0313726, 0.0313726, 0.0627451, 1 )
+
+[node name="PixellationBuffer" type="BackBufferCopy" parent="."]
+rect = Rect2( 0, 0, 1920, 1080 )
+
+[node name="Pixellation" type="ColorRect" parent="PixellationBuffer"]
+material = SubResource( 1 )
+margin_right = 160.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 1920, 1080 )
+mouse_filter = 2
+color = Color( 0, 0, 0, 0 )
+
+[node name="GlowBuffer" type="BackBufferCopy" parent="."]
+rect = Rect2( 0, 0, 1920, 1080 )
+
+[node name="Glow" type="ColorRect" parent="GlowBuffer"]
+material = SubResource( 6 )
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 1920, 1080 )
+color = Color( 1, 1, 1, 0 )
+
+[node name="TextControl" type="Control" parent="."]
+margin_left = 1290.0
+margin_right = 1290.0
+
+[node name="MainMenuText" parent="TextControl" instance=ExtResource( 3 )]
+
+[node name="Tween" type="Tween" parent="."]
