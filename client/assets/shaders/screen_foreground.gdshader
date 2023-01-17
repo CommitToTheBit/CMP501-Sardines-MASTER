@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// This shader has been adapted from: Godot Shaders (2021) VHS and CRT Monitor Effect. Available at https://godotshaders.com/shader/vhs-and-crt-monitor-effect/ (Accessed: 17 January 2023)
+
 shader_type canvas_item;
 
 // CRT parameters
@@ -85,3 +88,5 @@ void fragment()
 	colour.rgb += bloom;
 	COLOR = get_crt_interpolation(colour);
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
