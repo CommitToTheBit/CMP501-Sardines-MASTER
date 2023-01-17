@@ -12,16 +12,9 @@ Gambetta, G.  \harvardyearleft 2010\harvardyearright , `{Fast-Paced Multiplayer
   \url{https://www.gabrielgambetta.com/client-server-game-architecture.html}.
 \newblock (Accessed: 14 January 2023).
 
-\harvarditem{{Microsoft}}{n.d.{\em a}}{msftUTC}
-{Microsoft}  \harvardyearleft n.d.{\em a}\harvardyearright , `{Learn / .NET /
-  .NET API browser / System / DateTime / Properties / DateTime.UtcNow
-  Property}', Available at:
-  \url{https://learn.microsoft.com/en-us/dotnet/api/system.datetime.utcnow?redirectedfrom=MSDN&view=net-7.0#System_DateTime_UtcNow}.
-\newblock (Accessed: 14 January 2023).
-
-\harvarditem{{Microsoft}}{n.d.{\em b}}{msftSNS}
-{Microsoft}  \harvardyearleft n.d.{\em b}\harvardyearright , `{Learn / .NET /
-  .NET API browser / System.Net.Sockets Namespace}', Available at:
+\harvarditem{{Microsoft}}{n.d.}{msftSNS}
+{Microsoft}  \harvardyearleft n.d.\harvardyearright , `{Learn / .NET / .NET API
+  browser / System.Net.Sockets Namespace}', Available at:
   \url{https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets?view=net-7.0}.
 \newblock (Accessed: 14 January 2023).
 

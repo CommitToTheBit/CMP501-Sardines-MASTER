@@ -31,7 +31,7 @@
 
 \section*{Sardines: A Networked Game}
 
-\textit{Sardines} is a system of communication for 2-8 players. Each player controls a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves - representative of dots and dashes - to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox to best restrict attention to the networking techniques at play.
+\textit{Sardines} is a system of communication for 2-8 players. Each player controls a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves with thicknesses representative of dots and dashes, to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox to best restrict attention to the networking techniques at play.
 
 \subsection*{Architecture}\label{Architecture}
 
@@ -64,7 +64,7 @@ Very few assumptions are made as to the reliability of the communication protoco
 That the protocol guarantees reliability in-and-of-itself makes it perfect for \textit{Sardines}' purposes: for any two players to meaningfully communicate in morse code, they must be able to trust that their dots and dashes reach one another in order and without error.
 
 \vspace{5pt}\noindent
-There is, of course, an argument for updating positions via UDP. Suppose a submarine starts at point $A$, and fails to update to point $B$ - whereas a TCP connection will resend and resend this update until it succeeds, its ordered nature potentially holding up more important or immediate data, UDP assumes it \textit{has} sent correctly and moves on to the next point $C$. The minimalism of the protocol lends itself to the continuous, incremental nature of movement, but \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with trajectories needed reliably but not immediately, and given a robust prediction system (see `\nameref{Prediction}') updating position via TCP every 0.1s should be infrequent enough to avoid the backlog described above.
+There is, of course, an argument for updating positions via UDP. Suppose a submarine starts at point $A$, and fails to update to point $B$ - whereas a TCP connection will resend and resend this update until it succeeds, its ordered nature potentially holding up more important or immediate data, UDP assumes it \textit{has} sent correctly and moves on to the next point $C$. The minimalism of the protocol lends itself to the continuous, incremental nature of movement, but \textit{Sardines} will not make use of it. Submarines in this game travel slowly, with trajectories needed reliably but not immediately, and given a robust prediction system (see `\nameref{Prediction}') updating position via TCP every 0.2s should be infrequent enough to avoid the backlog described above.
 
 \paragraph{Application Layer} 
 
@@ -73,9 +73,9 @@ While it needn't consider the internetwork and hardware layers of the protocol s
 \vspace{5pt}\noindent
 At a more granular level, a \texttt{serialisedBody} may encode one of many structs, for one of many purposes:
 \begin{itemize}[noitemsep]
-\item \texttt{SyncPacket} Contains a \texttt{long} \texttt{syncTimestamp}. Sent on connection to standardise server and client calculations for \texttt{DateTime.UtcNow.Ticks} (which may vary from underlying OS to underlying OS, \citealp{msftUTC}).
+\item \texttt{SyncPacket} Contains a \texttt{long} \texttt{syncTimestamp}. Sent on connection to estimate the travel time, \texttt{delay}, between client and server.
 \item \texttt{IDPacket} Contains an \texttt{int} \texttt{clientID}, and a \texttt{char[]} \texttt{clientIP} that requires, by definition, no more than $16$ characters. Sent to initialise a client's unique identity, and let players track who else is playing.\footnote{In the hybrid architecture discussed above, the IP would also be used to establish crew-to-navigator connections.}
-\item \texttt{SubmarinePacket} Contains an \texttt{int} \texttt{submarineID}, the controller's \texttt{clientID}, and additional variables corresponding to future functionalities. Similarly initialises a unique identity for each submarine.\footnote{And similarly, the distinction between \texttt{clientID} and \texttt{submarineID} is only meaningful with multiple clients per submarine.}
+\item \texttt{SubmarinePacket} Contains an \texttt{int} \texttt{submarineID}, the controller's \texttt{clientID}, and additional variables for use in as-yet-unimplemented features. Similarly initialises a unique identity for each submarine.\footnote{And similarly, the distinction between \texttt{clientID} and \texttt{submarineID} is only meaningful with multiple clients per submarine.}
 \item \texttt{PositionPacket} Contains a submarine's \texttt{x}-, \texttt{y}-coordinates and rotation \texttt{theta} at a certain time \texttt{timestamp}. Sent client-to-server as updates to the master game state, and server-to-client for prediction and rendering.
 \item \texttt{MorsePacket} Similarly contains the necessary parameters to render a soundwave on the receiver's screen.
 \item \texttt{EmptyPacket} Contains no variables. Sent when the \texttt{bodyID} corresponds to a function with no arguments (e.g. \texttt{bodyID} \texttt{2310} tells a server in lobby mode to initialise a game).
@@ -87,12 +87,12 @@ While there isn't the space to break down every protocol in precise detail, all 
 \begin{enumerate}[label=\textit{\arabic*}\textit{.}, noitemsep]
 \item \textit{The client registers a TCP connection with the server, and sends a \texttt{syncPacket} (ID \texttt{1000}).} %The client then constructs a \texttt{syncPacket} (ID \texttt{1000}) to send over the connection.
 \item \textit{The server receives a \texttt{SyncPacket} from the client, and returns it, via \texttt{Receive1000()}.} %Calling \texttt{Receive1000()}, the server returns its own \texttt{syncPacket}, with \texttt{syncTimestamp} set to the timestamp on the received \texttt{HeaderPacket}.
-\item \textit{The client receives a \texttt{SyncPacket} from the server, estimates the two devices' time difference, and sends an \texttt{IDPacket} (ID \texttt{1001}), via} the client version of \textit{\texttt{Receive1000()}.} %With its own version of \texttt{Receive1000()}, the client uses the packet to estimate the time difference with the server. An \texttt{IDPacket} (ID \texttt{1001}) is then sent to confirm the player's identity.
+\item \textit{The client receives a \texttt{SyncPacket} from the server, estimates travel time between the two devices, and sends an \texttt{IDPacket} (ID \texttt{1001}), via} the client version of \textit{\texttt{Receive1000()}.} %With its own version of \texttt{Receive1000()}, the client uses the packet to estimate the time difference with the server. An \texttt{IDPacket} (ID \texttt{1001}) is then sent to confirm the player's identity.
 \item \textit{The server receives an \texttt{IDPacket} from the client, changes the \texttt{clientID} if it is unrecognised,\footnote{Or banned! Here, the server returns an \texttt{IDPacket} with a strictly negative \texttt{clientID}, which cues the client to disconnect.} and returns it, via \texttt{Receive1001()}.} %If it recognises the received \texttt{clientID}, \texttt{Receive1001()} returns it unchanged; if it is unrecognised, it returns a newly-assigned identity.\footnote{And if, for any reason, the player is recognised as banned from the server, it will return a strictly negative \texttt{clientID} that the client takes as its cue to disconnect!} % (or, to reject the client, returns the packet with \texttt{clientID} set to \texttt{-1}).
 \item \textit{The client receives an \texttt{IDPacket} from the server, a formal acceptance into the lobby, via \texttt{Receive1001()}.} %The client adopts the returned \texttt{clientID}, taking this as a `formal' acceptance onto the server.
 \item \textit{All clients receive (further) \texttt{IDPacket}s from the server (IDs \texttt{1002}). These tell players in the lobby who has just joined, and vice versa, all via \texttt{Receive1002()}.}
 \end{enumerate}
-There is arguably some unnecessary back-and-forth to the above, but small packet sizes shouldn't put any meaningful strain on bandwidth. The process is designed for ease of programming: treating major protocols as a chain of smaller, simpler steps, it becomes far easier to manage - and document - the application layer. 
+The process is designed for ease of programming: treating major protocols as a chain of smaller, simpler steps, it becomes far easier to manage - and document - the application layer (even if there is some unnecessary back-and-forth to the above).
 %This description may seem fairly dry, but it serves to ...
 %There is some degree of back-and-forth to this process...
 
@@ -104,14 +104,14 @@ There is arguably some unnecessary back-and-forth to the above, but small packet
 
 \subsection*{Integration}
 
-Each client organises its networking components in a \texttt{Handler} class, along with a `local' view of the game state. This is to be treated as a black box by the game at large, with local processing entered in and external updates read back. Consider, for example, how the \texttt{NavigationDisplay} interacts with the \texttt{Handler}. Every frame, \texttt{UpdatePosition()} pushes the player's new position into the local state and sends it on to the server; then, \texttt{Render()} pulls that same data to display (a relative view of) the map onscreen.
+Each client organises its networking components in a \texttt{Handler} class, along with a `local' copy of the game state. This is to be treated as a black box by the game at large, with local processing entered in and external updates read back. Consider, for example, how the \texttt{NavigationDisplay} interacts with the \texttt{Handler}. Every frame, \texttt{UpdatePosition()} pushes the player's new position into the local state and sends it on to the server; then, \texttt{Render()} pulls that same data to display (a relative view of) the map onscreen.
 
 \vspace{5pt}\noindent
-Client and server communicate `as and when'. Since TCP connections risk blocking either component, both rely on I/O multiplexing. The server runs , then [explain \texttt{select()}]. Each client does the same with its single server connection, to avoid freezing the broader game - \texttt{select()} is still a blocking function, though, resulting in an unfortunate buffering effect under poorer network conditions [IF FIXED: ADD if clause!]. The report notes that integrating the network through an asynchronous I/O may have had more tangible benefits.
+Client and server communicate `as and when'. Since TCP connections risk blocking either component, both rely on I/O multiplexing. The server uses System.Net.Sockets' \texttt{select()} function to monitor all connections simultaneously, set to time out after $1ms$. Each client does the same with its single server connection, to avoid freezing the broader game - \texttt{select()} is still a blocking function, though, sometimes resulting in an unfortunate buffering effect under poorer network conditions. The report notes that integrating the network with asynchronous I/O may have had more tangible benefits.
 
 \subsection*{Prediction}\label{Prediction}
 
-As discussed in `\nameref{Architecture}',  clients only send position updates every $0.1s$. What this report has so far failed to consider is how this appears to other clients - they experience what should be a smooth, continuous movement as discontinuous jumps over $0.1s$ intervals! \textit{Sardines} approaches this problem with a variety of techniques.
+As discussed in `\nameref{Architecture}',  clients only send position updates every $0.2s$. What this report has so far failed to consider is how this appears to other clients - they experience what should be a smooth, continuous movement as discontinuous jumps over $0.1s$ intervals! \textit{Sardines} approaches this problem with a variety of techniques.
 
 \vspace{5pt}\noindent
 When players choose to move forward, they do not jump to a constant speed but slowly ramp up from zero; the game makes a second-order, quadratic prediction to best approximate the second-order derivative that is acceleration. Given a submarine's three most recent positions $\mathbf{r}_0$, $\mathbf{r}_1$,$\mathbf{r}_2$ (corresponding to times $t_0 > t_1 > t_2$), clients can average the velocities from $\mathbf{r}_1$ to $\mathbf{r}_0$, from $\mathbf{r}_2$ to $\mathbf{r}_1$, and the acceleration from $\mathbf{r}_1$ to $\mathbf{r}_0$ as
@@ -131,7 +131,7 @@ $$\mathbf{\tilde{r}}(t) = \begin{cases}
 (1-q(t))\mathbf{\tilde{r}}_{\textrm{old}}(t) + q(t)\mathbf{\tilde{r}}_{\textrm{new}}(t) & \textrm{if $t_0 \leq t < t_0+T$} \\
 \mathbf{\tilde{r}}_{\textrm{new}}(t) & \textrm{if $t \geq t_0+T$}
 \end{cases}, \;\; \textrm{where $q(t) = \frac{1}{T}\left(t-t_0\right)$.}$$
-In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are sent via TCP every $0.1s$; interpolation therefore takes place over a strictly shorter interval $T = 0.05s$. 
+In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are sent via TCP every $0.2s$; interpolation therefore takes place over a strictly shorter interval $T = 0.1s$. 
 %Footnote - quirk of how we deal with being two packets behind?
 
 \begin{figure}[h]
@@ -142,30 +142,27 @@ In \textit{Sardines}' particular implementation, \texttt{PositionPacket}s are se
 \end{figure}
 
 \vspace{5pt}\noindent
-To fully understand how \textit{Sardines} uses it prediction techniques, this report must first introduce a core challenge of any networked game: conflict resolution.
+A classic problem in networked game design is one of conflict resolution - if client $A$ hits client $B$ with a projectile in their own local state, but misses in $B$'s, whose account does the server take as true? In \textit{Sardines}, the projectiles concerned are soundwaves. The visual language of the game, where soundwaves from external sources only become visible on collision with the player, provides a clear approach: the sender unequivocally takes precedence. Only when a player sees their soundwave hit another is a \texttt{MorsePacket} sent from their client (which will arrive with the usual delay). The sender knows with certainty who receives their message; the receiver, who cannot see the trajectory of the soundwave until it arrives, will have no sense whether it ``should'' have hit them according to their local game state.
 
 \vspace{5pt}\noindent
-In \textit{Sardines}, the projectiles concerned are soundwaves. The visual language of the game, where soundwaves from external sources only become visible on collision with the player, provides a clear approach: the sender unequivocally takes precedence. Only when a player sees their soundwave hit another is a \texttt{MorsePacket} sent from their client (which will arrive with the usual delay). The sender knows with certainty who receives their message; the receiver, who cannot see the trajectory of the soundwave until it arrives, will have no sense whether it ``should'' have hit them according to their local game state.
+To further smooth over the application's disputes, the receiving client makes use of backward prediction. Since neither server nor client stores more than three of any submarine's past positions at a time, it is fortunate the above definition of $\mathbf{\tilde{r}}(t)$ can approximate the past as well as the future.\footnote{\textit{Sardines}' submarines are physics-based objects, and at one point in development, the drag they experience was factored into prediction. However, the differential equations for 2D motion with a quadratic drag were too complex to find an analytic solution - rather than being able to substitute a $t$-value into a given equation, the prediction would be calculated over incremental, irreversible forward time steps - so the application sacrifices this more realistic model for the ability to look backwards in time.}
 
 \vspace{5pt}\noindent
-To further smooth over the application's conflict resolution, the receiving client makes use of backward prediction. Since neither server nor client stores more than three of any submarine's past positions at a time, it is fortunate the above definition of $\mathbf{\tilde{r}}(t)$ can approximate the past as well as the future.\footnote{\textit{Sardines}' submarines are physics-based objects, and at one point in development, the drag they experience was factored into prediction. However, the differential equations for 2D motion with a quadratic drag were too complex to find an analytic solution - rather than being able to substitute a $t$-value into a given equation, the prediction would be calculated over incremental, irreversible forward time steps - so the application sacrifices this more realistic model for the ability to look backwards in time.}
+Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, which they see reach a receiver at $t_0+\Delta t$. On the arrival of the corresponding packet at $t_1$, then, the receiving client has to decide where the wave was emitted from \textit{in its local view of the game}. The obvious choice would be the `true origin' $\mathbf{r}$, but \textit{Sardines} uses the backwards prediction $\mathbf{\tilde{r}}(t_1-\Delta t)$. Conflict resolution is, fundamentally, the art of deciding which quantities are preserved across clients, and \textit{Sardines} - a system exploring slow, real-time communications - is far less concerned with presenting a shared view of geography than it is a shared view of delay.
 
-\vspace{5pt}\noindent
-Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, which they see reach a receiver at $t_0+\Delta t$. On the arrival of the corresponding packet at $t_1$, then, the receiving client has to decide where the wave was emitted from \textit{in its local view of the game}. The obvious choice would be the `true origin' $\mathbf{r}$, but \textit{Sardines} uses the backwards prediction $\mathbf{\tilde{r}}(t_1-\Delta t)$. Conflict resolution is, fundamentally, the art of deciding which quantities are preserved across clients, and \textit{Sardines} - a system designed around slow, real-time communications - is far less concerned with a shared view of geography than it is a shared view of delay.
-
-\pagebreak
 \subsection*{Testing}\label{Testing}
 
 \vspace{5pt}\noindent
 [PARAGRAPH OF METHODOLOGY]
 Using clumsy...
-Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to performance under latency and throttle
+Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to performance under latency and throttle \footnote{It's also worth noting that - with testing integrated into the larger development process - the clients being tested were often run within the Godot editor. With poorer performance than a standalone executable, it follows that these results may constitute more of a worst-case scenario for \textit{Sardines} than intended...}
 
 \paragraph{Latency} Latency (or, colloquially, lag) is...
-For a game being released at scale, it is recommended to test latencies from $100ms$ to $1000ms$, as a bare minimum \citep{unityNTWK}.
+For a game aiming for release, it is recommended to test latencies from $100ms$ to $1000ms$, as a bare minimum \citep{unityNTWK}.
 
 \vspace{5pt}\noindent
-[LAG RESULTS: POSITIVE]
+At its current scale, \textit{Sardines} shows promise: its prediction techniques provide a smooth enough experience at a latency of $200ms$, even $250ms$, with the game only becoming unplayable at far higher thresholds. Indeed, a latency of, say, $500ms$, will see the clients' worldviews gradually fall out of sync, as each accumulates error over time. Though it cannot yet identify the cause of this desynchronisation effect, the report offers an optimistic outlook - %so much of network programming %one of the most valuable lessons of this whole assignment has been that, when faced with a seemingly-inexplicable bug, it is always worth taking a step back and re-evaluating the assumptions the network makes.%This desynchronisation bug appears a barrier to further success, the cause of which is unidentified - having come across such error 
+
 
 \begin{figure}[h]
 \centering
@@ -174,22 +171,25 @@ For a game being released at scale, it is recommended to test latencies from $10
 \end{figure}
 
 \vspace{5pt}\noindent
-[Paragraph on time syncing! Evaluate cost slow joining vs. out-of-sync prediction]
-%[Paragraph of Evaluation] The choice of a TCP as the application's sole transport protocol is seems to be of [little/significant] disadvantage here. [Central idea: design decisions that seem optimal in theory, but need tested in practice!]
+In the meanwhile, there are more concrete fixes to be made - consider, for instance, how travel times between client and server are calculated. Currently, \texttt{delay} is averaged from $5$ \texttt{syncPacket}s sent back and forth immediately on joining a lobby, the slow loading time made worthwhile by more accurate predictions. What this theory misses is travel times may vary over larger time scales; the experience of testing latency suggests \texttt{delay}s should be recalculated at a reasonable interval. %In theory, it is enough to average over a small sample of these times immediately on joining a lobby, but the experience of testing latency suggests this value could ebb and flow over a larger timescale. Recalculating...
 
-\paragraph{Packet Loss} 
+\paragraph{Throttle} On one hand, \textit{Sardines} would appear to have a built-in threshold for throttle: since it only 
 
-\paragraph{Throttle} [EXPLANATION OF THROTTLE AND TESTING]. [SYNTHESISE
 
-\vspace{5pt}\noindent
-'Behind time'!
 %Testing lag and throttle simultaneously yields unsurprising results. Having established acceptable network conditions - [TIME]$ms$ lag, a [$\%$ chance of [TIME]$ms$ throttle -
 
 \vspace{5pt}\noindent
-Recall the interpolation technique described above. Since $T < 0.1s$, the report has assumed the submarine being interpolated appears at position starts on a predicted trajectory at time $t_0$ - does this assumption hold in practice? If two \texttt{PositionPacket}s have been throttled, and arrive within $T$ seconds of each other, it follows that the submarine will not have finished its first interpolation by the time the second one starts! In this edge case of being caught mid-interpolation at some point $\mathbf{r}_0$, \textit{Sardines} prioritises catching up; rather than using a predicted trajectory as in Figure \ref{Interpolation}, the subsequent interpolation simplifies calculations by taking $\mathbf{\tilde{r}}_{\textrm{old}}(t) = \mathbf{r}_0$.
+Recall the interpolation technique described above. Since $T < 0.1s$, the report has assumed the submarine being interpolated appears at position starts on a predicted trajectory at time $t_0$ - does this assumption hold in practice? If two \texttt{PositionPacket}s have been throttled, and arrive within $T$ seconds of each other, it follows that the submarine will not have finished its first interpolation by the time the second one starts. In this edge case of being caught mid-interpolation at some point $\mathbf{r}_0$, \textit{Sardines} prioritises catching up; rather than using a predicted trajectory as in Figure \ref{Interpolation}, the subsequent interpolation simplifies calculations by taking $\mathbf{\tilde{r}}_{\textrm{old}}(t) = \mathbf{r}_0$.
 
 \vspace{5pt}\noindent
-Indeed, for all the optimisations and oversights discussed in this section, its worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. While [Conclude here, or one final paragraph for more general reflection?].
+Other such flaws remain unresolved, with one of the more surprising consequences of throttle lying in how in might obscure the meaning behind a client's morse code. While it's true that TCP connections will preserve the order of dots and dashes, it will not preserve the intervals at which they were sent - if two or more throttled soundwaves end up showing at the same time, their order becomes indistinguishable! The solution 
+
+\vspace{5pt}\noindent
+For all the optimisations and oversights discussed in this section, it's worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. 
+
+\vspace{5pt}\noindent
+To conclude
+While this report cannot yet explain that earlier issue of desynchronisation, it can absolutely offer lines of attack - be that re-examining [Conclude here, or one final paragraph for more general reflection?]. 
 
 \bibliographystyle{agsm}
 \bibliography{References}
