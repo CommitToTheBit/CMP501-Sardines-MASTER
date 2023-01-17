@@ -19,3 +19,5 @@ one may need to look at the trajectories of nearby submarines to confirm their o
 
 'Sardines' was built in the Godot engine, with no external libraries used.
 The full project is contained in the source folder, this being no larger than 300Mb.
+
+Video demonstration available at https://web.microsoftstream.com/video/94447502-0eaf-436e-85eb-e7cc901510f5.
