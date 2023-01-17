@@ -200,7 +200,7 @@ public class Submarine
     // Prediction
     public void UpdatePredictionModel(long interpolationTimestamp) // No inputs, as updating from the submarine's logged positions
     {
-        interpolationTimestamp = DateTime.UtcNow.Ticks; 
+        //interpolationTimestamp = DateTime.UtcNow.Ticks; 
         //GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
 
         //long sum = INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION);

@@ -310,7 +310,7 @@ public class Client : Node
         foreach (int delaySample in delaySamples)
             delay += delaySample;
         delay /= DELAY_SAMPLE_SIZE;
-        delay = 0; // DEBUG
+        //delay = 0; // DEBUG
 
         // DEBUG:
         GD.Print("We are a delay of "+delay+" behind the server...");
