@@ -1,6 +1,6 @@
 % LaTeX Template for short student reports.
 % Citations should be in bibtex format and go in references.bib
-\documentclass[a4paper, 9pt]{article}
+\documentclass[a4paper, 10pt]{article}
 \usepackage[top=3cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
 \geometry{a4paper} 
 \usepackage[utf8]{inputenc}
@@ -31,7 +31,7 @@
 
 \section*{Sardines: A Networked Game}
 
-\textit{Sardines} is a system of communication for 2-8 players. Each player controls a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves with thicknesses representative of dots and dashes, to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox to best restrict attention to the networking techniques at play.
+\textit{Sardines} is a system of communication for 2-8 players. Each player controls a submarine in real time, viewing their surroundings through the lens of a retro sonar system. These submarines communicate in morse code, firing soundwaves with thicknesses representative of dots and dashes to one another across the map. While this system has ultimately been designed for integration into a larger, more complete game, \textit{Sardines} presents itself as a sandbox to best restrict attention to the networking techniques at play.
 
 \subsection*{Architecture}\label{Architecture}
 
@@ -155,25 +155,24 @@ Suppose a sender emits a soundwave from position $\mathbf{r}$ at time $t_0$, whi
 \vspace{5pt}\noindent
 [PARAGRAPH OF METHODOLOGY]
 Using clumsy...
-Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to performance under latency and throttle \footnote{It's also worth noting that - with testing integrated into the larger development process - the clients being tested were often run within the Godot editor. With poorer performance than a standalone executable, it follows that these results may constitute more of a worst-case scenario for \textit{Sardines} than intended...}
+Since \textit{Sardines} only uses TCP connections, it ; this report will restrict its analysis to performance under latency and throttle \footnote{It's also worth noting that - with testing so integrated into the larger development process - the clients tested were often run within the Godot editor. With poorer performance than a standalone executable, the following results may constitute more of a worst-case scenario for \textit{Sardines} than intended...}
 
-\paragraph{Latency} Latency (or, colloquially, lag) is...
+\paragraph{Latency} Latency is a key concern of any online game, [SOURCE: PSYCHOLOGY!]
 For a game aiming for release, it is recommended to test latencies from $100ms$ to $1000ms$, as a bare minimum \citep{unityNTWK}.
 
 \vspace{5pt}\noindent
-At its current scale, \textit{Sardines} shows promise: its prediction techniques provide a smooth enough experience at a latency of $200ms$, even $250ms$, with the game only becoming unplayable at far higher thresholds. Indeed, a latency of, say, $500ms$, will see the clients' worldviews gradually fall out of sync, as each accumulates error over time. Though it cannot yet identify the cause of this desynchronisation effect, the report offers an optimistic outlook - %so much of network programming %one of the most valuable lessons of this whole assignment has been that, when faced with a seemingly-inexplicable bug, it is always worth taking a step back and re-evaluating the assumptions the network makes.%This desynchronisation bug appears a barrier to further success, the cause of which is unidentified - having come across such error 
+At its current scale, \textit{Sardines} shows promise: its prediction techniques provide a smooth enough experience at a latency of $200ms$, even $250ms$, with the game only becoming unplayable at far higher thresholds. A latency of, say, $500ms$, will see the clients' worldviews slowly desynchronise, accumulating more and more error with time. %Though it cannot yet identify the cause of this desynchronisation effect, the report offers an optimistic outlook - %so much of network programming %one of the most valuable lessons of this whole assignment has been that, when faced with a seemingly-inexplicable bug, it is always worth taking a step back and re-evaluating the assumptions the network makes.%This desynchronisation bug appears a barrier to further success, the cause of which is unidentified - having come across such error 
 
 
 \begin{figure}[h]
 \centering
-\caption{Three simultaneous, local views of the game world, at [ACCEPTABLE LAG]$ms$ lag (above); [UNACCEPTABLE LAG]$ms$ lag (below).}
+\caption{Three simultaneous, local views of the game world, at $100ms$ latency (taken during development).}
 \label{Lag Testing}
 \end{figure}
 
-\vspace{5pt}\noindent
-In the meanwhile, there are more concrete fixes to be made - consider, for instance, how travel times between client and server are calculated. Currently, \texttt{delay} is averaged from $5$ \texttt{syncPacket}s sent back and forth immediately on joining a lobby, the slow loading time made worthwhile by more accurate predictions. What this theory misses is travel times may vary over larger time scales; the experience of testing latency suggests \texttt{delay}s should be recalculated at a reasonable interval. %In theory, it is enough to average over a small sample of these times immediately on joining a lobby, but the experience of testing latency suggests this value could ebb and flow over a larger timescale. Recalculating...
+Before worrying about this big-picture performance issue, there are more concrete fixes to be made - consider, for instance, how travel times are calculated between client and server. Currently, \texttt{delay} is averaged from $5$ \texttt{syncPacket}s sent back and forth immediately on joining a lobby, the slow loading time made worthwhile by more accurate predictions. What this theory misses is travel times may vary over larger time scales; the experience of testing latency suggests \texttt{delay}s should in fact be recalculated at reasonable intervals. %In theory, it is enough to average over a small sample of these times immediately on joining a lobby, but the experience of testing latency suggests this value could ebb and flow over a larger timescale. Recalculating...
 
-\paragraph{Throttle} On one hand, \textit{Sardines} would appear to have a built-in threshold for throttle: since it only 
+\paragraph{Throttle} On one hand, \textit{Sardines} would appear to have a built-in threshold for throttle. Of all of data involved in the application layer, clients only update position values continuously, and only when those position values are actively changing - and only \textit{then} once every $0.2s$. It is therefore unsurprising that using clumsy to simulate $<200ms$ throttle (with probability $10\%$) has little visible effect. However, with values just above this again giving way to desynchronisation, the attached... to best present the game when challenged (but not outright broken) by poor network conditions.%since it only . %For these reasons, the video demonstration : it is 
 
 
 %Testing lag and throttle simultaneously yields unsurprising results. Having established acceptable network conditions - [TIME]$ms$ lag, a [$\%$ chance of [TIME]$ms$ throttle -
@@ -185,7 +184,7 @@ Recall the interpolation technique described above. Since $T < 0.1s$, the report
 Other such flaws remain unresolved, with one of the more surprising consequences of throttle lying in how in might obscure the meaning behind a client's morse code. While it's true that TCP connections will preserve the order of dots and dashes, it will not preserve the intervals at which they were sent - if two or more throttled soundwaves end up showing at the same time, their order becomes indistinguishable! The solution 
 
 \vspace{5pt}\noindent
-For all the optimisations and oversights discussed in this section, it's worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. 
+For all the optimisations and oversights discussed in this section, it's worth noting how fundamental testing has already been in development. With network programming being notoriously unpredictable, \textit{Sardines} has necessarily involved a lot of QA: a feature that works offline must be tested between a single client and the server; then between two clients on the same device; then across devices, or between more clients, or under poor network conditions; the list goes on. [SENTENCE?]
 
 \vspace{5pt}\noindent
 To conclude
