@@ -39,8 +39,7 @@ public class Client : Node
     public int submarineID;
 
     // DEBUG
-    public long init_game;
-    private int position_counter;
+    //private int position_counter;
 
     // Constructor
     public Client()
@@ -70,8 +69,7 @@ public class Client : Node
 
         state = new State(State.Mode.lobby, 0); // Seed doesn't matter on client side (?)
 
-        started = DateTime.UtcNow.Ticks;
-        Console.WriteLine("Client started at " + started+".");
+        started = 0;
 
         delaySamples = new List<long>();
         delay = 0;
@@ -101,9 +99,9 @@ public class Client : Node
         try
         {
             clientSocket.ConnectAsync(new IPEndPoint(IPAddress.Parse(serverIP),SERVERPORT));
-            disconnected = !clientSocket.Poll(2000000, SelectMode.SelectWrite); // CHECKME: Set this based on Clumsy results! // CHECKME: Async - separate thread/simultaneously?
+            disconnected = !clientSocket.Poll(2000000, SelectMode.SelectWrite); // Happy to disallow latencies higher than 2s!
 
-            if (!disconnected)//clientSocket.Poll(100000, SelectMode.SelectWrite)) // Immediately sync on connection...
+            if (!disconnected) // Immediately sync on connection...
             {
                 HeaderPacket header = new HeaderPacket(1000);
                 SyncPacket sync = new SyncPacket(0);
@@ -210,7 +208,7 @@ public class Client : Node
         // NB: Some header.bodyIDs aren't included here, as these will only be sent server-to-client
 
         // DEBUG:
-        //GD.Print("Received packet " + packet.header.bodyID + "...");
+        GD.Print("Received packet " + packet.header.bodyID + "...");
 
         SyncPacket syncPacket;
         IDPacket idPacket;
@@ -283,18 +281,13 @@ public class Client : Node
         EmitSignal("ReceivedPacket",packet.header.bodyID);
 
         // DEBUG:
-        //GD.Print();
+        GD.Print();
     }
 
     private void Receive1000(long serverTimestamp, long syncTimestamp)
     {
-        // Client receives a packet 'bounced off' the server
-        // Client uses syncTimestamp to estimate when the bounce occurred, then compares to serverTimestamp to estimate the delay between device clocks
-
-        // clientMoment and serverMoment should occur at (roughly) the same time
-        long clientTimestamp = (DateTime.UtcNow.Ticks-syncTimestamp)/2; // MAJOR LIMITATION: Assumes inbound AND outbound lag the same?
-
-        delaySamples.Add(clientTimestamp); // Round trip time...
+        // Estimating the time to get from client to server, or vice versa...
+        delaySamples.Add((DateTime.UtcNow.Ticks-syncTimestamp)/2); // Round trip time...
         if (delaySamples.Count < DELAY_SAMPLE_SIZE) // Sample delay multiple times, for more reliable estimate...
         {
             HeaderPacket syncHeader = new HeaderPacket(1000);
@@ -304,13 +297,10 @@ public class Client : Node
             return;
         }
 
-        // If clientTimestamp < serverTimestamp, the client is delayed behind the server
-        // We add this delay to future client calculations, to 'catch them up' with the server
         delay = 0;
         foreach (int delaySample in delaySamples)
             delay += delaySample;
         delay /= DELAY_SAMPLE_SIZE;
-        //delay = 0; // DEBUG
 
         // DEBUG:
         GD.Print("We are a delay of "+delay+" behind the server...");
@@ -373,7 +363,7 @@ public class Client : Node
                 for (int i = 0; i < 3; i++) // Brings abandoned submarine fully to rest // CHECKME: Erroneous use of interpolationTimestamp?
                     state.UpdateSubmarine(submarineID,submarines[submarineID].x[2],submarines[submarineID].y[2],submarines[submarineID].theta[2],submarines[submarineID].timestamp[2]+1,interpolationTimestamp);
         
-        // NEED TO HANDLE RE-JOINING SUBMARINES?
+        // No need to handle rejoining submarines...
     }
 
     private void Receive1200()
@@ -388,9 +378,8 @@ public class Client : Node
 
     private void Receive2310()
     {
-        // Client receives cues that
+        // Client receives cues that they're entering sandbox mode
         state.mode = State.Mode.sandbox;
-
 
     }
 
@@ -439,9 +428,10 @@ public class Client : Node
             }
         }
 
+        started = state.GetSubmarines()[submarineID].timestamp[2];
+
         // DEBUG:
-        init_game = state.GetSubmarines()[submarineID].timestamp[2];
-        position_counter = 0;
+        //position_counter = 0;
     }
 
     private void Receive4000(int superpowerID, int diplomatID)
@@ -500,8 +490,8 @@ public class Client : Node
         state.UpdateSubmarine(init_submarineID,init_x,init_y,init_theta,init_timestamp,interpolationTimestamp,delay);
 
         // DEBUG:
-        if (init_game > 0 && (position_counter++)%10 == 0)
-            GD.Print(init_timestamp-init_game);
+        //if (init_game > 0 && (position_counter++)%10 == 0)
+        //    GD.Print(init_timestamp-started);
 
     }
 
