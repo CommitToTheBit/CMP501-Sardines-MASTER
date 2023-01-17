@@ -292,9 +292,9 @@ public class Client : Node
         // Client uses syncTimestamp to estimate when the bounce occurred, then compares to serverTimestamp to estimate the delay between device clocks
 
         // clientMoment and serverMoment should occur at (roughly) the same time
-        long clientTimestamp = (syncTimestamp+DateTime.UtcNow.Ticks)/2; // MAJOR LIMITATION: Assumes inbound AND outbound lag the same!
+        long clientTimestamp = (DateTime.UtcNow.Ticks-syncTimestamp)/2; // MAJOR LIMITATION: Assumes inbound AND outbound lag the same?
 
-        delaySamples.Add(serverTimestamp-clientTimestamp);
+        delaySamples.Add(clientTimestamp); // Round trip time...
         if (delaySamples.Count < DELAY_SAMPLE_SIZE) // Sample delay multiple times, for more reliable estimate...
         {
             HeaderPacket syncHeader = new HeaderPacket(1000);
