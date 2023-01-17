@@ -27,9 +27,9 @@ public class NavigationDisplay : Control
 
     Sprite sweep;
 
-    // FIXME: AudioFrames handling
-    private List<Vector2> frames;
-    private AudioEffectCapture _effect;
+    // AudioFrames handling (not used in final presentation...)
+    //private List<Vector2> frames;
+    //private AudioEffectCapture _effect;
 
     public bool reset;
 
@@ -67,28 +67,9 @@ public class NavigationDisplay : Control
 
         sweep = GetNode<Sprite>("Foreground/Sweep");
 
-        // AudioStreamGenerator testing...
-        /*AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
-        AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
-
-        _effect = (AudioEffectCapture)AudioServer.GetBusEffect(1, 1);
-        _effect.BufferLength = 1.0f;
-
-        for (int i = 0; i < playback.GetFramesAvailable(); i++)
-        {
-            //playback.PushFrame(Vector2.Zero);
-        }
-
-        audioStreamPlayer.Play();*/
-
         reset = false;
         Hide();
     }
-
-    /*private void ReceivedFrame(Vector2 init_frame)
-    {
-        GD.Print("Received frame!");//frames.Add(init_frame);
-    }*/
 
     public void Reset()
     {
@@ -122,37 +103,6 @@ public class NavigationDisplay : Control
 
         // Move all objects on screen to h.c.state positions
         Render();
-
-        // AudioStreamGenerator testing...
-        /*AudioStreamPlayer audioStreamPlayer = GetNode<AudioStreamPlayer>("AudioStreamPlayer");
-        AudioStreamGeneratorPlayback playback = audioStreamPlayer.GetStreamPlayback() as AudioStreamGeneratorPlayback;
-
-        List<Vector2> sendFrames = new List<Vector2>(_effect.GetBuffer(_effect.GetFramesAvailable()));
-        //_effect.ClearBuffer();
-
-        for (int i = 0; i < sendFrames.Count; i++)
-        {
-            if (Input.IsActionPressed("ui_talk"))
-            {
-                h.c.Send4190(sendFrames[i].x,sendFrames[i].y);
-            }
-        }
-
-        //var to_fill = playback.GetFramesAvailable();
-        for (int i = 0; i < playback.GetFramesAvailable(); i++)
-        {
-            try
-            {
-                playback.PushFrame(frames[i]);
-            }
-            catch 
-            {
-                //playback.PushFrame(Vector2.Zero);
-            }
-        }
-        frames = new List<Vector2>();
-
-        audioStreamPlayer.Play();*/
     }
     
     public override void _Input(InputEvent @event)
@@ -206,10 +156,9 @@ public class NavigationDisplay : Control
         submarine.DerivePosition(thrust,steer,delta);
 
         // FIXME: Even with this restriction, once the submarine starts it isn't likely to stop...
-        if (positionTimer.IsStopped() && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !sending)) // sending is used to re-establish rest, preventing 'long-term' prediction! 
+        if (positionTimer.IsStopped() && ((x != submarine.x[2] || y != submarine.y[2] || theta != submarine.theta[2]) || !sending)) // Sending is used to re-establish rest, preventing 'long-term' prediction! 
             positionTimer.Start();
 
-        //GD.Print(stopped);
     }
 
     public void Render()
@@ -227,18 +176,18 @@ public class NavigationDisplay : Control
         float y = submarines[submarineID].y[2];
         float theta = submarines[submarineID].theta[2];
 
-        long timestamp = submarines[submarineID].timestamp[2];// But DateTime.UtcNow.Ticks is better for single throttle?
+        long timestamp = submarines[submarineID].timestamp[2]; // NB: Minimal use of Ticks...
         long ftimestamp = (timestamp-handler.client.GetStarted())%(int)(SWEEP_PERIOD*Mathf.Pow(10,7));
 
         float sweepTheta = 2*Mathf.Pi*ftimestamp/(SWEEP_PERIOD*Mathf.Pow(10,7))-Mathf.Pi; 
         sweep.Rotation = sweepTheta+3*Mathf.Pi/2;
         
+        // Updating other players relative to this player's POV
         foreach (int id in submarines.Keys)
         {
             if (id == submarineID)
                 continue;
 
-            //GD.Print("Predicting time: "+(timestamp-handler.client.init_game));
             (float x, float y, float theta) prediction = submarines[id].InterpolatePosition(timestamp);
 
             if (!vessels.ContainsKey(id))
@@ -273,7 +222,7 @@ public class NavigationDisplay : Control
             return;
 
         Submarine submarine = handler.client.state.GetSubmarines()[handler.client.submarineID];
-        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],submarine.timestamp[2]);//+handler.client.delay);
+        handler.client.Send4101(submarine.x[2],submarine.y[2],submarine.theta[2],submarine.timestamp[2]);
 
         xSent[0] = xSent[1];
         xSent[1] = xSent[2];
@@ -302,7 +251,7 @@ public class NavigationDisplay : Control
     public void ReceiveSoundwaveCollision(int senderID, bool collisionDot, float collisionRange, float collisionAngle, long collisionInterval)
     {
         // DEBUG:
-        GD.Print(senderID+" sent a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionInterval+" ticks...");
+        //GD.Print(senderID+" sent a "+((collisionDot) ? "dot" : "dash")+" at angle "+collisionAngle+" after "+collisionInterval+" ticks...");
 
         // Filters out any 'null' submarines
         if (handler.client.state.GetSubmarines()[senderID].captain.clientID < 0)
