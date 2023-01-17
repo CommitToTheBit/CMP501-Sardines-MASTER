@@ -243,7 +243,7 @@ public class NavigationDisplay : Control
             if (id == submarineID)
                 continue;
 
-            GD.Print("Predicting time: "+(timestamp-handler.client.init_game));
+            //GD.Print("Predicting time: "+(timestamp-handler.client.init_game));
             (float x, float y, float theta) prediction = submarines[id].InterpolatePosition(timestamp);
 
             if (!vessels.ContainsKey(id))

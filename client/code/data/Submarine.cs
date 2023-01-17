@@ -202,15 +202,6 @@ public class Submarine
     // Prediction
     public void UpdatePredictionModel(long interpolationTimestamp = 0) // No inputs, as updating from the submarine's logged positions
     {
-        //interpolationTimestamp = DateTime.UtcNow.Ticks; 
-        //GD.Print(newTimestamp+" vs. "+INTERPOLATION_TIMESTAMP);
-
-        //long sum = INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION);
-        //GD.Print(sum);
-
-        //GD.Print(newTimestamp - INTERPOLATION_TIMESTAMP);
-        //GD.Print((float)(newTimestamp-sum)*Mathf.Pow(10,-7));
-
         // Timestamps converted to seconds
         float[] deltas = new float[2] { Mathf.Pow(10, -7) * (timestamp[1] - timestamp[0]), Mathf.Pow(10, -7) * (timestamp[2] - timestamp[1]) };
 
@@ -227,14 +218,14 @@ public class Submarine
         // 'Catch up' back-end 
         if (positionInitialised)
         {
-            //if (true)//interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
-            //{
-            X[0] = X[1];
-            Y[0] = Y[1];
-            THETA[0] = THETA[1];
-            TIMESTAMP[0] = TIMESTAMP[1];
-            //}
-            /*else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
+            if (interpolationTimestamp >= INTERPOLATION_TIMESTAMP+(long)(Mathf.Pow(10,7)*T_INTERPOLATION)) // CASE: Previous interpolation has finished
+            {
+                X[0] = X[1];
+                Y[0] = Y[1];
+                THETA[0] = THETA[1];
+                TIMESTAMP[0] = TIMESTAMP[1];
+            }
+            else // CASE: Mid-way through previous interpolation; we 'stop where we are' as backPrediction...
             {
                 (float x, float y, float theta) interpolation = InterpolatePosition(interpolationTimestamp);
 
@@ -243,15 +234,9 @@ public class Submarine
                 THETA[0] = new float[2] { interpolation.theta, 0.0f }; 
                 TIMESTAMP[0] = interpolationTimestamp;
 
-                // DEBUG:
-                //X[1] = new float[3] { x[2], ux[1], ax[0] };
-                //Y[1] = new float[3] { y[2], uy[1], ay[0] };
-                //THETA[1] = new float[2] { theta[1], utheta[0] }; // NB: Left linear, since rudder moves 'zero to sixty'!
-                //TIMESTAMP[1] = timestamp[2];
-
                 GD.Print("Catching up submarine from client "+captain.clientID+"!");
                 GD.Print(((float)(interpolationTimestamp-INTERPOLATION_TIMESTAMP)*Mathf.Pow(10,-7))/T_INTERPOLATION);
-            }*/
+            }
 
             // Update parameters of quadratic model
             X[1] = new float[3] { x[2], ux[1], ax[0] };
