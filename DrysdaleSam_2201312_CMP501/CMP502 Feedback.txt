@@ -1,0 +1,9 @@
+GRADE: B+
+
+OVERALL FEEDBACK:
+Implementation is very good with very good justification.  
+The architecture and protocols are very good for the design with very good justifications for using hybrid server - client model and TCP/UDP protocols. 
+Linear and quadratic prediction have been used, discussed, implemented and justified very well. 
+Testing and evaluation is limited to lags and throttle with no clear justifications for not using other features. 
+Structure, presentation, logical arguments presented and referencing of the report could be improved. 
+Number of references could be increased.
